@@ -1,0 +1,46 @@
+buildscript {
+    ext.kotlin_version = '1.2.71'
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.2.0'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+
+//Android dependency 'androidx.core:core' has different version for the compile (1.0.0-rc01) and runtime (1.0.2) classpath. You should manually set the same version via DependencyResolution
+//위 오류 해결했던 코드
+subprojects {
+    project.configurations.all {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'androidx.core' &&
+                    !details.requested.name.contains('androidx')) {
+                details.useVersion "1.0.1"
+            }
+        }
+    }
+}
