@@ -1,25 +1,35 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:math';
 import 'package:socialapp/model/todo.dart';
 import 'package:socialapp/widgets/database_create.dart';
 import 'package:socialapp/base.dart';
 
 class writeprofile2 extends StatefulWidget {
-  writeprofile2({Key key}) : super(key: key);
+  final String currentUserId;
+
+  writeprofile2({Key key, @required this.currentUserId}) : super(key: key);
 
   @override
-  _writeprofile2State createState() => _writeprofile2State();
+  _writeprofile2State createState() =>
+      _writeprofile2State(currentUserId: currentUserId);
 }
 
 class _writeprofile2State extends State<writeprofile2> {
+  final String currentUserId;
+
+  _writeprofile2State({Key key, @required this.currentUserId});
+
   final _formKey = GlobalKey<FormState>();
   String _name, _age, _intro;
   final _nameText = TextEditingController();
   final _ageText = TextEditingController();
   final _introText = TextEditingController();
   bool _validate = false;
+  GoogleSignIn googleSignIn = GoogleSignIn();
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +74,8 @@ class _writeprofile2State extends State<writeprofile2> {
                                 height: MediaQuery.of(context).size.height / 15,
                                 decoration: BoxDecoration(
                                   color: Colors.black12,
-                                  borderRadius:
-                                  BorderRadius.all(const Radius.circular(20)),
+                                  borderRadius: BorderRadius.all(
+                                      const Radius.circular(20)),
                                 ),
                               ),
                             ),
@@ -108,7 +118,7 @@ class _writeprofile2State extends State<writeprofile2> {
                               decoration: BoxDecoration(
                                 color: Colors.black12,
                                 borderRadius:
-                                BorderRadius.all(const Radius.circular(20)),
+                                    BorderRadius.all(const Radius.circular(20)),
                               ),
                             ),
                             Padding(
@@ -154,7 +164,7 @@ class _writeprofile2State extends State<writeprofile2> {
                               decoration: BoxDecoration(
                                 color: Colors.black12,
                                 borderRadius:
-                                BorderRadius.all(const Radius.circular(20)),
+                                    BorderRadius.all(const Radius.circular(20)),
                               ),
                             ),
                             Padding(
@@ -228,16 +238,18 @@ class _writeprofile2State extends State<writeprofile2> {
     return null;
   }
 
-  void onPressed() {
+  void onPressed() async{
     var form = _formKey.currentState;
     if (form.validate()) {
       form.save();
       try {
-        String _email = 'kmail';
-        Todo newtodo = Todo(name: _name ,age: _age,intro: _intro,email: _email);
-        DBHelper().profileUpdate(newtodo);
-//        Navigator.push(
-//            context, MaterialPageRoute(builder: (context) => Base()));
+        print(currentUserId);
+        await Firestore.instance
+            .collection('users')
+            .document(currentUserId)
+            .updateData({'nickname': _name, 'age': _age, 'intro': _intro});
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Base(currentUserId: currentUserId,)));
       } catch (e) {
         print(e.message);
       }

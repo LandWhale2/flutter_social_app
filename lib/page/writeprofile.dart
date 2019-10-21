@@ -1,6 +1,9 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
@@ -31,13 +34,20 @@ PictureBox pictureBox6 = PictureBox(num: 5);
 final key = GlobalKey<writeprofileState>();
 
 class writeprofile extends StatefulWidget {
-  const writeprofile({Key key}) : super(key: key);
+  final String currentUserId;
+
+  const writeprofile({Key key, @required this.currentUserId}) : super(key: key);
 
   @override
-  writeprofileState createState() => writeprofileState();
+  writeprofileState createState() =>
+      writeprofileState(currentUserId: currentUserId);
 }
 
 class writeprofileState extends State<writeprofile> {
+  writeprofileState({Key key, @required this.currentUserId});
+
+  final String currentUserId;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -53,34 +63,90 @@ class writeprofileState extends State<writeprofile> {
 //      });
 //    }
 
-    Future<Null> _uploadImage() async {
-      print('asd');
-      tmpimagelist.forEach((f) {
-        print('asd1 $image64');
-        final StorageReference _ref =
-            FirebaseStorage.instance.ref().child('${random.nextInt(1000)}.jpg');
-        print('asd2');
-        final StorageUploadTask uploadTask = _ref.putFile(f);
-        print('asd3');
-        setState(() {
-          String _email = 'roro';
-          Todo imagetodo = Todo(
-            email: _email,
-            image0: tmp64list[0],
-            image1: tmp64list[1],
-            image2: tmp64list[2],
-            image3: tmp64list[3],
-            image4: tmp64list[4],
-            image5: tmp64list[5],
-          );
-          DBHelper().updateimage(imagetodo);
-//          Navigator.push(context,
-//              MaterialPageRoute(builder: (context) => writeprofile2()));
-        });
-      });
+    Future _uploadImage() async {
+      String foldername = currentUserId;
+      Firestore.instance
+          .collection('users')
+          .document(currentUserId).updateData({'image':null});
+
+      for (int i = 0; i < tmpimagelist.length; i++) {
+        if (tmpimagelist[i] != null) {
+          print(i);
+          print(tmpimagelist[i]);
+          final StorageReference ref =
+              FirebaseStorage.instance.ref().child('${foldername}/${i}.jpg');
+          final StorageUploadTask uploadTask = ref.putFile(tmpimagelist[i]);
+          StorageTaskSnapshot storageTaskSnapshot;
+          uploadTask.onComplete.then((value){
+            if(value.error == null) {
+              storageTaskSnapshot = value;
+              storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+                String photoUrl = downloadUrl;
+                Firestore.instance
+                    .collection('users')
+                    .document(currentUserId).updateData({'image':FieldValue.arrayUnion([photoUrl])});
+              }, onError: (err) {
+                Fluttertoast.showToast(msg: '이미지파일이 아닙니다.');
+              });
+            }else Fluttertoast.showToast(msg: '이미지파일이 아닙니다.');
+          });
+        } else
+          break;
+      }
+      print('upload');
+      Navigator.push(context, MaterialPageRoute(builder: (context) => writeprofile2(currentUserId: currentUserId,)));
+
+//      tmpimagelist.forEach((f) {
+//        if(f != null){
+//          print(num);
+//          final StorageReference _ref =
+//          FirebaseStorage.instance.ref().child('${foldername}/${num}.jpg');
+//          final StorageUploadTask uploadTask = _ref.putFile(f);
+//          StorageTaskSnapshot storageTaskSnapshot;
+//        }else{
+//          print('eeeeeee');
+//        }
+//        num++;
+////        uploadTask.onComplete.then((value){
+////          if(value.error == null){
+////
+////            storageTaskSnapshot = value;
+////            storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl){
+////              String photoUrl = downloadUrl;
+////
+////              Firestore.instance.collection('users')
+////                  .document(currentUserId)
+////                  .updateData({'image': FieldValue.arrayUnion([photoUrl]),});
+////            }, onError: (err){
+////              Fluttertoast.showToast(msg: '이미지가 아닙니다');
+////            });
+////          }else{
+////            Fluttertoast.showToast(msg: '이미지파일이 아닙니다.');
+////          }
+////        });
+//      });
     }
 
-    imageupload()async{
+    uploadDBimage() async {
+      Firestore.instance
+          .collection('users')
+          .document(currentUserId)
+          .updateData({
+        'image1': tmp64list[0],
+        'image2': tmp64list[1],
+        'image3': tmp64list[2],
+        'image4': tmp64list[3],
+        'image5': tmp64list[4],
+        'image6': tmp64list[5],
+        'favorite': '1',
+      });
+      print(tmp64list[0]);
+      print(currentUserId);
+//      Navigator.push(
+//          context, MaterialPageRoute(builder: (context) => writeprofile2()));
+    }
+
+    imageupload() async {
       print('업로드 시도');
       String _email = 'gam';
       Todo imagetodo = Todo(
@@ -94,7 +160,6 @@ class writeprofileState extends State<writeprofile> {
       );
       DBHelper().updateimage(imagetodo);
     }
-
 
     return Scaffold(
       body: Builder(
@@ -161,7 +226,7 @@ class writeprofileState extends State<writeprofile> {
                     ),
                   ),
                   InkWell(
-                    onTap: imageupload,
+                    onTap: _uploadImage,
                     child: Padding(
                       padding: EdgeInsets.only(top: 50),
                       child: Container(
@@ -216,12 +281,9 @@ class _PictureBoxState extends State<PictureBox> {
               await ImagePicker.pickImage(source: ImageSource.gallery);
           setState(() {
             tmpimage = getimage;
-            imageBytes = getimage.readAsBytesSync();
-            image64 = base64Encode(imageBytes);
-            print(tmp64list.length);
             print('Image Path $tmpimage');
+            tmpimagelist.add(tmpimage);
           });
-          tmp64list[widget.num] = image64;
         },
         child: Padding(
           padding: EdgeInsets.only(left: 10),

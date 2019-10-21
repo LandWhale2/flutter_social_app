@@ -215,7 +215,7 @@ class _Base extends State<Base> {
                   if(!snapshot.hasData){
                     return Center(
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                       ),
                     );
                   }else{
@@ -232,7 +232,7 @@ class _Base extends State<Base> {
               child: isLoading
                 ?Container(
                 child: Center(
-                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black87),
+                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                 ),
               ),
               color: Colors.white.withOpacity(0.8),
@@ -260,7 +260,7 @@ class _Base extends State<Base> {
                   placeholder: (context, url) => Container(
                     child: CircularProgressIndicator(
                       strokeWidth: 1,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.black87),
                     ),
                     width: 50,
                     height: 50,
@@ -285,7 +285,7 @@ class _Base extends State<Base> {
                       Container(
                         child: Text(
                           'Nickname: ${document['nickname']}',
-                          style: TextStyle(color: Colors.deepOrange),
+                          style: TextStyle(color: Colors.black87),
                         ),
                         alignment: Alignment.centerLeft,
                         margin: EdgeInsets.fromLTRB(10, 0, 0, 5),
@@ -293,7 +293,7 @@ class _Base extends State<Base> {
                       Container(
                         child: Text(
                           'About Me: ${document['aboutMe'] ?? 'Not availabe'}',
-                          style: TextStyle(color: Colors.orange),
+                          style: TextStyle(color: Colors.blue),
                         ),
                         alignment: Alignment.centerLeft,
                         margin: EdgeInsets.fromLTRB(10, 0, 0, 0),

@@ -11,6 +11,8 @@ import 'package:socialapp/model/todo.dart';
 import 'package:socialapp/page/signup.dart';
 import 'package:socialapp/widgets/database_create.dart';
 
+import 'writeprofile.dart';
+
 FirebaseUser firebaseauth;
 
 
@@ -106,7 +108,11 @@ class LoginScreenState extends State<LoginScreen>
           'photoUrl' : firebaseUser.photoUrl,
           'id' : firebaseUser.uid,
           'createAt' : DateTime.now().millisecondsSinceEpoch.toString(),
-          'chattingWith' : null
+          'chattingWith' : null,
+          'favorite' : null,
+          'image' : [],
+          'age' : null,
+          'intro' : null,
         });
 
 
@@ -127,7 +133,8 @@ class LoginScreenState extends State<LoginScreen>
         isLoading = false;
       });
 
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Base(currentUserId: firebaseUser.uid)));
+      print(firebaseUser.uid);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => writeprofile(currentUserId: firebaseUser.uid)));
     }else{
       Fluttertoast.showToast(msg: "sign in fail");
       this.setState((){
