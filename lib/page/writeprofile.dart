@@ -67,7 +67,8 @@ class writeprofileState extends State<writeprofile> {
       String foldername = currentUserId;
       Firestore.instance
           .collection('users')
-          .document(currentUserId).updateData({'image':null});
+          .document(currentUserId)
+          .updateData({'image': null});
 
       for (int i = 0; i < tmpimagelist.length; i++) {
         if (tmpimagelist[i] != null) {
@@ -77,24 +78,33 @@ class writeprofileState extends State<writeprofile> {
               FirebaseStorage.instance.ref().child('${foldername}/${i}.jpg');
           final StorageUploadTask uploadTask = ref.putFile(tmpimagelist[i]);
           StorageTaskSnapshot storageTaskSnapshot;
-          uploadTask.onComplete.then((value){
-            if(value.error == null) {
+          uploadTask.onComplete.then((value) {
+            if (value.error == null) {
               storageTaskSnapshot = value;
               storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
                 String photoUrl = downloadUrl;
                 Firestore.instance
                     .collection('users')
-                    .document(currentUserId).updateData({'image':FieldValue.arrayUnion([photoUrl])});
+                    .document(currentUserId)
+                    .updateData({
+                  'image': FieldValue.arrayUnion([photoUrl])
+                });
               }, onError: (err) {
                 Fluttertoast.showToast(msg: '이미지파일이 아닙니다.');
               });
-            }else Fluttertoast.showToast(msg: '이미지파일이 아닙니다.');
+            } else
+              Fluttertoast.showToast(msg: '이미지파일이 아닙니다.');
           });
         } else
           break;
       }
       print('upload');
-      Navigator.push(context, MaterialPageRoute(builder: (context) => writeprofile2(currentUserId: currentUserId,)));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => writeprofile2(
+                    currentUserId: currentUserId,
+                  )));
 
 //      tmpimagelist.forEach((f) {
 //        if(f != null){

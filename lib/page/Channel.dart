@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:socialapp/model/data.dart';
+import 'package:socialapp/page/signup.dart';
 import 'package:socialapp/widgets/slide_item.dart';
-
 
 class Home extends StatefulWidget {
   @override
@@ -12,24 +14,30 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
-
   var getTop;
 
-  void initState(){
+  void initState() {
     super.initState();
     futureget();
   }
 
-  futureget() async{
+  futureget() async {
     getTop = await getTopuser();
     return getTop;
+  }
+
+  gettoplength()async{
+    await Firestore.instance.collection('users').snapshots().listen((data)async{
+      int leng = data.documents.length;
+      return print(leng * 10/100);
+    });
+
   }
 
   Uint8List smallImageByte;
 
   @override
   Widget build(BuildContext context) {
-    futureget();
     super.build(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -55,10 +63,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                 child: Text(
                   "더보기",
                   style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.pinkAccent
-                  ),
+                      fontSize: 22,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.pinkAccent),
                 ),
                 onPressed: () {
                   print(getTop[2]);
@@ -72,28 +79,34 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
 
           //사진 리스트
           Container(
-            height: MediaQuery.of(context).size.height/2.4,
+            height: MediaQuery.of(context).size.height / 2.4,
             width: MediaQuery.of(context).size.width,
-            child: ListView.builder(
-                primary: false,
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount: getTop == null? 0: getTop.length,
-                itemBuilder: (BuildContext context, int index){
-                  Map post = getTop[index];
+            child: StreamBuilder(
+                stream: Firestore.instance
+                    .collection('users').orderBy('favorite', descending: true)
+                    .snapshots(),
+                builder: (BuildContext context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                        primary: false,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          DocumentSnapshot ds = snapshot.data.documents[index];
 
-                  return Padding(
-                    padding: EdgeInsets.only(right: 10),
-                    child: SlideItem(
-                      image0: post["image0"],
-                      name: post["name"],
-                      location: post["location"],
-                      vote: post["vote"],
-                      age: post["age"],
-                    ),
-                  );
-                }
-            ),
+                          return Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: SlideItem(
+                              image: ds['image'][0],
+                              nickname: ds['nickname'],
+                              intro: ds['intro'],
+                              age: ds['age'],
+                            ),
+                          );
+                        });
+                  }
+                }),
           ),
           SizedBox(height: 10),
 
@@ -111,70 +124,51 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                 child: Text(
                   "더보기",
                   style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.pinkAccent
-                  ),
+                      fontSize: 22,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.pinkAccent),
                 ),
-                onPressed: (){},
+                onPressed: () {},
               ),
             ],
           ),
           SizedBox(height: 10),
           Container(
-            height: MediaQuery.of(context).size.height/6,
-            child: ListView.builder(
-              primary: false,
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemCount: getTop == null? 0: getTop.length,
-              itemBuilder: (BuildContext context, int index){
-                Map post = getTop[index];
-                smallImageByte = Base64Decoder().convert(post["image0"]);
-                return Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Stack(
-                      children: <Widget>[
-                        Container(
-                          height: MediaQuery.of(context).size.height/6,
-                          width: MediaQuery.of(context).size.height/6,
-                          child: Image.memory(
-                            smallImageByte,
-                            fit: BoxFit.cover,
-                          ),
+            height: MediaQuery.of(context).size.height / 6,
+            child: StreamBuilder(
+              stream: Firestore.instance
+                  .collection('users').orderBy('favorite', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                return ListView.builder(
+                  primary: false,
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  itemCount: snapshot.data.documents.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    DocumentSnapshot ds = snapshot.data.documents[index];
+                    return Padding(
+                      padding: EdgeInsets.only(right: 10),
+                        child: Stack(
+                          children: <Widget>[
+                            Container(
+                              height: MediaQuery.of(context).size.height / 6,
+                              width: MediaQuery.of(context).size.height / 6,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(Radius.circular(20)),
+                                child: CachedNetworkImage(
+                                  imageUrl: ds['image'][0],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
 
-
-
-//                        Center(
-//                          child: Container(
-//                            height: MediaQuery.of(context).size.height/6,
-//                            width: MediaQuery.of(context).size.height/6,
-//                            padding: EdgeInsets.all(1),
-//                            constraints: BoxConstraints(
-//                              minWidth: 20,
-//                              minHeight: 20,
-//                            ),
-//                            child: Center(
-//                              child: Text(
-//                                post["name"],
-//                                style: TextStyle(
-//                                  color: Colors.white,
-//                                  fontSize: 20,
-//                                  fontWeight: FontWeight.bold,
-//                                ),
-//                                textAlign: TextAlign.center,
-//                              ),
-//                            ),
-//                          ),
-//                        ),
-                      ],
-                    ),
-                  ),
+                    );
+                  },
                 );
-              },
+              }
             ),
           ),
           SizedBox(height: 20),
@@ -226,7 +220,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
 //            ),
 //          ),
 //          SizedBox(height: 30),
-
         ],
       ),
     );

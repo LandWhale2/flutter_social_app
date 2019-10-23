@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,12 +11,9 @@ import 'package:flushbar/flushbar.dart';
 import 'package:socialapp/model/todo.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
+String currentId;
 
 class SignUpPage extends StatefulWidget {
-
-
-
-
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
@@ -26,9 +24,6 @@ class _SignUpPageState extends State<SignUpPage> {
   int check = 0;
 
   final _formKey = GlobalKey<FormState>();
-
-
-
 
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _smsController = TextEditingController();
@@ -46,8 +41,8 @@ class _SignUpPageState extends State<SignUpPage> {
       _verificationId = verificationId;
     };
 
-
-    final PhoneVerificationCompleted verificationCompleted = (AuthCredential phoneAuthCredential) {
+    final PhoneVerificationCompleted verificationCompleted =
+        (AuthCredential phoneAuthCredential) {
       _auth.signInWithCredential(phoneAuthCredential);
       setState(() {
         _message = 'received phone auth credential : $phoneAuthCredential';
@@ -56,13 +51,14 @@ class _SignUpPageState extends State<SignUpPage> {
 
     final PhoneVerificationFailed verfiFailed = (AuthException authException) {
       setState(() {
-        _message = '폰인증 실패 Code : ${authException.code}. Message: ${authException.message}';
+        _message =
+            '폰인증 실패 Code : ${authException.code}. Message: ${authException.message}';
         Flushbar(
-          margin:EdgeInsets.all(8),
+          margin: EdgeInsets.all(8),
           message: "전송에 실패했습니다 번호를 입력해주세요",
           icon: Icon(
             Icons.tablet_android,
-            size:28,
+            size: 28,
             color: Colors.blue[300],
           ),
           duration: Duration(seconds: 3),
@@ -71,13 +67,14 @@ class _SignUpPageState extends State<SignUpPage> {
       });
     };
 
-    final PhoneCodeSent codeSent = (String verificationId,[int forceResendingToken]) async{
+    final PhoneCodeSent codeSent =
+        (String verificationId, [int forceResendingToken]) async {
       Flushbar(
-        margin:EdgeInsets.all(8),
+        margin: EdgeInsets.all(8),
         message: "휴대폰에서 인증번호를 확인 후 입력해주세요",
         icon: Icon(
           Icons.tablet_android,
-          size:28,
+          size: 28,
           color: Colors.blue[300],
         ),
         duration: Duration(seconds: 3),
@@ -96,15 +93,14 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-
-  void signInwithPhoneNumber() async {
+  Future<String> signInwithPhoneNumber() async {
     final AuthCredential credential = PhoneAuthProvider.getCredential(
       verificationId: _verificationId,
       smsCode: _smsController.text,
     );
 
-
-    final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
+    final FirebaseUser user =
+        (await _auth.signInWithCredential(credential)).user;
     final FirebaseUser currentUser = await _auth.currentUser();
 
     assert(user.uid == currentUser.uid);
@@ -114,24 +110,29 @@ class _SignUpPageState extends State<SignUpPage> {
         print('success!');
         check = 1;
         Flushbar(
-          margin:EdgeInsets.all(8),
+          margin: EdgeInsets.all(8),
           message: "인증이 완료되었습니다",
           icon: Icon(
             Icons.tablet_android,
-            size:28,
+            size: 28,
             color: Colors.blue[300],
           ),
           duration: Duration(seconds: 3),
           leftBarIndicatorColor: Colors.blue[300],
         )..show(context);
+        print(currentUser.uid);
+
+        currentId = currentUser.uid;
+
+        return currentId;
       } else {
         print('sign in failed');
         Flushbar(
-          margin:EdgeInsets.all(8),
+          margin: EdgeInsets.all(8),
           message: "인증에 실패했습니다 다시한번 확인해주세요",
           icon: Icon(
             Icons.tablet_android,
-            size:28,
+            size: 28,
             color: Colors.blue[300],
           ),
           duration: Duration(seconds: 3),
@@ -140,9 +141,6 @@ class _SignUpPageState extends State<SignUpPage> {
       }
     });
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -315,7 +313,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                         color: Colors.black,
                                       ),
                                       contentPadding: const EdgeInsets.only(
-                                          top: 100, right: 30, bottom: 0, left: 5),
+                                          top: 100,
+                                          right: 30,
+                                          bottom: 0,
+                                          left: 5),
                                     ),
                                     validator: (input) {
                                       if (input.isEmpty) {
@@ -361,11 +362,11 @@ class _SignUpPageState extends State<SignUpPage> {
                           children: <Widget>[
                             Center(
                               child: Padding(
-                                padding: EdgeInsets.only(left: 90,top: 20),
+                                padding: EdgeInsets.only(left: 90, top: 20),
                                 child: Container(
                                   width: MediaQuery.of(context).size.width / 2,
                                   height:
-                                  MediaQuery.of(context).size.height / 20,
+                                      MediaQuery.of(context).size.height / 20,
                                   alignment: FractionalOffset.center,
                                   decoration: BoxDecoration(
                                     color: Colors.black12,
@@ -385,7 +386,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                         color: Colors.black,
                                       ),
                                       contentPadding: const EdgeInsets.only(
-                                          top: 100, right: 30, bottom: 0, left: 5),
+                                          top: 100,
+                                          right: 30,
+                                          bottom: 0,
+                                          left: 5),
                                     ),
                                     validator: (val) {
                                       if (!isNumber(val)) {
@@ -398,13 +402,17 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(left: 10,top: 15),
+                              padding: EdgeInsets.only(left: 10, top: 15),
                               child: InkWell(
-                                onTap: signInwithPhoneNumber,
+                                onTap: () async {
+                                  await signInwithPhoneNumber();
+                                  print('123');
+                                  print(currentId);
+                                },
                                 child: Container(
                                   width: MediaQuery.of(context).size.width / 5,
                                   height:
-                                  MediaQuery.of(context).size.height / 20,
+                                      MediaQuery.of(context).size.height / 20,
                                   alignment: FractionalOffset.center,
                                   decoration: BoxDecoration(
                                     color: Colors.black87,
@@ -427,7 +435,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top:5),
+                        padding: EdgeInsets.only(top: 5),
                         child: Text(
                           _message,
                           style: TextStyle(color: Colors.red),
@@ -468,30 +476,56 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
-  Future<void> _next() async{
+
+  Future<void> _next() async {
     var formstate = _formKey.currentState;
-    if(formstate.validate()){
-      if(check == 1){
+    if (formstate.validate()) {
+      if (check == 1) {
         formstate.save();
         try {
-          Todo signtodo = Todo(email:email, password: password);
-          DBHelper().createData(signtodo);
+          print(currentId);
+          print('222');
+          var firebaseUser;
+          final QuerySnapshot result = await Firestore.instance
+              .collection('users')
+              .where('id', isEqualTo: currentId)
+              .getDocuments();
+          final List<DocumentSnapshot> documents = result.documents;
+          if (documents.length == 0) {
+            Firestore.instance.collection('users').document(currentId).setData({
+              'nickname': null,
+              'photoUrl': null,
+              'email': email,
+              'password': password,
+              'id': currentId,
+              'createAt': DateTime.now().millisecondsSinceEpoch.toString(),
+              'chattingWith': null,
+              'favorite': null,
+              'image': [],
+              'age': null,
+              'intro': null,
+            });
+          }
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => writeprofile()));
-        }catch (e){
+              context,
+              MaterialPageRoute(
+                  builder: (context) => writeprofile(
+                        currentUserId: currentId,
+                      )));
+        } catch (e) {
           print(e.message);
         }
       }
     }
   }
 
-  int PasswordCheck(){
+  int PasswordCheck() {
     int _pscheck = 0;
-    if(password == _password2){
-      _pscheck =1;
+    if (password == _password2) {
+      _pscheck = 1;
       print('비밀번호같습니다');
       return _pscheck;
-    }else{
+    } else {
       return _pscheck;
     }
   }
@@ -504,4 +538,3 @@ bool isNumber(String valueNumber) {
   final n = num.tryParse(valueNumber);
   return n != null;
 }
-

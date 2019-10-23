@@ -1,22 +1,22 @@
+import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
 class SlideItem extends StatefulWidget {
-  final String image0;
-  final String name;
-  final String location;
+  String image;
+  final String nickname;
   final String age;
-  int vote;
+  String intro;
 
   SlideItem({
     Key key,
-    @required this.image0,
-    @required this.name,
-    @required this.location,
+    @required this.image,
+    @required this.nickname,
     @required this.age,
-    @required this.vote,
+    @required this.intro,
   }) : super(key: key);
 
   @override
@@ -24,12 +24,12 @@ class SlideItem extends StatefulWidget {
 }
 
 class _SlideItemState extends State<SlideItem> {
-  Uint8List bigImageByte;
+//  Uint8List bigImageByte;
+
 
   @override
   Widget build(BuildContext context) {
-    bigImageByte = Base64Decoder().convert(widget.image0);
-
+//    bigImageByte = Base64Decoder().convert(widget.image0);
     return Padding(
       padding: EdgeInsets.only(top: 5, bottom: 5),
       child: Container(
@@ -47,10 +47,10 @@ class _SlideItemState extends State<SlideItem> {
                   width: MediaQuery.of(context).size.width,
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(20)),
-                    child: Image.memory(
-                      bigImageByte,
+                    child: CachedNetworkImage(
+                      imageUrl: widget.image,
                       fit: BoxFit.cover,
-                    ),
+                    )
                   ),
                 ),
               ),
@@ -58,7 +58,7 @@ class _SlideItemState extends State<SlideItem> {
                 bottom: 50,
                 left: 10,
                 child: Text(
-                  '${widget.name}, ${widget.age}''세',
+                  '${widget.nickname}, ${widget.age}''세',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 25,
@@ -67,13 +67,13 @@ class _SlideItemState extends State<SlideItem> {
                 ),
               ),
               Positioned(
-                bottom: 30,
+                bottom: 20,
                 left: 10,
                 child: Text(
-                  '${widget.location}',
+                  '${widget.intro}',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 15,
+                    fontSize: 25,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

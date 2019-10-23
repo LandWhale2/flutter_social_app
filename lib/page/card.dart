@@ -18,15 +18,15 @@ class CardListState extends State<CardList>{
       body:Stack(
         children: <Widget>[
           Container(
-            height: 350,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
-                gradient: LinearGradient(
-                  colors: [Colors.pink,Colors.green],
-                  begin: Alignment.topLeft,
-                  end:Alignment.bottomRight,
-                )
-            ),
+//            height: 350,
+//            decoration: BoxDecoration(
+//                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
+//                gradient: LinearGradient(
+//                  colors: [Colors.pink,Colors.green],
+//                  begin: Alignment.topLeft,
+//                  end:Alignment.bottomRight,
+//                )
+//            ),
           ),
           Container(
             margin:const EdgeInsets.only(left: 20.0, right: 20.0, top: 0),
