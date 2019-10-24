@@ -1,438 +1,332 @@
-//import 'package:flushbar/flushbar.dart';
-//import 'package:flutter/material.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:bottom_navy_bar/bottom_navy_bar.dart';
+//import 'package:flutter/cupertino.dart';
 //import 'package:socialapp/base.dart';
-//import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-//import 'package:google_sign_in/google_sign_in.dart';
-//import 'package:socialapp/model/todo.dart';
-//import 'package:socialapp/page/signup.dart';
-//import 'package:socialapp/widgets/database_create.dart';
+//import 'package:flutter/material.dart';
 //
-//FirebaseUser firebaseauth;
-//
-//
-//DecorationImage tick = DecorationImage(
-//  image: ExactAssetImage('assets/tick.png'),
-//  fit: BoxFit.cover,
-//);
-//
-//DecorationImage backgroundImage = DecorationImage(
-//  image: ExactAssetImage('assets/lake.jpg'),
-//  fit: BoxFit.cover,
-//);
-//
-//class LoginScreen extends StatefulWidget {
-//  const LoginScreen({Key key}) : super(key: key);
+//class Mainhome extends StatefulWidget {
+//  Mainhome({Key key}) : super(key: key);
 //
 //  @override
-//  LoginScreenState createState() => LoginScreenState();
+//  MainhomeState createState() => MainhomeState();
 //}
 //
-//class LoginScreenState extends State<LoginScreen>
-//    with TickerProviderStateMixin {
-//  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-//  String _email ,_password;
-//
-//  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-//  final GoogleSignIn googleSignIn = GoogleSignIn();
-//
-//  Future<FirebaseUser> _signIn(BuildContext context) async{
-//
-//    final GoogleSignInAccount googleUser = await googleSignIn.signIn();
-//    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-//
-//    final AuthCredential credential = GoogleAuthProvider.getCredential(
-//        idToken: googleAuth.idToken,
-//        accessToken: googleAuth.accessToken);
-//
-//    FirebaseUser firebaseUser = (await firebaseAuth.signInWithCredential(credential)).user;
-//    ProviderDetails providerInfo = ProviderDetails(firebaseUser.providerId);
-//
-//    List<ProviderDetails> providerData = List<ProviderDetails>();
-//    providerData.add(providerInfo);
-//
-//    UserDetails details = UserDetails(
-//      firebaseUser.providerId,
-//      firebaseUser.displayName,
-//      firebaseUser.photoUrl,
-//      firebaseUser.email,
-//      providerData,
-//    );
-//
-//    Navigator.push(context,
-//        MaterialPageRoute(
-//          builder: (context) => Base(),
-//        ));
-//    return firebaseUser;
-//  }
-//
-//
+//class MainhomeState extends State<Mainhome> {
+//  var _selectedIndex;
 //
 //  @override
 //  Widget build(BuildContext context) {
 //    return Scaffold(
 //      body: Container(
-//        decoration: BoxDecoration(
-//          image: backgroundImage,
-//        ),
-//        child: Container(
-//          decoration: BoxDecoration(
-//              gradient: LinearGradient(
-//                colors: <Color>[
-//                  const Color.fromRGBO(162, 146, 199, 0.8),
-//                  const Color.fromRGBO(51, 51, 63, 0.9),
-//                ],
-//                stops: [0.2, 1.0],
-//                begin: const FractionalOffset(0, 0),
-//                end: const FractionalOffset(0, 1),
-//              )),
-//          child: ListView(
-//            padding: EdgeInsets.all(0),
-//            children: <Widget>[
-//              Stack(
-//                alignment: AlignmentDirectional.bottomCenter,
-//                children: <Widget>[
-//                  Column(
-//                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                    children: <Widget>[
-//                      Tick(image: tick),
-//                      Container(
-//                        margin: EdgeInsets.symmetric(horizontal: 20),
-//                        child: Column(
-//                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                          children: <Widget>[
-//                            Form(
-//                              child: Column(
-//                                mainAxisAlignment:
-//                                MainAxisAlignment.spaceAround,
-//                                children: <Widget>[
-//                                  Container(
-//                                    margin:
-//                                    EdgeInsets.symmetric(horizontal: 20),
-//                                    child: Column(
-//                                      mainAxisAlignment:
-//                                      MainAxisAlignment.spaceEvenly,
-//                                      children: <Widget>[
-//                                        Form(
-//                                          key: _formkey,
-//                                          child: Column(
-//                                            mainAxisAlignment:
-//                                            MainAxisAlignment.spaceAround,
-//                                            children: <Widget>[
-//                                              Container(
-//                                                decoration: BoxDecoration(
-//                                                  border: Border(
-//                                                    bottom: BorderSide(
-//                                                      width: 0.5,
-//                                                      color: Colors.white24,
-//                                                    ),
-//                                                  ),
-//                                                ),
-//                                                child: TextFormField(
-//                                                  validator: (input) {
-//                                                    if (input.isEmpty) {
-//                                                      return '이메일을 입력해주세요';
-//                                                    }
-//                                                  },
-//                                                  onSaved: (input) =>
-//                                                  _email = input,
-//                                                  keyboardType:
-//                                                  TextInputType.text,
-//                                                  obscureText: false,
-//                                                  style: const TextStyle(
-//                                                    color: Colors.white,
-//                                                  ),
-//                                                  decoration: InputDecoration(
-//                                                    icon: Icon(
-//                                                      Icons.person_outline,
-//                                                      color: Colors.white,
-//                                                    ),
-//                                                    border: InputBorder.none,
-//                                                    hintText: 'Email',
-//                                                    hintStyle: const TextStyle(
-//                                                        color: Colors.white,
-//                                                        fontSize: 15),
-//                                                    contentPadding:
-//                                                    const EdgeInsets.only(
-//                                                        top: 30,
-//                                                        right: 30,
-//                                                        bottom: 30,
-//                                                        left: 5),
-//                                                  ),
-//                                                ),
-//                                              ),
-//                                              Container(
-//                                                decoration: BoxDecoration(
-//                                                  border: Border(
-//                                                    bottom: BorderSide(
-//                                                      width: 0.5,
-//                                                      color: Colors.white24,
-//                                                    ),
-//                                                  ),
-//                                                ),
-//                                                child: TextFormField(
-//                                                  validator: (input) {
-//                                                    if (input.isEmpty) {
-//                                                      return '패스워드를 입력해주세요';
-//                                                    }
-//                                                  },
-//                                                  onSaved: (input) =>
-//                                                  _password = input,
-//                                                  keyboardType:
-//                                                  TextInputType.text,
-//                                                  obscureText: true,
-//                                                  style: const TextStyle(
-//                                                    color: Colors.white,
-//                                                  ),
-//                                                  decoration: InputDecoration(
-//                                                    icon: Icon(
-//                                                      Icons.lock,
-//                                                      color: Colors.white,
-//                                                    ),
-//                                                    border: InputBorder.none,
-//                                                    hintText: 'Password',
-//                                                    hintStyle: const TextStyle(
-//                                                        color: Colors.white,
-//                                                        fontSize: 15),
-//                                                    contentPadding:
-//                                                    const EdgeInsets.only(
-//                                                        top: 30,
-//                                                        right: 30,
-//                                                        bottom: 30,
-//                                                        left: 5),
-//                                                  ),
-//                                                ),
-//                                              ),
-//                                            ],
-//                                          ),
-//                                        ),
-//                                      ],
-//                                    ),
-//                                  ),
-//                                ],
-//                              ),
-//                            ),
-//                          ],
-//                        ),
+//        child: Column(
+//          children: <Widget>[
+//            Padding(
+//              padding: EdgeInsets.only(top: 30),
+//              child: Container(
+//                width: MediaQuery.of(context).size.width / 1.3,
+//                height: MediaQuery.of(context).size.height / 19,
+//                decoration: BoxDecoration(
+//                    color: Colors.white,
+//                    boxShadow: <BoxShadow>[
+//                      BoxShadow(
+//                        color: Colors.black38,
+//                        offset: Offset(4.0, 4.0),
+//                        blurRadius: 1,
 //                      ),
-//                      SignUp(),
 //                    ],
-//                  ),
-//                  Padding(
-//                    padding: EdgeInsets.only(bottom: 50),
-//                    child: InkWell(
-//                      onTap: _SignDB,
-//                      child: Container(
-//                        width: 330,
-//                        height: 60,
-//                        alignment: FractionalOffset.center,
-//                        decoration: BoxDecoration(
-//                          color: const Color.fromRGBO(247, 64, 106, 1),
-//                          borderRadius:
-//                          BorderRadius.all(const Radius.circular(30)),
-//                        ),
+//                    border: Border.all(
+//                        color: Colors.black26,
+//                        width: 1,
+//                        style: BorderStyle.solid),
+//                    borderRadius: BorderRadius.all(Radius.circular(10))),
+//                child: Row(
+//                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                  children: <Widget>[
+//                    Container(
+//                      width: MediaQuery.of(context).size.width / 1.5,
+//                      height: MediaQuery.of(context).size.height / 19,
+//                      child: Padding(
+//                        padding: const EdgeInsets.all(8.0),
 //                        child: Text(
-//                          "Sign In",
+//                          '찾는 장소를 입력해주세요.',
+//                          textAlign: TextAlign.left,
 //                          style: TextStyle(
-//                            color: Colors.white,
-//                            fontSize: 20,
-//                            fontWeight: FontWeight.w300,
-//                            letterSpacing: 0.3,
-//                          ),
+//                              color: Colors.black38,
+//                              fontSize: 20,
+//                              fontFamily: 'NIX'),
 //                        ),
 //                      ),
 //                    ),
-//                  ),
-//                ],
+//                    Icon(
+//                      Icons.search,
+//                    ),
+//                  ],
+//                ),
 //              ),
-//              Padding(
-//                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 100),
-//                child: InkWell(
-//                  onTap: (){
-//                    _signIn(context).then((FirebaseUser user)=>print(user)).catchError((e)=>print(e));
-//                  },
-//                  child: Container(
-//                    width: 200,
-//                    height: 30,
-//                    alignment: FractionalOffset.center,
-//                    decoration: BoxDecoration(
-//                      gradient: LinearGradient(
-//                        colors: [Colors.pinkAccent, Colors.lightBlueAccent],
-//                        begin: Alignment.topLeft,
-//                        end: Alignment.bottomRight,
-//                      ),
-//                      borderRadius: BorderRadius.all(const Radius.circular(30)),
-//                    ),
-//                    child: Row(children: <Widget>[
-//                      Icon(FontAwesomeIcons.google, color: Colors.black12),
-//                      Text(
-//                        "Sign in with Google",
-//                        style: TextStyle(
-//                          color: Colors.white,
-//                          fontSize: 15,
-//                          fontWeight: FontWeight.w100,
-//                          letterSpacing: 0.3,
+//            ),
+//            Padding(
+//              padding: EdgeInsets.only(top: 30),
+//              child: Container(
+//                width: MediaQuery.of(context).size.width / 1.5,
+//                height: 1,
+//                color: Colors.black26,
+//              ),
+//            ),
+//            Padding(
+//              padding: EdgeInsets.only(top: 30, bottom: 0, left: 15, right: 15),
+//              child: Center(
+//                child: Container(
+//                  width: MediaQuery.of(context).size.width,
+//                  height: MediaQuery.of(context).size.height / 1.75,
+//                  decoration: BoxDecoration(
+//                      color: Colors.white,
+//                      boxShadow: <BoxShadow>[
+//                        BoxShadow(
+//                          color: Colors.black38,
+//                          offset: Offset(5.0, 5.0),
+//                          blurRadius: 0,
 //                        ),
-//                      ),
-//                    ],
+//                      ],
+//                      border: Border.all(
+//                          color: Colors.black26,
+//                          width: 1,
+//                          style: BorderStyle.solid),
+//                      borderRadius: BorderRadius.all(Radius.circular(15))),
+//                  child: Scaffold(
+//                    body: myPageview(),
+//                    bottomNavigationBar: BottomNavigationBar(
+//                      currentIndex: _selectedIndex,
+//                      items: [
+//                        BottomNavigationBarItem(
+//                          icon: Icon(Icons.arrow_back_ios),
+//                          title: Text(' '),
+//                        ),
+//                        BottomNavigationBarItem(
+//                          icon: Icon(Icons.arrow_forward_ios),
+//                          title: Text(' '),
+//                        ),
+//                      ],
+//                      onTap: (index) {
+//                        _bottomtapped(index);
+//                      },
 //                    ),
 //                  ),
 //                ),
 //              ),
-//            ],
-//          ),
+//            ),
+//          ],
 //        ),
 //      ),
 //    );
 //  }
 //
-//  Future<void> _SignIn() async {
-//    final formState = _formkey.currentState;
-//    if (formState.validate()) {
-//      formState.save();
-//      try {
-//        AuthResult _user = await FirebaseAuth.instance
-//            .signInWithEmailAndPassword(email: _email, password: _password);
-//        Navigator.push(
-//            context, MaterialPageRoute(builder: (context) => Base()));
-//      } catch (e) {
-//        print(e.message);
-//      }
-//    }
+//  PageController _pageController = PageController(
+//    initialPage: 0,
+//    keepPage: true,
+//  );
+//
+//  void _bottomtapped(int index) {
+//    setState(() {
+//      _selectedIndex = index;
+//      _pageController.animateToPage(
+//        index,
+//        duration: Duration(milliseconds: 500),
+//        curve: Curves.ease,
+//      );
+//    });
 //  }
 //
-//  _SignDB() async{
-//    final formState = _formkey.currentState;
-//    if(formState.validate()){
-//      print('asd');
-//      formState.save();
-//      try{
-//        var useridpw = await DBHelper().getuserIDPW(_email);
-//        var tmpEmail;
-//        var tmpPassword;
-//
-//
-//        if(useridpw == Null){
-//          Flushbar(
-//            margin:EdgeInsets.all(8),
-//            message: "아이디 또는 비밀번호가 일치하지않습니다",
-//            icon: Icon(
-//              Icons.tablet_android,
-//              size:28,
-//              color: Colors.blue[300],
-//            ),
-//            duration: Duration(seconds: 3),
-//            leftBarIndicatorColor: Colors.blue[300],
-//          )..show(context);
-//        }else{
-//          useridpw.map((e) {
-//            tmpEmail = e['email'];
-//          }).toList();
-//          useridpw.map((e) {
-//            tmpPassword = e['password'];
-//          }).toList();
-//        }
-//
-//
-//
-//        if(_email == tmpEmail){
-//          if(_password == tmpPassword){
-//            Navigator.push(
-//                context, MaterialPageRoute(builder: (context) => Base()));
-//          }else{
-//            Flushbar(
-//              margin:EdgeInsets.all(8),
-//              message: "아이디 또는 비밀번호가 일치하지않습니다",
-//              icon: Icon(
-//                Icons.tablet_android,
-//                size:28,
-//                color: Colors.blue[300],
-//              ),
-//              duration: Duration(seconds: 3),
-//              leftBarIndicatorColor: Colors.blue[300],
-//            )..show(context);
-//          }
-//        }else{
-//          Flushbar(
-//            margin:EdgeInsets.all(8),
-//            message: "아이디 또는 비밀번호가 일치하지않습니다",
-//            icon: Icon(
-//              Icons.tablet_android,
-//              size:28,
-//              color: Colors.blue[300],
-//            ),
-//            duration: Duration(seconds: 3),
-//            leftBarIndicatorColor: Colors.blue[300],
-//          )..show(context);
-//        }
-//      }catch(e){
-//        print(e.message);
-//      }
-//    }
+//  Widget myPageview() {
+//    return PageView(
+//      controller: _pageController,
+//      onPageChanged: (index) {
+//        _pageChanged(index);
+//      },
+//      children: <Widget>[
+//        datespace(context),
+//        areaspace(context),
+//      ],
+//    );
 //  }
 //
+//  void _pageChanged(int index) {
+//    setState(() {
+//      _selectedIndex = index;
+//    });
+//  }
 //
+//  Widget datespace(BuildContext context) {
+//    return Column(
+//      children: <Widget>[
+//        SizedBox(
+//          height: 30,
+//        ),
+//        Row(
+//          children: <Widget>[
+//            SizedBox(
+//              width: 30,
+//            ),
+//            ItemBox(imagename: 'assets/homeicon/Bmovie.png', place: '영화관'),
+//            ItemBox(imagename: 'assets/homeicon/Bcoffee.png', place: '카페'),
+//            ItemBox(imagename: 'assets/homeicon/Brest.png', place: '맛집'),
+//          ],
+//        ),
+//        SizedBox(
+//          height: 20,
+//        ),
+//        Row(
+//          children: <Widget>[
+//            SizedBox(
+//              width: 30,
+//            ),
+//            ItemBox(imagename: 'assets/homeicon/Bskis.png', place: '스키장'),
+//            ItemBox(imagename: 'assets/homeicon/Bpark.png', place: '놀이동산'),
+//            ItemBox(imagename: 'assets/homeicon/Bgame.png', place: '피시방'),
+//          ],
+//        ),
+//        SizedBox(
+//          height: 20,
+//        ),
+//        Row(
+//          children: <Widget>[
+//            SizedBox(
+//              width: 33,
+//            ),
+//            ItemBox(imagename: 'assets/homeicon/BBear.png', place: '술'),
+//            ItemBox(imagename: 'assets/homeicon/Btrip.png', place: '여행'),
+//            ItemBox(imagename: 'assets/homeicon/etc.png', place: '기타'),
+//          ],
+//        ),
+//      ],
+//    );
+//  }
 //
-//
-//
+//  Widget areaspace(BuildContext context) {
+//    return Padding(
+//      padding: const EdgeInsets.all(8.0),
+//      child: Column(
+//        children: <Widget>[
+//          SizedBox(
+//            height: 10,
+//          ),
+//          Row(
+//            children: <Widget>[
+////              SizedBox(
+////                width: 30,
+////              ),
+//              CityItem(),
+//              CityItem(),
+//              CityItem(),
+//            ],
+//          ),
+//          SizedBox(
+//            height: 20,
+//          ),
+//          Row(
+//            children: <Widget>[
+////              SizedBox(
+////                width: 30,
+////              ),
+//              CityItem(),
+//              CityItem(),
+//              CityItem(),
+//            ],
+//          ),
+//          SizedBox(
+//            height: 20,
+//          ),
+//          Row(
+//            children: <Widget>[
+////              SizedBox(
+////                width: 33,
+////              ),
+//              CityItem(),
+//              CityItem(),
+//              CityItem(),
+//            ],
+//          ),
+//        ],
+//      ),
+//    );
+//  }
 //}
 //
-//class Tick extends StatelessWidget {
-//  final DecorationImage image;
+//class ItemBox extends StatelessWidget {
+//  String imagename, place;
 //
-//  Tick({this.image});
+//  ItemBox({Key key, @required this.imagename, @required this.place})
+//      : super(key: key);
 //
 //  @override
 //  Widget build(BuildContext context) {
-//    return (Container(
-//      width: 250,
-//      height: 250,
-//      alignment: Alignment.center,
-//      decoration: BoxDecoration(
-//        image: image,
+//    return Padding(
+//      padding: EdgeInsets.only(right: 20),
+//      child: Column(
+//        children: <Widget>[
+//          Container(
+//            width: MediaQuery.of(context).size.width / 4.5,
+//            height: MediaQuery.of(context).size.height / 11,
+////            decoration: BoxDecoration(
+////              color: Colors.black12,
+////              border: Border.all(color: Colors.black, width: 1),
+////            ),
+//            child: Image.asset(
+//              imagename,
+//              fit: BoxFit.fill,
+//            ),
+//          ),
+//          SizedBox(
+//            height: 5,
+//          ),
+//          Container(
+//            width: MediaQuery.of(context).size.width / 4.5,
+//            height: MediaQuery.of(context).size.height / 35,
+////            decoration: BoxDecoration(
+////              color: Colors.black12,
+////              border: Border.all(color: Colors.black, width: 1),
+////            ),
+//            child: Text(
+//              place,
+//              textAlign: TextAlign.center,
+//              style: TextStyle(
+//                  fontWeight: FontWeight.w600, fontSize: 20, fontFamily: 'NIX'),
+//            ),
+//          ),
+//        ],
 //      ),
-//    ));
+//    );
 //  }
 //}
 //
-//class SignUp extends StatelessWidget {
-//  SignUp();
-//
+//class CityItem extends StatelessWidget {
 //  @override
 //  Widget build(BuildContext context) {
-//    return (FlatButton(
-//      padding: const EdgeInsets.only(
-//        top: 160,
-//      ),
-//      onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpPage()));},
-//      child: Text(
-//        "Dont't have an account? Sign Up",
-//        textAlign: TextAlign.center,
-//        overflow: TextOverflow.ellipsis,
-//        softWrap: true,
-//        style: TextStyle(
-//          fontWeight: FontWeight.w300,
-//          letterSpacing: 0.5,
+//    return Padding(
+//      padding: const EdgeInsets.all(8.0),
+//      child: Container(
+//        width: MediaQuery.of(context).size.width / 4.1,
+//        height: MediaQuery.of(context).size.height / 9,
+//        decoration: BoxDecoration(
 //          color: Colors.white,
-//          fontSize: 12,
+//          boxShadow: <BoxShadow>[
+//            BoxShadow(
+//              color: Colors.black87,
+//              offset: Offset(4.0, 4.0),
+//              blurRadius: 1,
+//            ),
+//          ],
+//          border: Border.all(
+//              color: Colors.black38, width: 5, style: BorderStyle.solid),
+//          borderRadius: BorderRadius.all(Radius.circular(10)),
+//        ),
+//        child: Center(
+//          child: Text(
+//            '서울',
+//            style: TextStyle(
+//                fontWeight: FontWeight.w600, fontSize: 30, fontFamily: 'NIX'
+//            ),
+//          ),
 //        ),
 //      ),
-//    ));
+//    );
 //  }
-//}
-//
-//class UserDetails{
-//  final String providerDetails;
-//  final String userName;
-//  final String photoUrl;
-//  final String userEmail;
-//  final List<ProviderDetails> providerData;
-//  UserDetails(this.providerDetails, this.userName, this.photoUrl, this.userEmail, this.providerData);
-//
-//
-//}
-//
-//class ProviderDetails{
-//  ProviderDetails(this.providerDetails);
-//  final String providerDetails;
 //}
