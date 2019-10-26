@@ -350,11 +350,11 @@ class _Base extends State<Base> {
         pageChanged(index);
       },
       children: <Widget>[
-        Home(),
+        Home(currentId: currentUserId,),
 //        NewsFeed(),
-        Mainhome(),
+        Mainhome(currentId: currentUserId),
         chatpage(context),
-        ProfilePage(),
+        ProfilePage(currentId: currentUserId,),
       ],
     );
   }

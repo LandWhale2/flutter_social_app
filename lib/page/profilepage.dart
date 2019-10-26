@@ -13,11 +13,15 @@ import 'dart:convert';
 import 'Rewriteprofile.dart';
 
 class ProfilePage extends StatefulWidget {
+  final String currentId;
+  ProfilePage({Key key, @required this.currentId}): super(key:key);
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _ProfilePageState createState() => _ProfilePageState(currentId: currentId);
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final String currentId;
+  _ProfilePageState({Key key, @required this.currentId});
 
   String tmpimage;
   Uint8List TmpBytesImage;
@@ -122,11 +126,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         onTap: (){
-                          asdasd() async{
-                            var getttt = await getTopuser();
-                            print(getttt[2]);
-                          }
-                          asdasd();
+//                          asdasd() async{
+//                            var getttt = await getTopuser();
+//                            print(getttt[2]);
+//                          }
+//                          asdasd();
                         },
                       ),
                       Column(

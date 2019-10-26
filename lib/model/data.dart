@@ -42,7 +42,7 @@ List addres = [
   "대전광역시, 서구 대덕대로",
 ];
 
-getTopuser() async {
-  var getinfo = await DBHelper().gettop10person();
-  return getinfo.isNotEmpty? getinfo : Null ;
-}
+//getTopuser() async {
+//  var getinfo = await DBHelper().gettop10person();
+//  return getinfo.isNotEmpty? getinfo : Null ;
+//}

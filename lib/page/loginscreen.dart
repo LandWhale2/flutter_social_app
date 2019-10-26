@@ -382,20 +382,20 @@ class LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Future<void> _SignIn() async {
-    final formState = _formkey.currentState;
-    if (formState.validate()) {
-      formState.save();
-      try {
-        AuthResult _user = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: _email, password: _password);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Base()));
-      } catch (e) {
-        print(e.message);
-      }
-    }
-  }
+//  Future<void> _SignIn() async {
+//    final formState = _formkey.currentState;
+//    if (formState.validate()) {
+//      formState.save();
+//      try {
+//        AuthResult _user = await FirebaseAuth.instance
+//            .signInWithEmailAndPassword(email: _email, password: _password);
+//        Navigator.push(
+//            context, MaterialPageRoute(builder: (context) => Base(currentUserId: currentUser,)));
+//      } catch (e) {
+//        print(e.message);
+//      }
+//    }
+//  }
 
   _SignDB() async {
     final formState = _formkey.currentState;

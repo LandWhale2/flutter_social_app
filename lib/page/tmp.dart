@@ -11,7 +11,7 @@
 //}
 //
 //class MainhomeState extends State<Mainhome> {
-//  var _selectedIndex;
+//  int _bottomSelectedIndex = 0;
 //
 //  @override
 //  Widget build(BuildContext context) {
@@ -34,10 +34,10 @@
 //                      ),
 //                    ],
 //                    border: Border.all(
-//                        color: Colors.black26,
+//                        color: Colors.black87,
 //                        width: 1,
 //                        style: BorderStyle.solid),
-//                    borderRadius: BorderRadius.all(Radius.circular(10))),
+//                    borderRadius: BorderRadius.all(Radius.circular(15))),
 //                child: Row(
 //                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //                  children: <Widget>[
@@ -73,42 +73,41 @@
 //            ),
 //            Padding(
 //              padding: EdgeInsets.only(top: 30, bottom: 0, left: 15, right: 15),
-//              child: Center(
-//                child: Container(
-//                  width: MediaQuery.of(context).size.width,
-//                  height: MediaQuery.of(context).size.height / 1.75,
-//                  decoration: BoxDecoration(
-//                      color: Colors.white,
-//                      boxShadow: <BoxShadow>[
-//                        BoxShadow(
-//                          color: Colors.black38,
-//                          offset: Offset(5.0, 5.0),
-//                          blurRadius: 0,
-//                        ),
-//                      ],
-//                      border: Border.all(
-//                          color: Colors.black26,
-//                          width: 1,
-//                          style: BorderStyle.solid),
-//                      borderRadius: BorderRadius.all(Radius.circular(15))),
-//                  child: Scaffold(
-//                    body: myPageview(),
-//                    bottomNavigationBar: BottomNavigationBar(
-//                      currentIndex: _selectedIndex,
-//                      items: [
-//                        BottomNavigationBarItem(
-//                          icon: Icon(Icons.arrow_back_ios),
-//                          title: Text(' '),
-//                        ),
-//                        BottomNavigationBarItem(
-//                          icon: Icon(Icons.arrow_forward_ios),
-//                          title: Text(' '),
-//                        ),
-//                      ],
-//                      onTap: (index) {
-//                        _bottomtapped(index);
-//                      },
-//                    ),
+//              child: Container(
+//                width: MediaQuery.of(context).size.width,
+//                height: MediaQuery.of(context).size.height / 1.75,
+//                decoration: BoxDecoration(
+//                    color: Colors.white,
+//                    boxShadow: <BoxShadow>[
+//                      BoxShadow(
+//                        color: Colors.black38,
+//                        offset: Offset(4.0, 4.0),
+//                        blurRadius: 1,
+//                      ),
+//                    ],
+//                    border: Border.all(
+//                        color: Colors.black87,
+//                        width: 1,
+//                        style: BorderStyle.solid),
+//                    borderRadius: BorderRadius.all(Radius.circular(15))),
+//                child: Scaffold(
+//                  body: myPageview(),
+//                  bottomNavigationBar: BottomNavigationBar(
+//                    type: BottomNavigationBarType.fixed,
+//                    currentIndex: _bottomSelectedIndex,
+//                    items: <BottomNavigationBarItem>[
+//                      BottomNavigationBarItem(
+//                        icon: Icon(Icons.arrow_back_ios),
+//                        title: Text(' '),
+//                      ),
+//                      BottomNavigationBarItem(
+//                        icon: Icon(Icons.arrow_forward_ios),
+//                        title: Text(' '),
+//                      ),
+//                    ],
+//                    onTap: (index) {
+//                      _bottomtapped(index);
+//                    },
 //                  ),
 //                ),
 //              ),
@@ -126,7 +125,7 @@
 //
 //  void _bottomtapped(int index) {
 //    setState(() {
-//      _selectedIndex = index;
+//      _bottomSelectedIndex = index;
 //      _pageController.animateToPage(
 //        index,
 //        duration: Duration(milliseconds: 500),
@@ -150,7 +149,7 @@
 //
 //  void _pageChanged(int index) {
 //    setState(() {
-//      _selectedIndex = index;
+//      _bottomSelectedIndex = index;
 //    });
 //  }
 //
@@ -315,15 +314,14 @@
 //            ),
 //          ],
 //          border: Border.all(
-//              color: Colors.black38, width: 5, style: BorderStyle.solid),
+//              color: Colors.black87, width: 3, style: BorderStyle.solid),
 //          borderRadius: BorderRadius.all(Radius.circular(10)),
 //        ),
 //        child: Center(
 //          child: Text(
 //            '서울',
 //            style: TextStyle(
-//                fontWeight: FontWeight.w600, fontSize: 30, fontFamily: 'NIX'
-//            ),
+//                fontWeight: FontWeight.w600, fontSize: 30, fontFamily: 'NIX'),
 //          ),
 //        ),
 //      ),

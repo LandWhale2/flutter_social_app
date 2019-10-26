@@ -9,22 +9,26 @@ import 'package:socialapp/page/signup.dart';
 import 'package:socialapp/widgets/slide_item.dart';
 
 class Home extends StatefulWidget {
+  final String currentId;
+  Home({Key key, @required this.currentId}):super(key:key);
   @override
-  _HomeState createState() => _HomeState();
+  _HomeState createState() => _HomeState(currentId:currentId);
 }
 
 class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
+  final String currentId;
+  _HomeState({Key key, @required this.currentId});
   var getTop;
 
   void initState() {
     super.initState();
-    futureget();
+//    futureget();
   }
 
-  futureget() async {
-    getTop = await getTopuser();
-    return getTop;
-  }
+//  futureget() async {
+//    getTop = await getTopuser();
+//    return getTop;
+//  }
 
   gettoplength()async{
     await Firestore.instance.collection('users').snapshots().listen((data)async{
@@ -135,7 +139,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
           SizedBox(height: 10),
           Container(
             height: MediaQuery.of(context).size.height / 6,
-            child: StreamBuilder(
+            child: StreamBuilder<QuerySnapshot>(
               stream: Firestore.instance
                   .collection('users').orderBy('favorite', descending: true)
                   .snapshots(),
