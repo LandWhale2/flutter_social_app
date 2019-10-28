@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -19,29 +20,69 @@ class _WritingState extends State<Writing> {
   String _CONTEXT;
   File ImageFile;
   String _ImageUrl;
+  final _formKey = GlobalKey<FormState>();
 
   _WritingState({Key key, @required this.currentId});
 
-  Future GETImage() async{
+  Future GETImage() async {
     ImageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    if(ImageFile != null){
+    if (ImageFile != null) {
+      print(ImageFile);
       UploadImage();
     }
   }
-  Future UploadImage() async{
+
+  Future UploadImage() async {
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
+    StorageReference reference =
+        FirebaseStorage.instance.ref().child('${currentId}/${fileName}.jpg');
     StorageUploadTask uploadTask = reference.putFile(ImageFile);
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
-    storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl){
-      setState(() {
-        _ImageUrl = downloadUrl;
-      });
-    }, onError: (err){
-      Fluttertoast.showToast(msg: '이미지 파일이 아닙니다');
+    StorageTaskSnapshot storageTaskSnapshot;
+    uploadTask.onComplete.then((value) async {
+      print(value);
+      if (value.error == null) {
+        storageTaskSnapshot = value;
+        storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+          setState(() {
+            _ImageUrl = downloadUrl;
+          });
+//          Firestore.instance
+//              .collection('users')
+//              .document(currentId)
+//              .updateData({
+//            'image': FieldValue.arrayUnion([photoUrl])
+//          });
+        }, onError: (err) {
+          Fluttertoast.showToast(msg: '이미지파일이 아닙니다.');
+          print('123');
+        });
+      } else
+        Fluttertoast.showToast(msg: '이미지파일이 아닙니다.');
+      print(value.error);
     });
   }
+
+  void Postcontext() async{
+    var form = _formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      try {
+        var now = DateTime.now();
+        await Firestore.instance
+            .collection('users')
+            .document(currentId)
+            .collection('post')
+            .document(DateTime.now().millisecondsSinceEpoch.toString())
+            .setData({'context': _CONTEXT, 'image' : _ImageUrl, 'time' : now, 'space' : '영화관'});
+        Navigator.pop(context);
+      } catch (e) {
+        print(e.message);
+      }
+    }
+  }
+
+
 
 
 
@@ -65,26 +106,29 @@ class _WritingState extends State<Writing> {
                   ),
                   child: Row(
                     children: <Widget>[
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Icon(Icons.clear),
+                      IconButton(icon: Icon(Icons.clear), onPressed: (){
+                        Navigator.pop(context);
+                      }),
                       Padding(
                         padding: const EdgeInsets.only(left: 250),
-                        child: Container(
-                          width: 70,
-                          height: 30,
-                          decoration: BoxDecoration(
-                              color: Color.fromRGBO(123, 198, 250, 1),
-                              borderRadius: BorderRadius.all(Radius.circular(20))),
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 3),
-                            child: Text(
-                              '등록',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20
+                        child: InkWell(
+                          onTap: (){
+                            Postcontext();
+                          },
+                          child: Container(
+                            width: 70,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                color: Color.fromRGBO(123, 198, 250, 1),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20))),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 3),
+                              child: Text(
+                                '등록',
+                                textAlign: TextAlign.center,
+                                style:
+                                    TextStyle(color: Colors.white, fontSize: 20),
                               ),
                             ),
                           ),
@@ -109,10 +153,13 @@ class _WritingState extends State<Writing> {
                   onPressed: GETImage,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
+              Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    maxLength: 500,
+                    maxLines: null,
                     decoration: InputDecoration(
                       hintStyle: TextStyle(
                         fontSize: 15,
@@ -130,8 +177,13 @@ class _WritingState extends State<Writing> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-              )
+                  padding: const EdgeInsets.all(8.0),
+                  child: (_ImageUrl != null)
+                      ? Image.network(
+                          _ImageUrl,
+                    fit: BoxFit.fill,
+                        )
+                      : null)
             ],
           ),
         ),
@@ -139,3 +191,5 @@ class _WritingState extends State<Writing> {
     );
   }
 }
+
+

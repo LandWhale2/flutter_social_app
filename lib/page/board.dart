@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:socialapp/page/Writing.dart';
 import 'package:socialapp/page/signup.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-int menuIndexController=0;
+int menuIndexController = 0;
 
 class Board extends StatefulWidget {
   final String currentUserId;
@@ -63,11 +64,11 @@ class _BoardState extends State<Board> {
                         decoration: BoxDecoration(
                             border: (menuIndexController == 1)
                                 ? Border(
-                              bottom: BorderSide(
-                                color: Colors.black,
-                                width: 1,
-                              ),
-                            )
+                                    bottom: BorderSide(
+                                      color: Colors.black,
+                                      width: 1,
+                                    ),
+                                  )
                                 : null),
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
@@ -76,7 +77,8 @@ class _BoardState extends State<Board> {
 //                            height: MediaQuery.of(context).size.height/2,
                             decoration: BoxDecoration(
                               color: Color.fromRGBO(123, 198, 250, 1),
-                              borderRadius: BorderRadius.all(Radius.circular(30)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.only(top: 4),
@@ -107,11 +109,11 @@ class _BoardState extends State<Board> {
                         decoration: BoxDecoration(
                             border: (menuIndexController == 2)
                                 ? Border(
-                              bottom: BorderSide(
-                                color: Colors.black,
-                                width: 1,
-                              ),
-                            )
+                                    bottom: BorderSide(
+                                      color: Colors.black,
+                                      width: 1,
+                                    ),
+                                  )
                                 : null),
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
@@ -120,7 +122,8 @@ class _BoardState extends State<Board> {
 //                            height: MediaQuery.of(context).size.height/2,
                             decoration: BoxDecoration(
                               color: Color.fromRGBO(123, 198, 250, 1),
-                              borderRadius: BorderRadius.all(Radius.circular(30)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.only(top: 4),
@@ -151,11 +154,11 @@ class _BoardState extends State<Board> {
                         decoration: BoxDecoration(
                             border: (menuIndexController == 3)
                                 ? Border(
-                              bottom: BorderSide(
-                                color: Colors.black,
-                                width: 1,
-                              ),
-                            )
+                                    bottom: BorderSide(
+                                      color: Colors.black,
+                                      width: 1,
+                                    ),
+                                  )
                                 : null),
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
@@ -164,7 +167,8 @@ class _BoardState extends State<Board> {
 //                            height: MediaQuery.of(context).size.height/2,
                             decoration: BoxDecoration(
                               color: Color.fromRGBO(123, 198, 250, 1),
-                              borderRadius: BorderRadius.all(Radius.circular(30)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.only(top: 4),
@@ -195,13 +199,41 @@ class _BoardState extends State<Board> {
                 color: Colors.black26,
               ),
             ),
+            SizedBox(
+              width: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: StaggeredGridView.countBuilder(
+                crossAxisCount: 4,
+                staggeredTileBuilder: (int index) =>
+                    StaggeredTile.count(2, index.isEven ? 2 : 1),
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+                itemCount: 8,
+                itemBuilder: (BuildContext context, int index) => Container(
+                  color: Colors.green,
+                  child: Center(
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Text('$index'),
+                    ),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.border_color),
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Writing(currentId: currentUserId,)));
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Writing(
+                        currentId: currentUserId,
+                      )));
         },
       ),
     );
