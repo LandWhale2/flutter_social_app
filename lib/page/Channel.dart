@@ -97,6 +97,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                         scrollDirection: Axis.horizontal,
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (BuildContext context, int index) {
+                          if(!snapshot.hasData){
+                            return Text('없습니다');
+                          }
                           DocumentSnapshot ds = snapshot.data.documents[index];
 
                           return Padding(

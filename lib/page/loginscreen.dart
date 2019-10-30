@@ -44,6 +44,7 @@ class LoginScreenState extends State<LoginScreen>
   FirebaseUser currentUser;
 
   int check2 = 0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -128,7 +129,7 @@ class LoginScreenState extends State<LoginScreen>
         await prefs.setString('photoUrl', currentUser.photoUrl);
       } else {
         print('기존유');
-        check2= 1;
+        check2 = 1;
 
         Navigator.push(
             context,
@@ -149,14 +150,13 @@ class LoginScreenState extends State<LoginScreen>
       print(firebaseUser.uid);
 
       await Future.delayed(Duration(seconds: 1));
-      if(check2 == 0){
+      if (check2 == 0) {
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
                     writeprofile(currentUserId: firebaseUser.uid)));
       }
-
     } else {
       Fluttertoast.showToast(msg: "sign in fail");
       this.setState(() {

@@ -24,70 +24,16 @@ class MainhomeState extends State<Mainhome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(top: 30),
-              child: Container(
-                width: MediaQuery.of(context).size.width / 1.3,
-                height: MediaQuery.of(context).size.height / 19,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Colors.black38,
-                        offset: Offset(4.0, 4.0),
-                        blurRadius: 1,
-                      ),
-                    ],
-                    border: Border.all(
-                        color: Colors.black87,
-                        width: 1,
-                        style: BorderStyle.solid),
-//                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      width: MediaQuery.of(context).size.width / 1.5,
-                      height: MediaQuery.of(context).size.height / 19,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '찾는 장소를 입력해주세요.',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: Colors.black38,
-                              fontSize: 20,
-                              fontFamily: 'NIX'),
-                        ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.search,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 30),
-              child: Container(
-                width: MediaQuery.of(context).size.width / 1.5,
-                height: 1,
-                color: Colors.black26,
-              ),
-            ),
-            Stack(
-              children: <Widget>[
-                Padding(//큰 네모
-                  padding: EdgeInsets.only(top: 30, bottom: 0, left: 15, right: 15),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 1.75,
-                    decoration: BoxDecoration(
+      body: SingleChildScrollView(
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 30),
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 1.3,
+                  height: MediaQuery.of(context).size.height / 19,
+                  decoration: BoxDecoration(
                       color: Colors.white,
                       boxShadow: <BoxShadow>[
                         BoxShadow(
@@ -100,56 +46,112 @@ class MainhomeState extends State<Mainhome> {
                           color: Colors.black87,
                           width: 1,
                           style: BorderStyle.solid),
-//                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                    ),
-                    child: Scaffold(
-                      body: myPageview(),
-                      bottomNavigationBar: BottomNavigationBar(
-                        type: BottomNavigationBarType.fixed,
-                        currentIndex: _bottomSelectedIndex,
-                        items: <BottomNavigationBarItem>[
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.arrow_back_ios),
-                            title: Text(' '),
-                            backgroundColor: Color.fromRGBO(253, 36, 75, 1)
+//                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        width: MediaQuery.of(context).size.width / 1.5,
+                        height: MediaQuery.of(context).size.height / 19,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '찾는 장소를 입력해주세요.',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                color: Colors.black38,
+                                fontSize: 20,
+                                fontFamily: 'NIX'),
                           ),
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.arrow_forward_ios),
-                            title: Text(' '),
+                        ),
+                      ),
+                      Icon(
+                        Icons.search,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 30),
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 1.5,
+                  height: 1,
+                  color: Colors.black26,
+                ),
+              ),
+              Stack(
+                children: <Widget>[
+                  Padding(//큰 네모
+                    padding: EdgeInsets.only(top: 30, bottom: 0, left: 15, right: 15),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height / 1.75,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            color: Colors.black38,
+                            offset: Offset(4.0, 4.0),
+                            blurRadius: 1,
                           ),
                         ],
-                        onTap: (index) {
-                          _bottomtapped(index);
-                        },
+                        border: Border.all(
+                            color: Colors.black87,
+                            width: 1,
+                            style: BorderStyle.solid),
+//                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      child: Scaffold(
+                        body: myPageview(),
+                        bottomNavigationBar: BottomNavigationBar(
+                          type: BottomNavigationBarType.fixed,
+                          currentIndex: _bottomSelectedIndex,
+                          items: <BottomNavigationBarItem>[
+                            BottomNavigationBarItem(
+                              icon: Icon(Icons.arrow_back_ios),
+                              title: Text(' '),
+                              backgroundColor: Color.fromRGBO(253, 36, 75, 1)
+                            ),
+                            BottomNavigationBarItem(
+                              icon: Icon(Icons.arrow_forward_ios),
+                              title: Text(' '),
+                            ),
+                          ],
+                          onTap: (index) {
+                            _bottomtapped(index);
+                          },
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                    top: 20,
-                    bottom: 444,
-                    right: 43,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width/5,
-                      height: MediaQuery.of(context).size.height / 27,
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(253, 36, 75, 1),
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                      ),
-                      child: Text(
-                        '인기',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 23,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
+                  Positioned(
+                      top: 20,
+                      bottom: 444,
+                      right: 43,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width/5,
+                        height: MediaQuery.of(context).size.height / 27,
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(253, 36, 75, 1),
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
                         ),
-                      ),
-                    )
-                ),
-              ],
-            ),
-          ],
+                        child: Text(
+                          '인기',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 23,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      )
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

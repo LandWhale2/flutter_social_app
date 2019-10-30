@@ -63,28 +63,40 @@ class _WritingState extends State<Writing> {
     });
   }
 
-  void Postcontext() async{
+  Postcontext() async {
     var form = _formKey.currentState;
     if (form.validate()) {
       form.save();
       try {
-        var now = DateTime.now();
+        var documentName= 'M'+DateTime.now().millisecondsSinceEpoch.toString();
         await Firestore.instance
             .collection('users')
-            .document(currentId)
-            .collection('post')
-            .document(DateTime.now().millisecondsSinceEpoch.toString())
-            .setData({'context': _CONTEXT, 'image' : _ImageUrl, 'time' : now, 'space' : '영화관'});
+            .where('id', isEqualTo: currentId)
+            .snapshots()
+            .listen((data) async {
+          await Firestore.instance
+              .collection('movie')
+              .document(documentName)
+              .setData({
+            'context': _CONTEXT,
+            'image': data.documents[0]['image'][0],
+            'time': DateTime.now().millisecondsSinceEpoch,
+            'space': '영화관',
+            'nickname': data.documents[0]['nickname'],
+            'contextImage' : _ImageUrl,
+            'id' : data.documents[0]['id'],
+            'contextID' : documentName,
+            'like' : 0,
+            'comment' : 0,
+          });
+        });
+
         Navigator.pop(context);
       } catch (e) {
         print(e.message);
       }
     }
   }
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -106,13 +118,15 @@ class _WritingState extends State<Writing> {
                   ),
                   child: Row(
                     children: <Widget>[
-                      IconButton(icon: Icon(Icons.clear), onPressed: (){
-                        Navigator.pop(context);
-                      }),
+                      IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }),
                       Padding(
                         padding: const EdgeInsets.only(left: 250),
                         child: InkWell(
-                          onTap: (){
+                          onTap: () {
                             Postcontext();
                           },
                           child: Container(
@@ -127,8 +141,8 @@ class _WritingState extends State<Writing> {
                               child: Text(
                                 '등록',
                                 textAlign: TextAlign.center,
-                                style:
-                                    TextStyle(color: Colors.white, fontSize: 20),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
                               ),
                             ),
                           ),
@@ -181,7 +195,7 @@ class _WritingState extends State<Writing> {
                   child: (_ImageUrl != null)
                       ? Image.network(
                           _ImageUrl,
-                    fit: BoxFit.fill,
+                          fit: BoxFit.fill,
                         )
                       : null)
             ],
@@ -191,5 +205,3 @@ class _WritingState extends State<Writing> {
     );
   }
 }
-
-
