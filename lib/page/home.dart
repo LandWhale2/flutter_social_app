@@ -150,6 +150,14 @@ class MainhomeState extends State<Mainhome> {
                   ),
                 ],
               ),
+              Container(
+                width: MediaQuery.of(context).size.width/5,
+                height: MediaQuery.of(context).size.height / 10,
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(253, 36, 75, 1),
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                ),
+              ),
             ],
           ),
         ),

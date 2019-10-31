@@ -23,13 +23,46 @@ class ContextPage extends StatefulWidget {
 class _ContextPageState extends State<ContextPage> {
   final String currentId;
   final String contextId;
+  int commentNum;
   String _comment;
   String reply;
+  bool LikeState = false;
   final _formKey = GlobalKey<FormState>();
   final replyKey = GlobalKey<FormState>();
+  final _controller = TextEditingController();
 
   _ContextPageState(
       {Key key, @required this.currentId, @required this.contextId});
+
+
+
+
+  CommentSum() async{
+    await Firestore.instance.collection('movie')
+        .document(contextId).collection('comment').snapshots().listen((data){
+          commentNum = data.documents.length;
+       return commentNum;
+    });
+  }
+
+  LikeControll(bool state) async {
+    if (state == false) {
+        return await Firestore.instance
+            .collection('movie')
+            .document(contextId)
+            .updateData({
+          'like': FieldValue.increment(1),
+      });
+    }else{
+      return await Firestore.instance
+          .collection('movie')
+          .document(contextId)
+          .updateData({
+        'like': FieldValue.increment(-1),
+      });
+    }
+
+  }
 
   PostReply(String commentId) async {
     var _form = replyKey.currentState;
@@ -52,9 +85,9 @@ class _ContextPageState extends State<ContextPage> {
               .collection('reply')
               .document(documentName)
               .setData({
-            'commentID':commentId,
-            'contextID':contextId,
-            'replyID' : documentName,
+            'commentID': commentId,
+            'contextID': contextId,
+            'replyID': documentName,
             'context': reply,
             'time': DateTime.now().millisecondsSinceEpoch,
             'space': '영화관',
@@ -63,8 +96,6 @@ class _ContextPageState extends State<ContextPage> {
             'nickname': data.documents[0]['nickname'],
           });
         });
-
-
 
         setState(() {
           _form.reset();
@@ -114,6 +145,13 @@ class _ContextPageState extends State<ContextPage> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    CommentSum();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream: Firestore.instance
@@ -124,6 +162,9 @@ class _ContextPageState extends State<ContextPage> {
           var ds1 = snapshot.data;
           return Scaffold(
             appBar: AppBar(
+              iconTheme: IconThemeData(
+                color: Colors.black,
+              ),
               title: Text(
                 ds1['nickname'],
                 style: TextStyle(
@@ -231,7 +272,7 @@ class _ContextPageState extends State<ContextPage> {
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         height: 1,
-                        color: Colors.black54,
+                        color: Colors.black,
                       ),
                     ),
                     SizedBox(
@@ -253,44 +294,62 @@ class _ContextPageState extends State<ContextPage> {
                         children: <Widget>[
                           Container(
                             //좋아요수
-                            width: MediaQuery.of(context).size.width / 8,
+                            width: MediaQuery.of(context).size.width / 5,
                             height: MediaQuery.of(context).size.height / 40,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              //Color.fromRGBO(123, 198, 250, 1)
-                              border: Border.all(width: 0.5),
-                            ),
+//                            decoration: BoxDecoration(
+//                              color: Colors.white,
+//                              //Color.fromRGBO(123, 198, 250, 1)
+//                              border: Border.all(width: 0.5),
+//                            ),
                             child: Row(
                               children: <Widget>[
-                                Icon(
-                                  Icons.favorite,
-                                  color: Colors.black54,
-                                  size: 20,
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      if (LikeState == false) {
+                                        LikeControll(LikeState);
+                                        LikeState = true;
+                                      } else {
+                                        LikeControll(LikeState);
+                                        LikeState = false;
+                                      }
+                                    });
+                                  },
+                                  child: (LikeState == false)
+                                      ? Icon(
+                                          Icons.favorite_border,
+                                          color: Colors.black54,
+                                          size: 20,
+                                        )
+                                      : Icon(
+                                          Icons.favorite,
+                                          color: Colors.black54,
+                                          size: 20,
+                                        ),
                                 ),
                                 SizedBox(
                                   width: 5,
                                 ),
-                                Text(
-                                  '5',
-                                  style: TextStyle(
-                                    color: Colors.black54,
-                                  ),
+                                  Text(
+                                    '${ds1['like']}',
+                                    maxLines: null,
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                    ),
                                 )
                               ],
                             ),
                           ),
-                          SizedBox(
-                            width: 5,
-                          ),
                           Container(
                             //코멘트 수
-                            width: MediaQuery.of(context).size.width / 8,
+                            width: MediaQuery.of(context).size.width / 5,
                             height: MediaQuery.of(context).size.height / 40,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              //Color.fromRGBO(123, 198, 250, 1)
-                              border: Border.all(width: 0.5),
-                            ),
+//                            decoration: BoxDecoration(
+//                              color: Colors.white,
+//                              //Color.fromRGBO(123, 198, 250, 1)
+//                              border: Border.all(width: 0.5),
+//                            ),
                             child: Row(
                               children: <Widget>[
                                 Icon(
@@ -302,7 +361,8 @@ class _ContextPageState extends State<ContextPage> {
                                   width: 5,
                                 ),
                                 Text(
-                                  '5',
+                                  '$commentNum',
+                                  textAlign: TextAlign.start,
                                   style: TextStyle(
                                     color: Colors.black54,
                                   ),
@@ -316,7 +376,7 @@ class _ContextPageState extends State<ContextPage> {
                     Padding(
                       //댓글창위에 선
                       padding:
-                          const EdgeInsets.only(top: 0, left: 10, bottom: 10),
+                          const EdgeInsets.only(top: 10, left: 10, bottom: 10),
                       child: Container(
                         width: MediaQuery.of(context).size.width / 1.1,
                         height: 1,
@@ -355,6 +415,7 @@ class _ContextPageState extends State<ContextPage> {
                                       Padding(
                                         padding: const EdgeInsets.only(left: 3),
                                         child: TextFormField(
+                                          controller: _controller,
                                           maxLength: 500,
                                           maxLines: null,
                                           decoration: InputDecoration(
@@ -440,207 +501,177 @@ class _ContextPageState extends State<ContextPage> {
           return ListView.builder(
               padding: EdgeInsets.only(top: 10),
               shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemCount: snapshot.data.documents.length,
               itemBuilder: (BuildContext context, int index) {
                 DocumentSnapshot ds2 = snapshot.data.documents[index];
                 var textlength = ds2['context'].length;
-                if(){
-                  
-                }else{
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / 1.38,
-                      height: MediaQuery.of(context).size.height / 10,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                              color: Colors.black38,
-                              offset: Offset(3.0, 3.0),
-                              blurRadius: 1,
-                            ),
-                          ],
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Stack(
-                        children: <Widget>[
-                          Positioned(
-                            top: 5,
-                            left: 5,
-                            child: Container(
-                              //작성자프로필사진
-                              width: MediaQuery.of(context).size.width / 6,
-                              height: MediaQuery.of(context).size.height / 12,
-//                          decoration: BoxDecoration(
-//                            border: Border.all(width: 1),
-//                            color: Colors.white,
-//                          ),
-                              child: ClipRRect(
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(10)),
-                                child: (ds2['image'] != null)
-                                    ? CachedNetworkImage(
-                                  imageUrl: ds2['image'],
-                                  fit: BoxFit.cover,
-                                )
-                                    : null,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 5,
-                            left: 70,
-                            child: Container(
-                              //작성자프로필사진
-                              width: MediaQuery.of(context).size.width / 6,
-                              height: MediaQuery.of(context).size.height / 40,
-                              decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
-                                      width: 1,
-                                      color: Color.fromRGBO(255, 125, 128, 1),
-                                    )),
-                                color: Colors.white,
-                              ),
-                              child: Text(
-                                ds2['nickname'],
-                                textAlign: TextAlign.center,
-                                style: TextStyle(),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 5,
-                            right: 10,
-                            child: Container(
-                              //작성자프로필사진
-                              width: MediaQuery.of(context).size.width / 5,
-                              height: MediaQuery.of(context).size.height / 40,
-//                          decoration: BoxDecoration(
-//                            border: Border.all(width: 1),
-//                            color: Colors.white,
-//                          ),
-                              child: Text(
-                                TimeDuration(ds2['time'], DateTime.now()),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 30,
-                            left: 70,
-                            child: InkWell(
-                              onTap: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        content: Text(
-                                          ds2['context'],
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            child: Text('확인'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            textColor: maincolor,
-                                            padding: EdgeInsets.only(right: 120),
-                                          )
-                                        ],
-                                      );
-                                    });
-                              },
-                              child: Container(
-                                //텍스트
-                                width: MediaQuery.of(context).size.width / 1.5,
-                                height: MediaQuery.of(context).size.height / 22,
-//                          decoration: BoxDecoration(
-//                            border: Border.all(width: 1),
-//                            color: Colors.white,
-//                          ),
-                                child: (textlength < 41)
-                                    ? Text(
-                                  ds2['context'],
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(),
-                                )
-                                    : Text(
-                                  ds2['context'].substring(1, 38) + '...',
-                                  textAlign: TextAlign.start,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            right: 5,
-                            bottom: 15,
-                            child: InkWell(
-                              onTap: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        content: Form(
-                                          key: replyKey,
-                                          child: TextFormField(
-                                            maxLength: 500,
-                                            maxLines: null,
-                                            decoration: InputDecoration(
-                                              hintStyle: TextStyle(
-                                                fontSize: 15,
-                                              ),
-                                              hintText: '내용을 입력해주세요.',
-                                              border: InputBorder.none,
-                                            ),
-                                            validator: (input) {
-                                              if (input.isEmpty) {
-                                                return '내용을입력해주세요';
-                                              }
-                                            },
-                                            onSaved: (value) => reply = value,
-                                          ),
-                                        ),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            child: Text('확인'),
-                                            onPressed: () {
-                                              PostReply(ds2['commentID']);
-                                              Navigator.of(context).pop();
-                                            },
-                                            textColor: maincolor,
-                                            padding: EdgeInsets.only(right: 120),
-                                          )
-                                        ],
-                                      );
-                                    });
-                              },
-                              child: Container(
-                                //작성자프로필사진
-                                width: MediaQuery.of(context).size.width / 12,
-                                height: MediaQuery.of(context).size.height / 22,
-                                color: Color.fromRGBO(255, 125, 128, 1),
-//                          decoration: BoxDecoration(
-//                            border: Border.all(width: 1),
-//                            color: Color.fromRGBO(255, 125, 128, 1),
-//                          ),
-                                child: Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
+                return Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width / 1.38,
+                    height: MediaQuery.of(context).size.height / 10,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            color: Colors.black38,
+                            offset: Offset(0, 3.0),
+                            blurRadius: 1,
                           ),
                         ],
-                      ),
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    child: Stack(
+                      children: <Widget>[
+                        Positioned(
+                          top: 5,
+                          left: 5,
+                          child: Container(
+                            //작성자프로필사진
+                            width: MediaQuery.of(context).size.width / 6,
+                            height: MediaQuery.of(context).size.height / 12,
+//                          decoration: BoxDecoration(
+//                            border: Border.all(width: 1),
+//                            color: Colors.white,
+//                          ),
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                              child: (ds2['image'] != null)
+                                  ? CachedNetworkImage(
+                                      imageUrl: ds2['image'],
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 5,
+                          left: 70,
+                          child: Container(
+                            //닉네임
+                            width: MediaQuery.of(context).size.width / 6,
+                            height: MediaQuery.of(context).size.height / 40,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                width: 1,
+                                color: Color.fromRGBO(255, 125, 128, 1),
+                              )),
+                              color: Colors.white,
+                            ),
+                            child: Text(
+                              ds2['nickname'],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 5,
+                          right: 10,
+                          child: Container(
+                            //작성자프로필사진
+                            width: MediaQuery.of(context).size.width / 5,
+                            height: MediaQuery.of(context).size.height / 40,
+//                          decoration: BoxDecoration(
+//                            border: Border.all(width: 1),
+//                            color: Colors.white,
+//                          ),
+                            child: Text(
+                              TimeDuration(ds2['time'], DateTime.now()),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 30,
+                          left: 70,
+                          child: InkWell(
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      content: Text(
+                                        ds2['context'],
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          child: Text('확인'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          textColor: maincolor,
+                                          padding: EdgeInsets.only(right: 120),
+                                        )
+                                      ],
+                                    );
+                                  });
+                            },
+                            child: Container(
+                              //텍스트
+                              width: MediaQuery.of(context).size.width / 1.5,
+                              height: MediaQuery.of(context).size.height / 22,
+//                          decoration: BoxDecoration(
+//                            border: Border.all(width: 1),
+//                            color: Colors.white,
+//                          ),
+                              child: (textlength < 41)
+                                  ? Text(
+                                      ds2['context'],
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(),
+                                    )
+                                  : Text(
+                                      ds2['context'].substring(1, 38) + '...',
+                                      textAlign: TextAlign.start,
+                                    ),
+                            ),
+                          ),
+                        ),
+//                        Positioned(
+//                          top: 2,
+//                          left: 170,
+//                          child: InkWell(
+//                            onTap: () {
+//                              setState(() {
+//                                _controller.text = 'assdsdd';
+//                                Text(
+//                                  _controller.text,
+//                                  style: TextStyle(
+//                                    color: Colors.redAccent
+//                                  ),
+//                                );
+//                              });
+//
+//                            },
+//                            child: Container(
+//                              //답글
+//                              width: MediaQuery.of(context).size.width / 6,
+//                              height: MediaQuery.of(context).size.height / 40,
+//                              decoration: BoxDecoration(
+//                                borderRadius:
+//                                    BorderRadius.all(Radius.circular(10)),
+//                                color: maincolor,
+//                              ),
+//                              child: Center(
+//                                child: Text(
+//                                  '답글',
+//                                  style: TextStyle(color: Colors.white),
+//                                ),
+//                              ),
+//                            ),
+//                          ),
+//                        ),
+                      ],
                     ),
-                  );
-                }
-
+                  ),
+                );
               });
         });
   }
-
 }

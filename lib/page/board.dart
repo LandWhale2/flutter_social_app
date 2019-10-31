@@ -36,6 +36,9 @@ class _BoardState extends State<Board> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
         title: Text(
           '영화관',
           style:
@@ -233,7 +236,7 @@ class _BoardState extends State<Board> {
 
   Widget Stagger(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection('movie').orderBy('time', descending: true).snapshots(),
+        stream: Firestore.instance.collection('movie').orderBy('like', descending: true).snapshots(),
         builder: (context, snapshot) {
           int count = snapshot.data.documents.length;
           return ListView.builder(
@@ -284,12 +287,15 @@ class _BoardState extends State<Board> {
                       ),
                       InkWell(
                         onTap: (){
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ContextPage(
-                                    currentId: currentUserId,contextId: ds['contextID'],
-                                  )));
+                          if(snapshot.hasData){
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ContextPage(
+                                      currentId: currentUserId,contextId: ds['contextID'],
+                                    )));
+                          }
+
                         },
                         child: Container(
                           width: MediaQuery.of(context).size.width / 1.38,
