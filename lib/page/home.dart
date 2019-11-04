@@ -9,6 +9,7 @@ import 'board.dart';
 
 class Mainhome extends StatefulWidget {
   final String currentId;
+
   Mainhome({Key key, @required this.currentId}) : super(key: key);
 
   @override
@@ -17,6 +18,7 @@ class Mainhome extends StatefulWidget {
 
 class MainhomeState extends State<Mainhome> {
   final String currentId;
+
   MainhomeState({Key key, @required this.currentId});
 
   int _bottomSelectedIndex = 0;
@@ -34,18 +36,18 @@ class MainhomeState extends State<Mainhome> {
                   width: MediaQuery.of(context).size.width / 1.3,
                   height: MediaQuery.of(context).size.height / 19,
                   decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                          color: Colors.black38,
-                          offset: Offset(4.0, 4.0),
-                          blurRadius: 1,
-                        ),
-                      ],
-                      border: Border.all(
-                          color: Colors.black87,
-                          width: 1,
-                          style: BorderStyle.solid),
+                    color: Colors.white,
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                        color: Colors.black38,
+                        offset: Offset(4.0, 4.0),
+                        blurRadius: 1,
+                      ),
+                    ],
+                    border: Border.all(
+                        color: Colors.black87,
+                        width: 1,
+                        style: BorderStyle.solid),
 //                    borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
                   child: Row(
@@ -83,8 +85,10 @@ class MainhomeState extends State<Mainhome> {
               ),
               Stack(
                 children: <Widget>[
-                  Padding(//큰 네모
-                    padding: EdgeInsets.only(top: 30, bottom: 0, left: 15, right: 15),
+                  Padding(
+                    //큰 네모
+                    padding: EdgeInsets.only(
+                        top: 30, bottom: 0, left: 15, right: 15),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height / 1.75,
@@ -110,10 +114,10 @@ class MainhomeState extends State<Mainhome> {
                           currentIndex: _bottomSelectedIndex,
                           items: <BottomNavigationBarItem>[
                             BottomNavigationBarItem(
-                              icon: Icon(Icons.arrow_back_ios),
-                              title: Text(' '),
-                              backgroundColor: Color.fromRGBO(253, 36, 75, 1)
-                            ),
+                                icon: Icon(Icons.arrow_back_ios),
+                                title: Text(' '),
+                                backgroundColor:
+                                    Color.fromRGBO(253, 36, 75, 1)),
                             BottomNavigationBarItem(
                               icon: Icon(Icons.arrow_forward_ios),
                               title: Text(' '),
@@ -131,7 +135,7 @@ class MainhomeState extends State<Mainhome> {
                       bottom: 444,
                       right: 43,
                       child: Container(
-                        width: MediaQuery.of(context).size.width/5,
+                        width: MediaQuery.of(context).size.width / 5,
                         height: MediaQuery.of(context).size.height / 27,
                         decoration: BoxDecoration(
                           color: Color.fromRGBO(253, 36, 75, 1),
@@ -146,17 +150,8 @@ class MainhomeState extends State<Mainhome> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                      )
-                  ),
+                      )),
                 ],
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width/5,
-                height: MediaQuery.of(context).size.height / 10,
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(253, 36, 75, 1),
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                ),
               ),
             ],
           ),
@@ -211,9 +206,27 @@ class MainhomeState extends State<Mainhome> {
             SizedBox(
               width: 30,
             ),
-            ItemBox(imagename: 'assets/homeicon/Bmovie.png', place: '영화관', currentId: currentId,),
-            ItemBox(imagename: 'assets/homeicon/Bcoffee.png', place: '카페',currentId: currentId,),
-            ItemBox(imagename: 'assets/homeicon/Brest.png', place: '맛집',currentId: currentId,),
+            ItemBox(
+              imagename: 'assets/homeicon/Bmovie.png',
+              place: '영화관',
+              currentId: currentId,
+              title: '영화관',
+              SelectSpace: 'movie',
+            ),
+            ItemBox(
+              imagename: 'assets/homeicon/Bcoffee.png',
+              place: '카페',
+              currentId: currentId,
+              title: '카페',
+              SelectSpace: 'cafe',
+            ),
+            ItemBox(
+              imagename: 'assets/homeicon/Brest.png',
+              place: '맛집',
+              currentId: currentId,
+              title: '맛집',
+              SelectSpace: 'food',
+            ),
           ],
         ),
         SizedBox(
@@ -224,9 +237,27 @@ class MainhomeState extends State<Mainhome> {
             SizedBox(
               width: 30,
             ),
-            ItemBox(imagename: 'assets/homeicon/Bskis.png', place: '스키장',currentId: currentId,),
-            ItemBox(imagename: 'assets/homeicon/Bpark.png', place: '놀이동산',currentId: currentId,),
-            ItemBox(imagename: 'assets/homeicon/Bgame.png', place: '피시방',currentId: currentId,),
+            ItemBox(
+              imagename: 'assets/homeicon/Bskis.png',
+              place: '스키장',
+              currentId: currentId,
+              title: '스키장',
+              SelectSpace: 'skis',
+            ),
+            ItemBox(
+              imagename: 'assets/homeicon/Bpark.png',
+              place: '놀이동산',
+              currentId: currentId,
+              title: '놀이동산',
+              SelectSpace: 'park',
+            ),
+            ItemBox(
+              imagename: 'assets/homeicon/Bgame.png',
+              place: '피시방',
+              currentId: currentId,
+              title: '피시방',
+              SelectSpace: 'pcroom',
+            ),
           ],
         ),
         SizedBox(
@@ -237,9 +268,27 @@ class MainhomeState extends State<Mainhome> {
             SizedBox(
               width: 33,
             ),
-            ItemBox(imagename: 'assets/homeicon/BBear.png', place: '술',currentId: currentId,),
-            ItemBox(imagename: 'assets/homeicon/Btrip.png', place: '여행',currentId: currentId,),
-            ItemBox(imagename: 'assets/homeicon/etc.png', place: '기타',currentId: currentId,),
+            ItemBox(
+              imagename: 'assets/homeicon/BBear.png',
+              place: '술',
+              currentId: currentId,
+              title: '술',
+              SelectSpace: 'liquor',
+            ),
+            ItemBox(
+              imagename: 'assets/homeicon/Btrip.png',
+              place: '여행',
+              currentId: currentId,
+              title: '여행',
+              SelectSpace: 'trip',
+            ),
+            ItemBox(
+              imagename: 'assets/homeicon/etc.png',
+              place: '기타',
+              currentId: currentId,
+              title: '기타',
+              SelectSpace: 'etc',
+            ),
           ],
         ),
       ],
@@ -259,9 +308,9 @@ class MainhomeState extends State<Mainhome> {
 //              SizedBox(
 //                width: 30,
 //              ),
-              CityItem(),
-              CityItem(),
-              CityItem(),
+              CityItem(currentId: currentId,title: '서울', SelectSpace: 'seoul'),
+              CityItem(currentId: currentId,title: '경기도', SelectSpace: 'gyeonggi'),
+              CityItem(currentId: currentId,title: '부산', SelectSpace: 'busan'),
             ],
           ),
           SizedBox(
@@ -272,9 +321,9 @@ class MainhomeState extends State<Mainhome> {
 //              SizedBox(
 //                width: 30,
 //              ),
-              CityItem(),
-              CityItem(),
-              CityItem(),
+              CityItem(currentId: currentId,title: '광주', SelectSpace: 'gwangju'),
+              CityItem(currentId: currentId,title: '대전', SelectSpace: 'daejeon'),
+              CityItem(currentId: currentId,title: '경상도', SelectSpace: 'geongsang'),
             ],
           ),
           SizedBox(
@@ -285,9 +334,9 @@ class MainhomeState extends State<Mainhome> {
 //              SizedBox(
 //                width: 33,
 //              ),
-              CityItem(),
-              CityItem(),
-              CityItem(),
+              CityItem(currentId: currentId,title: '강원도', SelectSpace: 'gangwon'),
+              CityItem(currentId: currentId,title: '전라도', SelectSpace: 'jeonra'),
+              CityItem(currentId: currentId,title: '제주도', SelectSpace: 'jeju'),
             ],
           ),
         ],
@@ -299,8 +348,16 @@ class MainhomeState extends State<Mainhome> {
 class ItemBox extends StatelessWidget {
   String imagename, place;
   final String currentId;
+  String SelectSpace, title;
+  String ww;
 
-  ItemBox({Key key, @required this.imagename, @required this.place, @required this.currentId})
+  ItemBox(
+      {Key key,
+      @required this.imagename,
+      @required this.place,
+      @required this.SelectSpace,
+      @required this.currentId,
+      @required this.title})
       : super(key: key);
 
   @override
@@ -308,8 +365,15 @@ class ItemBox extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(right: 20),
       child: InkWell(
-        onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Board(currentUserId: currentId,)));
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Board(
+                        currentUserId: currentId,
+                        SelectSpace: SelectSpace,
+                        title: title,
+                      )));
         },
         child: Column(
           children: <Widget>[
@@ -339,7 +403,9 @@ class ItemBox extends StatelessWidget {
                 place,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontWeight: FontWeight.w600, fontSize: 20, fontFamily: 'NIX'),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                    fontFamily: 'NIX'),
               ),
             ),
           ],
@@ -350,31 +416,53 @@ class ItemBox extends StatelessWidget {
 }
 
 class CityItem extends StatelessWidget {
+  String space, title, currentId, SelectSpace;
+
+  CityItem(
+      {Key key,
+      @required this.space,
+      @required this.SelectSpace,
+      @required this.currentId,
+      @required this.title})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Container(
-        width: MediaQuery.of(context).size.width / 4.1,
-        height: MediaQuery.of(context).size.height / 9,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: Colors.black87,
-              offset: Offset(4.0, 4.0),
-              blurRadius: 1,
+      child: InkWell(
+        onTap: (){
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Board(
+                    currentUserId: currentId,
+                    SelectSpace: SelectSpace,
+                    title: title,
+                  )));
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width / 4.1,
+          height: MediaQuery.of(context).size.height / 9,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: Colors.black87,
+                offset: Offset(4.0, 4.0),
+                blurRadius: 1,
+              ),
+            ],
+            border: Border.all(
+                color: Colors.black87, width: 3, style: BorderStyle.solid),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                  fontWeight: FontWeight.w600, fontSize: 30, fontFamily: 'NIX'),
             ),
-          ],
-          border: Border.all(
-              color: Colors.black87, width: 3, style: BorderStyle.solid),
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        child: Center(
-          child: Text(
-            '서울',
-            style: TextStyle(
-                fontWeight: FontWeight.w600, fontSize: 30, fontFamily: 'NIX'),
           ),
         ),
       ),

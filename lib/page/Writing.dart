@@ -8,21 +8,23 @@ import 'package:image_picker/image_picker.dart';
 
 class Writing extends StatefulWidget {
   final String currentId;
+  String title, SelectSpace;
 
-  Writing({Key key, @required this.currentId}) : super(key: key);
+  Writing({Key key, @required this.currentId, @required this.title, @required this.SelectSpace}) : super(key: key);
 
   @override
-  _WritingState createState() => _WritingState(currentId: currentId);
+  _WritingState createState() => _WritingState(currentId: currentId, title: title, SelectSpace: SelectSpace);
 }
 
 class _WritingState extends State<Writing> {
+  String title, SelectSpace;
   final String currentId;
   String _CONTEXT;
   File ImageFile;
   String _ImageUrl;
   final _formKey = GlobalKey<FormState>();
 
-  _WritingState({Key key, @required this.currentId});
+  _WritingState({Key key, @required this.currentId,@required this.title, @required this.SelectSpace});
 
   Future GETImage() async {
     ImageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -75,19 +77,21 @@ class _WritingState extends State<Writing> {
             .snapshots()
             .listen((data) async {
           await Firestore.instance
-              .collection('movie')
+              .collection(SelectSpace)
               .document(documentName)
               .setData({
             'context': _CONTEXT,
             'image': data.documents[0]['image'][0],
             'time': DateTime.now().millisecondsSinceEpoch,
-            'space': '영화관',
+            'space': title,
             'nickname': data.documents[0]['nickname'],
             'contextImage' : _ImageUrl,
             'id' : data.documents[0]['id'],
             'contextID' : documentName,
             'like' : 0,
             'comment' : 0,
+            'latitude' : data.documents[0]['latitude'],
+            'longitude' : data.documents[0]['longitude'],
           });
         });
 
