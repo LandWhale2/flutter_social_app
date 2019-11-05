@@ -15,8 +15,12 @@ class MyApp extends StatelessWidget{
   static const String _title = 'flutter code';
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<BlocProvider>.value(
-      value: BlocProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<BlocProvider>.value(value: BlocProvider()),
+        ChangeNotifierProvider<ProfileLikeState>.value(value: ProfileLikeState()),
+        ChangeNotifierProvider<ContextLikeState>.value(value:ContextLikeState()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: _title,

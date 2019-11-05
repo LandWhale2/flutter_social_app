@@ -169,7 +169,6 @@ class _BoardState extends State<Board> {
                     InkWell(
                       onTap: () {
                         blocProvider.select1();
-                        print(blocProvider.MenuController);
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width / 3.5,
@@ -320,249 +319,252 @@ class _BoardState extends State<Board> {
                 var longitude2 = ds['longitude'];
 
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 5,
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height / 5,
 //                  decoration: BoxDecoration(
 //                      color: Colors.white, //Color.fromRGBO(123, 198, 250, 1)
 //                      border: Border.all(width: 0.5),
 //                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                    child: Row(
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Container(
-                              width: MediaQuery.of(context).size.width / 5,
-                              height: MediaQuery.of(context).size.height / 10,
-                              child: ClipRRect(
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(5)),
-                                child: CachedNetworkImage(
-                                  imageUrl: ds['image'],
-                                  fit: BoxFit.cover,
+                      child: Row(
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                width: MediaQuery.of(context).size.width / 5,
+                                height: MediaQuery.of(context).size.height / 10,
+                                child: ClipRRect(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                                  child: CachedNetworkImage(
+                                    imageUrl: ds['image'],
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              //이름
-                              padding: EdgeInsets.only(top: 5),
+                              Padding(
+                                //이름
+                                padding: EdgeInsets.only(top: 5),
 
-                              child: Text(
-                                ds['nickname'],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontFamily: 'SIL'),
+                                child: Text(
+                                  ds['nickname'],
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontFamily: 'SIL'),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            if (snapshot.hasData) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ContextPage(
-                                        currentId: currentUserId,
-                                        contextId: ds['contextID'],
-                                      )));
-                            }
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 1.38,
-                            height: MediaQuery.of(context).size.height / 5,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                //Color.fromRGBO(123, 198, 250, 1)
+                            ],
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              if (snapshot.hasData) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ContextPage(
+                                          currentId: currentUserId,
+                                          contextId: ds['contextID'],
+                                          SelectSpace: SelectSpace,
+                                          title: title,
+                                        )));
+                              }
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width / 1.38,
+                              height: MediaQuery.of(context).size.height / 5,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  //Color.fromRGBO(123, 198, 250, 1)
 //                            border: Border.all(width: 0.5),
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    color: Colors.black38,
-                                    offset: Offset(3.0, 3.0),
-                                    blurRadius: 1,
-                                  ),
-                                ],
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                            child: Stack(
-                              children: <Widget>[
-                                Positioned(
-                                  //텍스트
-                                  right: 20,
-                                  bottom: 60,
-                                  child: Container(
-                                    width:
-                                    MediaQuery.of(context).size.width / 1.6,
-                                    height:
-                                    MediaQuery.of(context).size.height / 12,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      //Color.fromRGBO(123, 198, 250, 1)
+                                  boxShadow: <BoxShadow>[
+                                    BoxShadow(
+                                      color: Colors.black38,
+                                      offset: Offset(3.0, 3.0),
+                                      blurRadius: 1,
+                                    ),
+                                  ],
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                              child: Stack(
+                                children: <Widget>[
+                                  Positioned(
+                                    //텍스트
+                                    right: 20,
+                                    bottom: 60,
+                                    child: Container(
+                                      width:
+                                      MediaQuery.of(context).size.width / 1.6,
+                                      height:
+                                      MediaQuery.of(context).size.height / 12,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        //Color.fromRGBO(123, 198, 250, 1)
 //                                  border: Border.all(width: 0.5),
-                                    ),
-                                    child: Text(
-                                      ds['context'],
-                                      style: TextStyle(fontFamily: 'NIX'),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  //사진1
-                                  left: 10,
-                                  bottom: 5,
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width / 7,
-                                    height:
-                                    MediaQuery.of(context).size.height / 16,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      //Color.fromRGBO(123, 198, 250, 1)
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                      child: (ds['contextImage'] != null)
-                                          ? CachedNetworkImage(
-                                        imageUrl: ds['contextImage'],
-                                        fit: BoxFit.cover,
-                                      )
-                                          : null,
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  //거리
-                                  top: 5,
-                                  right: 5,
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width / 5,
-                                    height:
-                                    MediaQuery.of(context).size.height / 40,
-//                                decoration: BoxDecoration(
-//                                  color: Colors.white,
-//                                  //Color.fromRGBO(123, 198, 250, 1)
-//                                  border: Border.all(width: 0.5),
-//                                ),
-                                    child: (LocationCalcul(latitude1, longitude1,
-                                        latitude2, longitude2) !=
-                                        null)
-                                        ? Text(
-                                      LocationCalcul(latitude1, longitude1,
-                                          latitude2, longitude2),
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Color.fromRGBO(
-                                              255, 125, 128, 99)),
-                                    )
-                                        : Text(
-                                      '???m',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Color.fromRGBO(
-                                              255, 125, 128, 99)),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  //댓글
-                                  left: 5,
-                                  top: 5,
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width / 8,
-                                    height:
-                                    MediaQuery.of(context).size.height / 40,
-//                                decoration: BoxDecoration(
-//                                  color: Colors.white,
-//                                  //Color.fromRGBO(123, 198, 250, 1)
-//                                  border: Border.all(width: 0.5),
-//                                ),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.favorite,
-                                          color: Colors.black54,
-                                          size: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          ds['like'].toString(),
-                                          style: TextStyle(
-                                            color: Colors.black54,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  //좋아요
-                                  left: 55,
-                                  top: 5,
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width / 8,
-                                    height:
-                                    MediaQuery.of(context).size.height / 40,
-//                                decoration: BoxDecoration(
-//                                  color: Colors.white,
-//                                  //Color.fromRGBO(123, 198, 250, 1)
-//                                  border: Border.all(width: 0.5),
-//                                ),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.sms,
-                                          color: Colors.black54,
-                                          size: 22,
-                                        ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          ds['comment'].toString(),
-                                          style: TextStyle(
-                                            color: Colors.black54,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  //시간
-                                  right: 5,
-                                  bottom: 5,
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width / 5,
-                                    height:
-                                    MediaQuery.of(context).size.height / 40,
-//                                decoration: BoxDecoration(
-//                                  color: Colors.white,
-//                                  //Color.fromRGBO(123, 198, 250, 1)
-//                                  border: Border.all(width: 0.5),
-//                                ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(3.0),
+                                      ),
                                       child: Text(
-                                        TimeDuration(ds['time'], DateTime.now()),
-                                        style: TextStyle(color: Colors.black54),
+                                        ds['context'],
+                                        style: TextStyle(fontFamily: 'NIX'),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                  Positioned(
+                                    //사진1
+                                    left: 10,
+                                    bottom: 5,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width / 7,
+                                      height:
+                                      MediaQuery.of(context).size.height / 16,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        //Color.fromRGBO(123, 198, 250, 1)
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                        child: (ds['contextImage'] != null)
+                                            ? CachedNetworkImage(
+                                          imageUrl: ds['contextImage'],
+                                          fit: BoxFit.cover,
+                                        )
+                                            : null,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    //거리
+                                    top: 5,
+                                    right: 5,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width / 5,
+                                      height:
+                                      MediaQuery.of(context).size.height / 40,
+//                                decoration: BoxDecoration(
+//                                  color: Colors.white,
+//                                  //Color.fromRGBO(123, 198, 250, 1)
+//                                  border: Border.all(width: 0.5),
+//                                ),
+                                      child: (LocationCalcul(latitude1, longitude1,
+                                          latitude2, longitude2) !=
+                                          null)
+                                          ? Text(
+                                        LocationCalcul(latitude1, longitude1,
+                                            latitude2, longitude2),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Color.fromRGBO(
+                                                255, 125, 128, 99)),
+                                      )
+                                          : Text(
+                                        '???m',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Color.fromRGBO(
+                                                255, 125, 128, 99)),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    //댓글
+                                    left: 5,
+                                    top: 5,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width / 8,
+                                      height:
+                                      MediaQuery.of(context).size.height / 40,
+//                                decoration: BoxDecoration(
+//                                  color: Colors.white,
+//                                  //Color.fromRGBO(123, 198, 250, 1)
+//                                  border: Border.all(width: 0.5),
+//                                ),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.favorite,
+                                            color: Colors.black54,
+                                            size: 20,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                              (ds['like'] != null)?ds['like'].toString():'0',
+                                            style: TextStyle(
+                                              color: Colors.black54,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    //좋아요
+                                    left: 55,
+                                    top: 5,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width / 8,
+                                      height:
+                                      MediaQuery.of(context).size.height / 40,
+//                                decoration: BoxDecoration(
+//                                  color: Colors.white,
+//                                  //Color.fromRGBO(123, 198, 250, 1)
+//                                  border: Border.all(width: 0.5),
+//                                ),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.sms,
+                                            color: Colors.black54,
+                                            size: 22,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            ds['comment'].toString(),
+                                            style: TextStyle(
+                                              color: Colors.black54,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    //시간
+                                    right: 5,
+                                    bottom: 5,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width / 5,
+                                      height:
+                                      MediaQuery.of(context).size.height / 40,
+//                                decoration: BoxDecoration(
+//                                  color: Colors.white,
+//                                  //Color.fromRGBO(123, 198, 250, 1)
+//                                  border: Border.all(width: 0.5),
+//                                ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(3.0),
+                                        child: Text(
+                                          TimeDuration(ds['time'], DateTime.now()),
+                                          style: TextStyle(color: Colors.black54),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                );
+                  );
+
               },
             );
           }else{

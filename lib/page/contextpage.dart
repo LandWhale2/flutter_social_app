@@ -1,110 +1,161 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:socialapp/base.dart';
 import 'package:socialapp/main.dart';
+import 'package:socialapp/widgets/Bloc.dart';
 import 'board.dart';
 import 'package:socialapp/widgets/Hero.dart';
 
 var maincolor = Color.fromRGBO(255, 125, 128, 1);
 
 class ContextPage extends StatefulWidget {
+  String SelectSpace, title;
   final String currentId;
   final String contextId;
 
-  ContextPage({Key key, @required this.currentId, @required this.contextId})
-      : super(key: key);
+  ContextPage({
+    Key key,
+    @required this.title,
+    @required this.currentId,
+    @required this.contextId,
+    @required this.SelectSpace,
+  }) : super(key: key);
 
   @override
-  _ContextPageState createState() =>
-      _ContextPageState(currentId: currentId, contextId: contextId);
+  _ContextPageState createState() => _ContextPageState(
+      currentId: currentId,
+      contextId: contextId,
+      SelectSpace: SelectSpace,
+      title: title);
 }
 
 class _ContextPageState extends State<ContextPage> {
   final String currentId;
   final String contextId;
+  String SelectSpace, title;
+  bool LikeState = false;
   int commentNum;
   String _comment;
   String reply;
-  bool LikeState = false;
   final _formKey = GlobalKey<FormState>();
   final replyKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
 
   _ContextPageState(
-      {Key key, @required this.currentId, @required this.contextId});
+      {Key key,
+      @required this.currentId,
+      @required this.contextId,
+      @required this.title,
+      @required this.SelectSpace});
+
+  LikeManager() async {
+    await Firestore.instance.collection(SelectSpace).document(contextId).snapshots().listen((data)async{
+      List<dynamic> tmp = data['likeperson'];
+      for(int i=0 ; i<tmp.length; i++){
+        if(tmp[i] == currentId){
+          await Firestore.instance
+              .collection(SelectSpace)
+              .document(contextId)
+              .updateData({
+            'likeperson': FieldValue.arrayRemove([currentId]),
+            'like': FieldValue.increment(-1),
+          });
+          return print('up');
+        }
+      }
+
+      await Firestore.instance
+          .collection(SelectSpace)
+          .document(contextId)
+          .updateData({
+        'likeperson': FieldValue.arrayUnion([currentId]),
+        'like': FieldValue.increment(1),
+      });
+    });
 
 
+//    await Firestore.instance
+//        .collection(SelectSpace)
+//        .document(contextId)
+//        .updateData({
+//      'likeperson': FieldValue.arrayUnion([like]),
+//      'like': FieldValue.increment(1),
+//    });
+  }
 
-
-  CommentSum() async{
-    await Firestore.instance.collection('movie')
-        .document(contextId).collection('comment').snapshots().listen((data){
-          commentNum = data.documents.length;
-       return commentNum;
+  CommentSum() async {
+    await Firestore.instance
+        .collection(SelectSpace)
+        .document(contextId)
+        .collection('comment')
+        .snapshots()
+        .listen((data) {
+      commentNum = data.documents.length;
+      return commentNum;
     });
   }
 
-  LikeControll(bool state) async {
-    if (state == false) {
-        return await Firestore.instance
-            .collection('movie')
-            .document(contextId)
-            .updateData({
-          'like': FieldValue.increment(1),
-      });
-    }else{
-      return await Firestore.instance
-          .collection('movie')
-          .document(contextId)
-          .updateData({
-        'like': FieldValue.increment(-1),
-      });
-    }
+//  LikeControll(bool state) async {
+//    if (state == false) {
+//      return await Firestore.instance
+//          .collection(SelectSpace)
+//          .document(contextId)
+//          .updateData({
+//        'like': FieldValue.increment(1),
+//      });
+//    } else {
+//      return await Firestore.instance
+//          .collection(SelectSpace)
+//          .document(contextId)
+//          .updateData({
+//        'like': FieldValue.increment(-1),
+//      });
+//    }
+//  }
 
-  }
-
-  PostReply(String commentId) async {
-    var _form = replyKey.currentState;
-    if (_form.validate()) {
-      _form.save();
-      try {
-        var documentName =
-            'R' + DateTime.now().millisecondsSinceEpoch.toString();
-
-        await Firestore.instance
-            .collection('users')
-            .where('id', isEqualTo: currentId)
-            .snapshots()
-            .listen((data) async {
-          await Firestore.instance
-              .collection('movie')
-              .document(contextId)
-              .collection('comment')
-              .document(commentId)
-              .collection('reply')
-              .document(documentName)
-              .setData({
-            'commentID': commentId,
-            'contextID': contextId,
-            'replyID': documentName,
-            'context': reply,
-            'time': DateTime.now().millisecondsSinceEpoch,
-            'space': '영화관',
-            'id': currentId,
-            'image': data.documents[0]['image'][0],
-            'nickname': data.documents[0]['nickname'],
-          });
-        });
-
-        setState(() {
-          _form.reset();
-        });
-      } catch (e) {
-        print(e.message);
-      }
-    }
-  }
+//  PostReply(String commentId) async {
+//    var _form = replyKey.currentState;
+//    if (_form.validate()) {
+//      _form.save();
+//      try {
+//        var documentName =
+//            'R' + DateTime.now().millisecondsSinceEpoch.toString();
+//
+//        await Firestore.instance
+//            .collection('users')
+//            .where('id', isEqualTo: currentId)
+//            .snapshots()
+//            .listen((data) async {
+//          await Firestore.instance
+//              .collection(SelectSpace)
+//              .document(contextId)
+//              .collection('comment')
+//              .document(commentId)
+//              .collection('reply')
+//              .document(documentName)
+//              .setData({
+//            'commentID': commentId,
+//            'contextID': contextId,
+//            'replyID': documentName,
+//            'context': reply,
+//            'time': DateTime.now().millisecondsSinceEpoch,
+//            'space': title,
+//            'id': currentId,
+//            'image': data.documents[0]['image'][0],
+//            'nickname': data.documents[0]['nickname'],
+//          });
+//        });
+//
+//        setState(() {
+//          _form.reset();
+//        });
+//      } catch (e) {
+//        print(e.message);
+//      }
+//    }
+//  }
 
   PostComment() async {
     var form = _formKey.currentState;
@@ -119,7 +170,7 @@ class _ContextPageState extends State<ContextPage> {
             .snapshots()
             .listen((data) async {
           await Firestore.instance
-              .collection('movie')
+              .collection(SelectSpace)
               .document(contextId)
               .collection('comment')
               .document(documentName)
@@ -127,7 +178,7 @@ class _ContextPageState extends State<ContextPage> {
             'context': _comment,
             'image': data.documents[0]['image'][0],
             'time': DateTime.now().millisecondsSinceEpoch,
-            'space': '영화관',
+            'space': title,
             'nickname': data.documents[0]['nickname'],
             'id': data.documents[0]['id'],
             'commentID': documentName,
@@ -144,6 +195,19 @@ class _ContextPageState extends State<ContextPage> {
     }
   }
 
+  LikeCheck(List person){
+    if (person != null) {
+      for (int i = 0; i < person.length; i++) {
+        if (person[i] == currentId) {
+            LikeState = true;
+          return LikeState;
+        }
+      }
+      LikeState = false;
+      return LikeState;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -155,7 +219,7 @@ class _ContextPageState extends State<ContextPage> {
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream: Firestore.instance
-            .collection('movie')
+            .collection(SelectSpace)
             .document(contextId)
             .snapshots(),
         builder: (context, snapshot) {
@@ -292,55 +356,56 @@ class _ContextPageState extends State<ContextPage> {
                       padding: const EdgeInsets.only(top: 70, bottom: 10),
                       child: Row(
                         children: <Widget>[
-                          Container(
-                            //좋아요수
-                            width: MediaQuery.of(context).size.width / 5,
-                            height: MediaQuery.of(context).size.height / 40,
-//                            decoration: BoxDecoration(
-//                              color: Colors.white,
-//                              //Color.fromRGBO(123, 198, 250, 1)
-//                              border: Border.all(width: 0.5),
+//                          Container(
+//                            //좋아요수
+//                            width: MediaQuery.of(context).size.width / 5,
+//                            height: MediaQuery.of(context).size.height / 40,
+////                            decoration: BoxDecoration(
+////                              color: Colors.white,
+////                              //Color.fromRGBO(123, 198, 250, 1)
+////                              border: Border.all(width: 0.5),
+////                            ),
+//                            child: Row(
+//                              children: <Widget>[
+//                                InkWell(
+//                                  onTap: () {
+////                                    LikeManager();
+////                                    if (contextLikeState.LikeState2 == false) {
+////                                      LikeControll(contextLikeState.LikeState2);
+////                                      contextLikeState.on2();
+////                                    } else {
+////                                      LikeControll(contextLikeState.LikeState2);
+////                                      contextLikeState.off2();
+////                                    }
+//                                  },
+//                                  child: (LikeCheck(ds1['likeperson']) == false)
+//                                      ? Icon(
+//                                          Icons.favorite_border,
+//                                          color: Colors.black54,
+//                                          size: 20,
+//                                        )
+//                                      : Icon(
+//                                          Icons.favorite,
+//                                          color: Colors.red,
+//                                          size: 20,
+//                                        ),
+//                                ),
+//                                SizedBox(
+//                                  width: 5,
+//                                ),
+//                                Text(
+//                                  (ds1['like'] != null)
+//                                      ? ds1['like'].toString()
+//                                      : '0',
+//                                  maxLines: null,
+//                                  textAlign: TextAlign.start,
+//                                  style: TextStyle(
+//                                    color: Colors.black54,
+//                                  ),
+//                                )
+//                              ],
 //                            ),
-                            child: Row(
-                              children: <Widget>[
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      if (LikeState == false) {
-                                        LikeControll(LikeState);
-                                        LikeState = true;
-                                      } else {
-                                        LikeControll(LikeState);
-                                        LikeState = false;
-                                      }
-                                    });
-                                  },
-                                  child: (LikeState == false)
-                                      ? Icon(
-                                          Icons.favorite_border,
-                                          color: Colors.black54,
-                                          size: 20,
-                                        )
-                                      : Icon(
-                                          Icons.favorite,
-                                          color: Colors.black54,
-                                          size: 20,
-                                        ),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                  Text(
-                                    '${ds1['like']}',
-                                    maxLines: null,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      color: Colors.black54,
-                                    ),
-                                )
-                              ],
-                            ),
-                          ),
+//                          ),
                           Container(
                             //코멘트 수
                             width: MediaQuery.of(context).size.width / 5,
@@ -361,7 +426,7 @@ class _ContextPageState extends State<ContextPage> {
                                   width: 5,
                                 ),
                                 Text(
-                                  '$commentNum',
+                                  ds1['comment'].toString(),
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     color: Colors.black54,
@@ -489,7 +554,7 @@ class _ContextPageState extends State<ContextPage> {
   Widget CommentBox(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: Firestore.instance
-            .collection('movie')
+            .collection(SelectSpace)
             .document(contextId)
             .collection('comment')
             .orderBy('time', descending: true)

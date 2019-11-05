@@ -416,11 +416,11 @@ class ItemBox extends StatelessWidget {
 }
 
 class CityItem extends StatelessWidget {
-  String space, title, currentId, SelectSpace;
+  String title, currentId, SelectSpace;
 
   CityItem(
       {Key key,
-      @required this.space,
+
       @required this.SelectSpace,
       @required this.currentId,
       @required this.title})

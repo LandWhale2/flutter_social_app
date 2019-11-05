@@ -88,8 +88,8 @@ class _WritingState extends State<Writing> {
             'contextImage' : _ImageUrl,
             'id' : data.documents[0]['id'],
             'contextID' : documentName,
-            'like' : 0,
             'comment' : 0,
+            'like': 0,
             'latitude' : data.documents[0]['latitude'],
             'longitude' : data.documents[0]['longitude'],
           });
