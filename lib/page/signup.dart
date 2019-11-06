@@ -504,6 +504,8 @@ class _SignUpPageState extends State<SignUpPage> {
               'image': [],
               'age': null,
               'intro': null,
+              'like' : 0,
+              'likeperson' : null,
             });
           }
           Navigator.push(

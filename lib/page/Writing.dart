@@ -90,6 +90,7 @@ class _WritingState extends State<Writing> {
             'contextID' : documentName,
             'comment' : 0,
             'like': 0,
+            'likeperson': null,
             'latitude' : data.documents[0]['latitude'],
             'longitude' : data.documents[0]['longitude'],
           });

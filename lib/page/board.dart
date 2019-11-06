@@ -8,6 +8,7 @@ import 'package:socialapp/page/Writing.dart';
 import 'package:socialapp/page/signup.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:socialapp/widgets/Bloc.dart';
+import 'ProfileDetail.dart';
 import 'contextpage.dart';
 import 'test.dart';
 import 'package:socialapp/widgets/tool.dart';
@@ -331,15 +332,26 @@ class _BoardState extends State<Board> {
                         children: <Widget>[
                           Column(
                             children: <Widget>[
-                              Container(
-                                width: MediaQuery.of(context).size.width / 5,
-                                height: MediaQuery.of(context).size.height / 10,
-                                child: ClipRRect(
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
-                                  child: CachedNetworkImage(
-                                    imageUrl: ds['image'],
-                                    fit: BoxFit.cover,
+                              InkWell(
+                                onTap: (){
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ProfileDetail(
+                                            usercurrentId: ds['id'],
+                                            currentId: currentId,
+                                          )));
+                                },
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width / 5,
+                                  height: MediaQuery.of(context).size.height / 10,
+                                  child: ClipRRect(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(5)),
+                                    child: CachedNetworkImage(
+                                      imageUrl: ds['image'],
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -412,7 +424,7 @@ class _BoardState extends State<Board> {
                                     ),
                                   ),
                                   Positioned(
-                                    //사진1
+                                    //사진
                                     left: 10,
                                     bottom: 5,
                                     child: Container(

@@ -120,6 +120,8 @@ class LoginScreenState extends State<LoginScreen>
           'image': [],
           'age': null,
           'intro': null,
+          'like' : 0,
+          'likeperson' : null,
         });
 
         //write data local

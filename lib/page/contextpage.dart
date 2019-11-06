@@ -50,39 +50,38 @@ class _ContextPageState extends State<ContextPage> {
       @required this.title,
       @required this.SelectSpace});
 
-  LikeManager() async {
-    await Firestore.instance.collection(SelectSpace).document(contextId).snapshots().listen((data)async{
-      List<dynamic> tmp = data['likeperson'];
-      for(int i=0 ; i<tmp.length; i++){
-        if(tmp[i] == currentId){
-          await Firestore.instance
-              .collection(SelectSpace)
-              .document(contextId)
-              .updateData({
-            'likeperson': FieldValue.arrayRemove([currentId]),
-            'like': FieldValue.increment(-1),
-          });
-          return print('up');
-        }
-      }
-
-      await Firestore.instance
+  LikeManager(List tmp) {
+    if (tmp == null) {
+      return Firestore.instance
           .collection(SelectSpace)
           .document(contextId)
           .updateData({
         'likeperson': FieldValue.arrayUnion([currentId]),
         'like': FieldValue.increment(1),
       });
+    }
+
+    for (int i = 0; i < tmp.length; i++) {
+      if (tmp[i] == currentId) {
+        return Firestore.instance
+            .collection(SelectSpace)
+            .document(contextId)
+            .updateData({
+          'likeperson': FieldValue.arrayRemove([currentId]),
+          'like': FieldValue.increment(-1),
+        });
+      } else {
+        continue;
+      }
+    }
+
+    return Firestore.instance
+        .collection(SelectSpace)
+        .document(contextId)
+        .updateData({
+      'likeperson': FieldValue.arrayUnion([currentId]),
+      'like': FieldValue.increment(1),
     });
-
-
-//    await Firestore.instance
-//        .collection(SelectSpace)
-//        .document(contextId)
-//        .updateData({
-//      'likeperson': FieldValue.arrayUnion([like]),
-//      'like': FieldValue.increment(1),
-//    });
   }
 
   CommentSum() async {
@@ -195,17 +194,19 @@ class _ContextPageState extends State<ContextPage> {
     }
   }
 
-  LikeCheck(List person){
+  LikeCheck(List person) {
     if (person != null) {
       for (int i = 0; i < person.length; i++) {
         if (person[i] == currentId) {
-            LikeState = true;
+          LikeState = true;
           return LikeState;
         }
       }
       LikeState = false;
       return LikeState;
     }
+
+    return false;
   }
 
   @override
@@ -356,56 +357,49 @@ class _ContextPageState extends State<ContextPage> {
                       padding: const EdgeInsets.only(top: 70, bottom: 10),
                       child: Row(
                         children: <Widget>[
-//                          Container(
-//                            //좋아요수
-//                            width: MediaQuery.of(context).size.width / 5,
-//                            height: MediaQuery.of(context).size.height / 40,
-////                            decoration: BoxDecoration(
-////                              color: Colors.white,
-////                              //Color.fromRGBO(123, 198, 250, 1)
-////                              border: Border.all(width: 0.5),
-////                            ),
-//                            child: Row(
-//                              children: <Widget>[
-//                                InkWell(
-//                                  onTap: () {
-////                                    LikeManager();
-////                                    if (contextLikeState.LikeState2 == false) {
-////                                      LikeControll(contextLikeState.LikeState2);
-////                                      contextLikeState.on2();
-////                                    } else {
-////                                      LikeControll(contextLikeState.LikeState2);
-////                                      contextLikeState.off2();
-////                                    }
-//                                  },
-//                                  child: (LikeCheck(ds1['likeperson']) == false)
-//                                      ? Icon(
-//                                          Icons.favorite_border,
-//                                          color: Colors.black54,
-//                                          size: 20,
-//                                        )
-//                                      : Icon(
-//                                          Icons.favorite,
-//                                          color: Colors.red,
-//                                          size: 20,
-//                                        ),
-//                                ),
-//                                SizedBox(
-//                                  width: 5,
-//                                ),
-//                                Text(
-//                                  (ds1['like'] != null)
-//                                      ? ds1['like'].toString()
-//                                      : '0',
-//                                  maxLines: null,
-//                                  textAlign: TextAlign.start,
-//                                  style: TextStyle(
-//                                    color: Colors.black54,
-//                                  ),
-//                                )
-//                              ],
+                          Container(
+                            //좋아요수
+                            width: MediaQuery.of(context).size.width / 5,
+                            height: MediaQuery.of(context).size.height / 40,
+//                            decoration: BoxDecoration(
+//                              color: Colors.white,
+//                              //Color.fromRGBO(123, 198, 250, 1)
+//                              border: Border.all(width: 0.5),
 //                            ),
-//                          ),
+                            child: Row(
+                              children: <Widget>[
+                                InkWell(
+                                  onTap: (){
+                                    LikeManager(ds1['likeperson']);
+                                  },
+                                  child: (LikeCheck(ds1['likeperson']) == false)
+                                      ? Icon(
+                                          Icons.favorite_border,
+                                          color: Colors.black54,
+                                          size: 20,
+                                        )
+                                      : Icon(
+                                          Icons.favorite,
+                                          color: Colors.red,
+                                          size: 20,
+                                        ),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  (ds1['like'] != null)
+                                      ? ds1['like'].toString()
+                                      : '0',
+                                  maxLines: null,
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    color: Colors.black54,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                           Container(
                             //코멘트 수
                             width: MediaQuery.of(context).size.width / 5,
@@ -561,7 +555,7 @@ class _ContextPageState extends State<ContextPage> {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Text('끝');
+            return Container();
           }
           return ListView.builder(
               padding: EdgeInsets.only(top: 10),

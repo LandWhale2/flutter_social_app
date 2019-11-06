@@ -18,7 +18,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:geolocator/geolocator.dart';
 
-
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 final SnackBar snackBar = const SnackBar(content: Text('Showing Snackbar'));
 int _bottomSelectedIndex = 0;
@@ -104,10 +103,10 @@ class _Base extends State<Base> {
 //        message['body'].toString(), platformChannelSpecifics, payload: json.encode(message));
 //  }
 
-  Future<bool> onBackPress() {
-    openDialog();
-    return Future.value(false);
-  }
+//  Future<bool> onBackPress() {
+//    openDialog();
+//    return Future.value(false);
+//  }
 
   Future<Position> _getLocation() async {
     var currentLocation;
@@ -212,18 +211,19 @@ class _Base extends State<Base> {
     }
   }
 
-  AddLocation()async{
-    _getLocation().then((position) async{
+  AddLocation() async {
+    _getLocation().then((position) async {
       print('위치저장 시작');
-      await Firestore.instance.collection('users').document(currentUserId)
+      await Firestore.instance
+          .collection('users')
+          .document(currentUserId)
           .updateData({
-        'longitude' : position.longitude,
-        'latitude':position.latitude,
+        'longitude': position.longitude,
+        'latitude': position.latitude,
       });
       print('사용자 위치저장');
     });
   }
-
 
   Future<Null> handleSignOut() async {
     this.setState(() {
@@ -275,7 +275,7 @@ class _Base extends State<Base> {
                       child: Center(
                         child: CircularProgressIndicator(
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.blue),
+                              AlwaysStoppedAnimation<Color>(Colors.redAccent),
                         ),
                       ),
                       color: Colors.white.withOpacity(0.8),
@@ -284,7 +284,6 @@ class _Base extends State<Base> {
             ),
           ],
         ),
-        onWillPop: onBackPress,
       ),
     );
   }
@@ -369,7 +368,6 @@ class _Base extends State<Base> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -429,7 +427,7 @@ class _Base extends State<Base> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.shopping_cart),
-            tooltip: 'next page?',
+            tooltip: '',
             onPressed: () {
               openPage(context);
             },

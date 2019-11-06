@@ -117,7 +117,8 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => ProfileDetail(
-                                        currentId: ds['id'],
+                                        usercurrentId: ds['id'],
+                                        currentId: currentId,
                                       )));
                             },
                             child: Padding(
