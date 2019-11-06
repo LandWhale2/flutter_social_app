@@ -106,7 +106,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }else{
       groupChatId = '$peerId-$id';
     }
-    Firestore.instance.collection('users').document(id).updateData({'chattingWith': peerId});
+//    Firestore.instance.collection('users').document(id).updateData({'chattingWith': peerId});
 
     setState(() {
     });
@@ -397,18 +397,18 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
 
-  Future<bool> onBackPress(){
-    if(isShowSticker){
-      setState(() {
-        isShowSticker= false;
-      });
-    }else{
-      Firestore.instance.collection('users').document(id).updateData({'chattingWith': null});
-      Navigator.pop(context);
-    }
-
-    return Future.value(false);
-  }
+//  Future<bool> onBackPress(){
+//    if(isShowSticker){
+//      setState(() {
+//        isShowSticker= false;
+//      });
+//    }else{
+//      Firestore.instance.collection('users').document(id).updateData({'chattingWith': null});
+//      Navigator.pop(context);
+//    }
+//
+//    return Future.value(false);
+//  }
 
 
 
@@ -436,7 +436,7 @@ class _ChatScreenState extends State<ChatScreen> {
           buildLoading()
         ],
       ),
-      onWillPop: onBackPress,
+//      onWillPop: onBackPress,
     );
   }
 

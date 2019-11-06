@@ -9,6 +9,7 @@ import 'package:geocoder/geocoder.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socialapp/main.dart';
 import 'package:socialapp/model/data.dart';
+import 'package:socialapp/page/chatpage.dart';
 import 'package:socialapp/page/home.dart';
 import 'package:socialapp/page/NewsFeed.dart';
 import 'package:socialapp/page/Channel.dart';
@@ -243,130 +244,9 @@ class _Base extends State<Base> {
         (Route<dynamic> route) => false);
   }
 
-  Widget chatpage(BuildContext context) {
-    return Scaffold(
-      body: WillPopScope(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              child: StreamBuilder(
-                stream: Firestore.instance.collection('users').snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                      ),
-                    );
-                  } else {
-                    return ListView.builder(
-                      itemBuilder: (context, index) =>
-                          buildItem(context, snapshot.data.documents[index]),
-                      padding: EdgeInsets.all(10),
-                      itemCount: snapshot.data.documents.length,
-                    );
-                  }
-                },
-              ),
-            ),
-            Positioned(
-              child: isLoading
-                  ? Container(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.redAccent),
-                        ),
-                      ),
-                      color: Colors.white.withOpacity(0.8),
-                    )
-                  : Container(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget buildItem(BuildContext context, DocumentSnapshot document) {
-    if (document['id'] == currentUserId) {
-      return Container();
-    } else {
-      return Container(
-        child: FlatButton(
-          child: Row(
-            children: <Widget>[
-              Material(
-                child: document['photoUrl'] != null
-                    ? CachedNetworkImage(
-                        placeholder: (context, url) => Container(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 1,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.black87),
-                          ),
-                          width: 50,
-                          height: 50,
-                          padding: EdgeInsets.all(15),
-                        ),
-                        imageUrl: document['photoUrl'],
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                      )
-                    : Icon(
-                        Icons.account_circle,
-                        size: 50,
-                        color: Colors.grey,
-                      ),
-                borderRadius: BorderRadius.all(Radius.circular(25)),
-                clipBehavior: Clip.hardEdge,
-              ),
-              Flexible(
-                child: Container(
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        child: Text(
-                          'Nickname: ${document['nickname']}',
-                          style: TextStyle(color: Colors.black87),
-                        ),
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.fromLTRB(10, 0, 0, 5),
-                      ),
-                      Container(
-                        child: Text(
-                          'About Me: ${document['aboutMe'] ?? 'Not availabe'}',
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                      ),
-                    ],
-                  ),
-                  margin: EdgeInsets.only(left: 20),
-                ),
-              ),
-            ],
-          ),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Chat(
-                          peerId: document.documentID,
-                          peerAvatar: document['photoUrl'],
-                        )));
-          },
-          color: Colors.grey,
-          padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-        margin: EdgeInsets.only(bottom: 10, left: 5, right: 5),
-      );
-    }
-  }
+
+
 
   @override
   void initState() {
@@ -397,7 +277,7 @@ class _Base extends State<Base> {
         ),
 //        NewsFeed(),
         Mainhome(currentId: currentUserId),
-        chatpage(context),
+        Chatpage(currentId: currentUserId,),
         ProfilePage(
           currentId: currentUserId,
         ),

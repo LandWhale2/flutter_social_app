@@ -6,6 +6,8 @@ import 'package:socialapp/page/contextpage.dart';
 import 'package:socialapp/widgets/Bloc.dart';
 import 'package:socialapp/base.dart';
 
+import 'chatpage.dart';
+
 class ProfileDetail extends StatefulWidget {
   final String usercurrentId, currentId;
 
@@ -91,12 +93,15 @@ class _ProfileDetailState extends State<ProfileDetail> {
   }
 
   AddChat(List profileuser, List user, String profileId, String userId){
-    if(user != null){
-      if(user.length > profileuser.length){
-        for(int i = 0 ; i<profileuser.length ; i++){
-          if(user[i] == profileuser[i]){
+    print(profileId);
+    print(userId);
+    if(user != null){//저장된게있을때
+      if(user.length > profileuser.length){//길이큰쪽으로 검사하기위함
+        for(int i = 0 ; i<profileuser.length ; i++){//리스트중복검사
+          if(user[i] == profileuser[i]){//원래 채팅하던유저
             //채팅방이동페이지
-          }else{
+            return print('a');
+          }else{//신규채팅등록
             Firestore.instance.collection('users').document(profileId).updateData({
               'chattingWith' : FieldValue.arrayUnion([userId]),
             });
@@ -105,34 +110,34 @@ class _ProfileDetailState extends State<ProfileDetail> {
             });
 
             //채팅방이동페이지
+            return print('b');
           }
         }
-      }else{
-        for(int i = 0 ; i<user.length ; i++){
-          if(user[i] == profileuser[i]){
+      }else{//길이큰쪽으로 검사하기위함
+        for(int i = 0 ; i<user.length ; i++){//리스트중복검사
+          if(user[i] == profileuser[i]){//원래채팅하던유저
             //채팅방이동페이지
-          }else{
+            return print('f');
+          }else{//신규채팅등록
             Firestore.instance.collection('users').document(profileId).updateData({
               'chattingWith' : FieldValue.arrayUnion([userId]),
             });
             Firestore.instance.collection('users').document(userId).updateData({
               'chattingWith' : FieldValue.arrayUnion([profileId]),
             });
-//            Navigator.push(
-//                context,
-//                MaterialPageRoute(
-//                    builder: (context) => ()));
+            return print('c');
             //채팅방 이동페이지
           }
         }
       }
-    }else{
+    }else if(user == null){//아무것도없을때 최초저장
       Firestore.instance.collection('users').document(profileId).updateData({
         'chattingWith' : FieldValue.arrayUnion([userId]),
       });
       Firestore.instance.collection('users').document(userId).updateData({
         'chattingWith' : FieldValue.arrayUnion([profileId]),
       });
+      return print('d');
     }
   }
 
