@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:socialapp/base.dart';
 import 'package:socialapp/main.dart';
@@ -96,6 +97,15 @@ class _ContextPageState extends State<ContextPage> {
     });
   }
 
+  delete(String commentId) {
+    Firestore.instance
+        .collection(SelectSpace)
+        .document(contextId)
+        .collection('comment')
+        .document(commentId)
+        .delete();
+  }
+
 //  LikeControll(bool state) async {
 //    if (state == false) {
 //      return await Firestore.instance
@@ -185,6 +195,10 @@ class _ContextPageState extends State<ContextPage> {
           });
         });
 
+        Firestore.instance.collection(SelectSpace).document(contextId).updateData({
+          'comment' : FieldValue.increment(1),
+        });
+
         setState(() {
           form.reset();
         });
@@ -225,6 +239,9 @@ class _ContextPageState extends State<ContextPage> {
             .snapshots(),
         builder: (context, snapshot) {
           var ds1 = snapshot.data;
+          if (!snapshot.hasData) {
+            return Container();
+          }
           return Scaffold(
             appBar: AppBar(
               iconTheme: IconThemeData(
@@ -319,11 +336,11 @@ class _ContextPageState extends State<ContextPage> {
 //                                border: Border.all(width: 1),
 //                                color: Colors.white,
 //                              ),
-                              child: Text(
-                                '33m',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.black45),
-                              ),
+//                              child: Text(
+//                                '33m',
+//                                textAlign: TextAlign.center,
+//                                style: TextStyle(color: Colors.black45),
+//                              ),
                             ),
                           ),
                         ],
@@ -369,7 +386,7 @@ class _ContextPageState extends State<ContextPage> {
                             child: Row(
                               children: <Widget>[
                                 InkWell(
-                                  onTap: (){
+                                  onTap: () {
                                     LikeManager(ds1['likeperson']);
                                   },
                                   child: (LikeCheck(ds1['likeperson']) == false)
@@ -420,7 +437,9 @@ class _ContextPageState extends State<ContextPage> {
                                   width: 5,
                                 ),
                                 Text(
-                                  ds1['comment'].toString(),
+                                  (commentNum != null)
+                                      ? commentNum.toString()
+                                      : '0',
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     color: Colors.black54,
@@ -454,7 +473,6 @@ class _ContextPageState extends State<ContextPage> {
 //                                color: Colors.white,
 //                              ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Form(
                                 key: _formKey,
@@ -513,11 +531,14 @@ class _ContextPageState extends State<ContextPage> {
 //                                        border: Border.all(width: 0.3),
                                       color: Color.fromRGBO(255, 125, 128, 1),
                                     ),
-                                    child: Text(
-                                      '전송',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 20, color: Colors.white),
+                                    child: Center(
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          '전송',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -613,17 +634,20 @@ class _ContextPageState extends State<ContextPage> {
                             width: MediaQuery.of(context).size.width / 6,
                             height: MediaQuery.of(context).size.height / 40,
                             decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                width: 1,
-                                color: Color.fromRGBO(255, 125, 128, 1),
-                              )),
+//                              border: Border(
+//                                  bottom: BorderSide(
+//                                width: 1,
+//                                color: Color.fromRGBO(255, 125, 128, 1),
+//                              )),
                               color: Colors.white,
                             ),
                             child: Text(
                               ds2['nickname'],
                               textAlign: TextAlign.center,
-                              style: TextStyle(),
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontFamily: 'NIX'),
                             ),
                           ),
                         ),

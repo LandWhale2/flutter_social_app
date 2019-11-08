@@ -72,6 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 .snapshots(),
             builder: (context, snapshot) {
               DocumentSnapshot ds = snapshot.data;
+              if(!snapshot.hasData){return Container();}
               return Stack(
                 children: <Widget>[
                   Column(
@@ -251,22 +252,33 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Padding(
                 padding: EdgeInsets.only(right: 10),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(100)),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
                   child: Container(
                     width: 80,
                     height: 80,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10))
+                    ),
                     child: (profileImage != null)
-                        ? CircleAvatar(
-                            radius: 18,
-                            child: ClipOval(
-                              child: Image.network(
-                                profileImage,
-                                fit: BoxFit.fill,
-                                width: 100,
-                                height: 100,
-                              ),
-                            ),
-                          )
+                        ? CachedNetworkImage(
+                      placeholder: (context, url) => Container(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.black87),
+                        ),
+                        width: 80,
+                        height: 80,
+                        padding: EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
+                      imageUrl: profileImage,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    )
                         : Icon(Icons.add),
                   ),
                 ),

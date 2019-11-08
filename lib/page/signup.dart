@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/base.dart';
 import 'package:socialapp/widgets/database_create.dart';
 import 'dart:async';
@@ -24,6 +25,7 @@ class _SignUpPageState extends State<SignUpPage> {
   int check = 0;
 
   final _formKey = GlobalKey<FormState>();
+  SharedPreferences prefs;
 
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _smsController = TextEditingController();

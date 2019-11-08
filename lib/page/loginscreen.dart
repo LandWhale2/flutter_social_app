@@ -120,8 +120,8 @@ class LoginScreenState extends State<LoginScreen>
           'image': [],
           'age': null,
           'intro': null,
-          'like' : 0,
-          'likeperson' : null,
+          'like': 0,
+          'likeperson': null,
         });
 
         //write data local
@@ -441,13 +441,13 @@ class LoginScreenState extends State<LoginScreen>
                     .where('email', isEqualTo: _email)
                     .snapshots()
                     .listen((data) async {
-                  var currnetid = data.documents[0]['id'];
-                  print(currnetid);
+                  var currentId = data.documents[0]['id'];
+                  print(currentId);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => Base(
-                                currentUserId: currnetid,
+                                currentUserId: currentId,
                               )));
                 });
               } else {

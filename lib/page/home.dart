@@ -31,7 +31,7 @@ class MainhomeState extends State<Mainhome> {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(top: 30),
+                padding: EdgeInsets.only(top: 10),
                 child: Container(
                   width: MediaQuery.of(context).size.width / 1.3,
                   height: MediaQuery.of(context).size.height / 19,
@@ -58,13 +58,16 @@ class MainhomeState extends State<Mainhome> {
                         height: MediaQuery.of(context).size.height / 19,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '찾는 장소를 입력해주세요.',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                color: Colors.black38,
-                                fontSize: 20,
-                                fontFamily: 'NIX'),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              '찾는 장소를 입력해주세요.',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: Colors.black54,
+//                                fontSize: MediaQuery.of(context).textScaleFactor *15,
+                                  fontFamily: 'NIX'),
+                            ),
                           ),
                         ),
                       ),
@@ -76,7 +79,7 @@ class MainhomeState extends State<Mainhome> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 30),
+                padding: EdgeInsets.only(top: 20),
                 child: Container(
                   width: MediaQuery.of(context).size.width / 1.5,
                   height: 1,
@@ -87,11 +90,10 @@ class MainhomeState extends State<Mainhome> {
                 children: <Widget>[
                   Padding(
                     //큰 네모
-                    padding: EdgeInsets.only(
-                        top: 30, bottom: 0, left: 15, right: 15),
+                    padding: EdgeInsets.all(15),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height / 1.75,
+                      height: MediaQuery.of(context).size.height / 1.65,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         boxShadow: <BoxShadow>[
@@ -130,27 +132,6 @@ class MainhomeState extends State<Mainhome> {
                       ),
                     ),
                   ),
-                  Positioned(
-                      top: 20,
-                      bottom: 444,
-                      right: 43,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 5,
-                        height: MediaQuery.of(context).size.height / 27,
-                        decoration: BoxDecoration(
-                          color: Color.fromRGBO(253, 36, 75, 1),
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                        ),
-                        child: Text(
-                          '인기',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 23,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      )),
                 ],
               ),
             ],
@@ -196,150 +177,161 @@ class MainhomeState extends State<Mainhome> {
   }
 
   Widget datespace(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        SizedBox(
-          height: 30,
-        ),
-        Row(
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
           children: <Widget>[
             SizedBox(
-              width: 30,
+              width: MediaQuery.of(context).size.width /25,
             ),
-            ItemBox(
-              imagename: 'assets/homeicon/Bmovie.png',
-              place: '영화관',
-              currentId: currentId,
-              title: '영화관',
-              SelectSpace: 'movie',
-            ),
-            ItemBox(
-              imagename: 'assets/homeicon/Bcoffee.png',
-              place: '카페',
-              currentId: currentId,
-              title: '카페',
-              SelectSpace: 'cafe',
-            ),
-            ItemBox(
-              imagename: 'assets/homeicon/Brest.png',
-              place: '맛집',
-              currentId: currentId,
-              title: '맛집',
-              SelectSpace: 'food',
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: MediaQuery.of(context).size.height/30,
+                ),
+                Row(
+                  children: <Widget>[
+                    ItemBox(
+                      imagename: 'assets/homeicon/Bmovie.png',
+                      place: '영화관',
+                      currentId: currentId,
+                      title: '영화관',
+                      SelectSpace: 'movie',
+                    ),
+                    ItemBox(
+                      imagename: 'assets/homeicon/Bcoffee.png',
+                      place: '카페',
+                      currentId: currentId,
+                      title: '카페',
+                      SelectSpace: 'cafe',
+                    ),
+                    ItemBox(
+                      imagename: 'assets/homeicon/Brest.png',
+                      place: '맛집',
+                      currentId: currentId,
+                      title: '맛집',
+                      SelectSpace: 'food',
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: <Widget>[
+
+                    ItemBox(
+                      imagename: 'assets/homeicon/Bskis.png',
+                      place: '스키장',
+                      currentId: currentId,
+                      title: '스키장',
+                      SelectSpace: 'skis',
+                    ),
+                    ItemBox(
+                      imagename: 'assets/homeicon/Bpark.png',
+                      place: '놀이동산',
+                      currentId: currentId,
+                      title: '놀이동산',
+                      SelectSpace: 'park',
+                    ),
+                    ItemBox(
+                      imagename: 'assets/homeicon/Bgame.png',
+                      place: '피시방',
+                      currentId: currentId,
+                      title: '피시방',
+                      SelectSpace: 'pcroom',
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: <Widget>[
+                    ItemBox(
+                      imagename: 'assets/homeicon/BBear.png',
+                      place: '술',
+                      currentId: currentId,
+                      title: '술',
+                      SelectSpace: 'liquor',
+                    ),
+                    ItemBox(
+                      imagename: 'assets/homeicon/Btrip.png',
+                      place: '여행',
+                      currentId: currentId,
+                      title: '여행',
+                      SelectSpace: 'trip',
+                    ),
+                    ItemBox(
+                      imagename: 'assets/homeicon/etc.png',
+                      place: '기타',
+                      currentId: currentId,
+                      title: '기타',
+                      SelectSpace: 'etc',
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
-        SizedBox(
-          height: 20,
-        ),
-        Row(
-          children: <Widget>[
-            SizedBox(
-              width: 30,
-            ),
-            ItemBox(
-              imagename: 'assets/homeicon/Bskis.png',
-              place: '스키장',
-              currentId: currentId,
-              title: '스키장',
-              SelectSpace: 'skis',
-            ),
-            ItemBox(
-              imagename: 'assets/homeicon/Bpark.png',
-              place: '놀이동산',
-              currentId: currentId,
-              title: '놀이동산',
-              SelectSpace: 'park',
-            ),
-            ItemBox(
-              imagename: 'assets/homeicon/Bgame.png',
-              place: '피시방',
-              currentId: currentId,
-              title: '피시방',
-              SelectSpace: 'pcroom',
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Row(
-          children: <Widget>[
-            SizedBox(
-              width: 33,
-            ),
-            ItemBox(
-              imagename: 'assets/homeicon/BBear.png',
-              place: '술',
-              currentId: currentId,
-              title: '술',
-              SelectSpace: 'liquor',
-            ),
-            ItemBox(
-              imagename: 'assets/homeicon/Btrip.png',
-              place: '여행',
-              currentId: currentId,
-              title: '여행',
-              SelectSpace: 'trip',
-            ),
-            ItemBox(
-              imagename: 'assets/homeicon/etc.png',
-              place: '기타',
-              currentId: currentId,
-              title: '기타',
-              SelectSpace: 'etc',
-            ),
-          ],
-        ),
-      ],
+      ),
     );
   }
 
   Widget areaspace(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: <Widget>[
-//              SizedBox(
-//                width: 30,
-//              ),
-              CityItem(currentId: currentId,title: '서울', SelectSpace: 'seoul'),
-              CityItem(currentId: currentId,title: '경기도', SelectSpace: 'gyeonggi'),
-              CityItem(currentId: currentId,title: '부산', SelectSpace: 'busan'),
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: <Widget>[
-//              SizedBox(
-//                width: 30,
-//              ),
-              CityItem(currentId: currentId,title: '광주', SelectSpace: 'gwangju'),
-              CityItem(currentId: currentId,title: '대전', SelectSpace: 'daejeon'),
-              CityItem(currentId: currentId,title: '경상도', SelectSpace: 'geongsang'),
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: <Widget>[
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: <Widget>[
+            SizedBox(
+              width: MediaQuery.of(context).size.width/15,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: MediaQuery.of(context).size.height/ 40,
+                ),
+                Row(
+                  children: <Widget>[
+                    CityItem(currentId: currentId,title: '서울', SelectSpace: 'seoul'),
+                    CityItem(currentId: currentId,title: '경기도', SelectSpace: 'gyeonggi'),
+                    CityItem(currentId: currentId,title: '부산', SelectSpace: 'busan'),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: <Widget>[
+                    CityItem(currentId: currentId,title: '광주', SelectSpace: 'gwangju'),
+                    CityItem(currentId: currentId,title: '대전', SelectSpace: 'daejeon'),
+                    CityItem(currentId: currentId,title: '경상도', SelectSpace: 'geongsang'),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: <Widget>[
 //              SizedBox(
 //                width: 33,
 //              ),
-              CityItem(currentId: currentId,title: '강원도', SelectSpace: 'gangwon'),
-              CityItem(currentId: currentId,title: '전라도', SelectSpace: 'jeonra'),
-              CityItem(currentId: currentId,title: '제주도', SelectSpace: 'jeju'),
-            ],
-          ),
-        ],
+                    CityItem(currentId: currentId,title: '강원도', SelectSpace: 'gangwon'),
+                    CityItem(currentId: currentId,title: '전라도', SelectSpace: 'jeonra'),
+                    CityItem(currentId: currentId,title: '제주도', SelectSpace: 'jeju'),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -378,8 +370,8 @@ class ItemBox extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Container(
-              width: MediaQuery.of(context).size.width / 4.5,
-              height: MediaQuery.of(context).size.height / 11,
+              width: MediaQuery.of(context).size.width / 5,
+              height: MediaQuery.of(context).size.height / 12,
 //            decoration: BoxDecoration(
 //              color: Colors.black12,
 //              border: Border.all(color: Colors.black, width: 1),
@@ -389,24 +381,23 @@ class ItemBox extends StatelessWidget {
                 fit: BoxFit.fill,
               ),
             ),
-            SizedBox(
-              height: 5,
-            ),
             Container(
               width: MediaQuery.of(context).size.width / 4.5,
-              height: MediaQuery.of(context).size.height / 35,
+              height: MediaQuery.of(context).size.height / 30,
 //            decoration: BoxDecoration(
 //              color: Colors.black12,
 //              border: Border.all(color: Colors.black, width: 1),
 //            ),
-              child: Text(
-                place,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                    fontFamily: 'NIX'),
-              ),
+
+                child: Text(
+                  place,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: MediaQuery.of(context).textScaleFactor*18,
+                      fontFamily: 'NIX'),
+                ),
+
             ),
           ],
         ),
@@ -442,8 +433,8 @@ class CityItem extends StatelessWidget {
                   )));
         },
         child: Container(
-          width: MediaQuery.of(context).size.width / 4.1,
-          height: MediaQuery.of(context).size.height / 9,
+          width: MediaQuery.of(context).size.width / 5,
+          height: MediaQuery.of(context).size.height / 10,
           decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: <BoxShadow>[
@@ -461,7 +452,8 @@ class CityItem extends StatelessWidget {
             child: Text(
               title,
               style: TextStyle(
-                  fontWeight: FontWeight.w600, fontSize: 30, fontFamily: 'NIX'),
+                  fontWeight: FontWeight.w600, fontSize: MediaQuery.of(context).textScaleFactor*18,
+                  fontFamily: 'NIX'),
             ),
           ),
         ),

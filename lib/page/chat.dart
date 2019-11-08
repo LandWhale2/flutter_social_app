@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/model/fullPhoto.dart';
+import 'package:socialapp/page/contextpage.dart';
 import 'package:socialapp/page/loginscreen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -19,8 +20,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 class Chat extends StatelessWidget {
   final String peerId;
   final String peerAvatar;
+  final String currentId;
 
-  Chat({Key key,@required this.peerId, @required this.peerAvatar}) : super(key:key);
+  Chat({Key key,@required this.peerId, @required this.peerAvatar , @required this.currentId}) : super(key:key);
 
 
   @override
@@ -32,7 +34,7 @@ class Chat extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body:ChatScreen(peerId: peerId, peerAvatar: peerAvatar),
+      body:ChatScreen(peerId: peerId, peerAvatar: peerAvatar, currentId: currentId,),
     );
   }
 }
@@ -40,25 +42,24 @@ class Chat extends StatelessWidget {
 
 
 
-
-
-
 class ChatScreen extends StatefulWidget {
+  final String currentId;
   final String peerId;
   final String peerAvatar;
 
-  ChatScreen({Key key,@required this.peerId, @required this.peerAvatar}) : super(key:key);
+  ChatScreen({Key key,@required this.peerId, @required this.peerAvatar, @required this.currentId}) : super(key:key);
 
 
   @override
-  _ChatScreenState createState() => _ChatScreenState(peerId: peerId, peerAvatar: peerAvatar);
+  _ChatScreenState createState() => _ChatScreenState(peerId: peerId, peerAvatar: peerAvatar, currentId: currentId);
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  _ChatScreenState({Key key,@required this.peerId, @required this.peerAvatar});
+  _ChatScreenState({Key key,@required this.peerId, @required this.peerAvatar, @required this.currentId});
   String peerId;
   String peerAvatar;
   String id;
+  final String currentId;
 
   var listMessage;
   String groupChatId;
@@ -99,8 +100,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   readLocal() async{
-    prefs = await SharedPreferences.getInstance();
-    id = prefs.getString('id') ?? '';
+    id = currentId;
     if(id.hashCode <= peerId.hashCode){
       groupChatId = '$id-$peerId';
     }else{
@@ -187,16 +187,24 @@ class _ChatScreenState extends State<ChatScreen> {
       // Right (my message)
       return Row(
         children: <Widget>[
+          Container(
+            child: Text(
+              DateFormat('dd MMM kk:mm')
+                  .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document['timestamp']))),
+              style: TextStyle(color: Colors.black54, fontSize: 12.0),
+            ),
+            margin: EdgeInsets.only(right: 10),
+          ),
           document['type'] == 0
           // Text
               ? Container(
             child: Text(
               document['content'],
-              style: TextStyle(color: Colors.pinkAccent),
+              style: TextStyle(color: Colors.white),
             ),
             padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
             width: 200.0,
-            decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(8.0)),
+            decoration: BoxDecoration(color: Colors.lightBlueAccent, borderRadius: BorderRadius.circular(8.0)),
             margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
           )
               : document['type'] == 1
@@ -294,11 +302,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     ? Container(
                   child: Text(
                     document['content'],
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.black),
                   ),
                   padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                   width: 200.0,
-                  decoration: BoxDecoration(color: Colors.orange, borderRadius: BorderRadius.circular(8.0)),
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8.0),
+                  border: Border.all(width: 0.3)),
                   margin: EdgeInsets.only(left: 10.0),
                 )
                     : document['type'] == 1
@@ -366,7 +375,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Text(
                 DateFormat('dd MMM kk:mm')
                     .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document['timestamp']))),
-                style: TextStyle(color: Colors.green, fontSize: 12.0, fontStyle: FontStyle.italic),
+                style: TextStyle(color: Colors.black54, fontSize: 12.0),
               ),
               margin: EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
             )
@@ -634,7 +643,6 @@ class _ChatScreenState extends State<ChatScreen> {
             .document(groupChatId)
             .collection(groupChatId)
             .orderBy('timestamp', descending: true)
-            .limit(20)
             .snapshots(),
         builder: (context, snapshot){
           if(!snapshot.hasData){

@@ -11,7 +11,9 @@ import 'chatpage.dart';
 class ProfileDetail extends StatefulWidget {
   final String usercurrentId, currentId;
 
-  ProfileDetail({Key key, @required this.usercurrentId, @required this.currentId}) : super(key: key);
+  ProfileDetail(
+      {Key key, @required this.usercurrentId, @required this.currentId})
+      : super(key: key);
 
   @override
   _ProfileDetailState createState() =>
@@ -20,10 +22,13 @@ class ProfileDetail extends StatefulWidget {
 
 class _ProfileDetailState extends State<ProfileDetail> {
   final String usercurrentId, currentId;
-
+  final _formKey = GlobalKey<FormState>();
   bool LikeState = false;
 
-  _ProfileDetailState({Key key, @required this.usercurrentId, @required this.currentId});
+  String _today;
+
+  _ProfileDetailState(
+      {Key key, @required this.usercurrentId, @required this.currentId});
 
 //  LikeControll(bool state, String userId) async {
 //    if (state == false) {
@@ -92,50 +97,111 @@ class _ProfileDetailState extends State<ProfileDetail> {
     return LikeState;
   }
 
-  AddChat(List profileuser, List user, String profileId, String userId){
-    print(profileId);
-    print(userId);
-    if(user != null){//저장된게있을때
-      if(user.length > profileuser.length){//길이큰쪽으로 검사하기위함
-        for(int i = 0 ; i<profileuser.length ; i++){//리스트중복검사
-          if(user[i] == profileuser[i]){//원래 채팅하던유저
-            //채팅방이동페이지
-            return print('a');
-          }else{//신규채팅등록
-            Firestore.instance.collection('users').document(profileId).updateData({
-              'chattingWith' : FieldValue.arrayUnion([userId]),
-            });
-            Firestore.instance.collection('users').document(userId).updateData({
-              'chattingWith' : FieldValue.arrayUnion([profileId]),
-            });
-
-            //채팅방이동페이지
-            return print('b');
-          }
-        }
-      }else{//길이큰쪽으로 검사하기위함
-        for(int i = 0 ; i<user.length ; i++){//리스트중복검사
-          if(user[i] == profileuser[i]){//원래채팅하던유저
-            //채팅방이동페이지
-            return print('f');
-          }else{//신규채팅등록
-            Firestore.instance.collection('users').document(profileId).updateData({
-              'chattingWith' : FieldValue.arrayUnion([userId]),
-            });
-            Firestore.instance.collection('users').document(userId).updateData({
-              'chattingWith' : FieldValue.arrayUnion([profileId]),
-            });
-            return print('c');
-            //채팅방 이동페이지
-          }
-        }
+  Posttoday() {
+    var form = _formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      try {
+        Firestore.instance
+            .collection('users')
+            .document(usercurrentId)
+            .updateData({
+          'today': _today,
+        });
+        Navigator.of(context).pop();
+      } catch (e) {
+        print(e.message);
       }
-    }else if(user == null){//아무것도없을때 최초저장
-      Firestore.instance.collection('users').document(profileId).updateData({
-        'chattingWith' : FieldValue.arrayUnion([userId]),
+    }
+  }
+
+
+
+  AddChat(List profileuser, List user, String profileId, String userId) {
+    if (user != null) {
+      //저장된게있을때
+      if (profileuser != null) {
+        //프로필유저 저장된게있을때
+        if (user.length >= profileuser.length) {
+          //길이큰쪽으로 검사하기위함
+          for (int i = 0; i < profileuser.length; i++) {
+            //리스트중복검사
+            if(profileuser[i] == userId){
+              //원래채팅하던유저
+              //채팅방이동페이지
+              return print('a');
+            }else if(i == profileuser.length){
+              Firestore.instance
+                  .collection('users')
+                  .document(profileId)
+                  .updateData({
+                'chattingWith': FieldValue.arrayUnion([userId]),
+              });
+              Firestore.instance
+                  .collection('users')
+                  .document(userId)
+                  .updateData({
+                'chattingWith': FieldValue.arrayUnion([profileId]),
+              });
+              //채팅방이동페이지
+              return print('b');
+            }
+          }
+        } else {
+          //길이큰쪽으로 검사하기위함
+          for (int i = 0; i < user.length; i++) {
+            //리스트중복검사
+            if (user[i] == profileId) {
+              //원래채팅하던유저
+              //채팅방이동페이지
+              return print('f');
+            } else if(i ==user.length){
+              //신규채팅등록
+              Firestore.instance
+                  .collection('users')
+                  .document(profileId)
+                  .updateData({
+                'chattingWith': FieldValue.arrayUnion([userId]),
+              });
+              Firestore.instance
+                  .collection('users')
+                  .document(userId)
+                  .updateData({
+                'chattingWith': FieldValue.arrayUnion([profileId]),
+              });
+              return print('c');
+              //채팅방 이동페이지
+            }
+          }
+        }
+      } else {
+        Firestore.instance
+            .collection('users')
+            .document(profileId)
+            .updateData({
+          'chattingWith': FieldValue.arrayUnion([userId]),
+        });
+        Firestore.instance
+            .collection('users')
+            .document(userId)
+            .updateData({
+          'chattingWith': FieldValue.arrayUnion([profileId]),
+        });
+        return print('g');
+      }
+    } else if (user == null) {
+      //아무것도없을때 최초저장
+      Firestore.instance
+          .collection('users')
+          .document(profileId)
+          .updateData({
+        'chattingWith': FieldValue.arrayUnion([userId]),
       });
-      Firestore.instance.collection('users').document(userId).updateData({
-        'chattingWith' : FieldValue.arrayUnion([profileId]),
+      Firestore.instance
+          .collection('users')
+          .document(userId)
+          .updateData({
+        'chattingWith': FieldValue.arrayUnion([profileId]),
       });
       return print('d');
     }
@@ -143,8 +209,6 @@ class _ProfileDetailState extends State<ProfileDetail> {
 
   @override
   Widget build(BuildContext context) {
-    final ProfileLikeState profileLikeState =
-        Provider.of<ProfileLikeState>(context);
     return StreamBuilder(
         stream: Firestore.instance
             .collection('users')
@@ -169,175 +233,283 @@ class _ProfileDetailState extends State<ProfileDetail> {
               backgroundColor: Colors.white, //Color.fromRGBO(188, 206, 255, 1)
             ),
             body: StreamBuilder(
-              stream: Firestore.instance
-                  .collection('users')
-                  .document(currentId)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Container();
-                }
-                var ds2 = snapshot.data;
-                return Container(
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                        height: MediaQuery.of(context).size.height / 4,
-                        color: Color.fromRGBO(255, 125, 128, 100),
-                      ),
-                      Center(
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width / 5,
-                              height: MediaQuery.of(context).size.height / 10,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                child: CachedNetworkImage(
-                                  imageUrl: ds['image'][0],
-                                  fit: BoxFit.cover,
+                stream: Firestore.instance
+                    .collection('users')
+                    .document(currentId)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Container();
+                  }
+                  var ds2 = snapshot.data;
+                  return Container(
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          height: MediaQuery.of(context).size.height / 4,
+                          color: Color.fromRGBO(255, 125, 128, 100),
+                        ),
+                        Center(
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 5,
+                                height: MediaQuery.of(context).size.height / 10,
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                  child: CachedNetworkImage(
+                                    imageUrl: ds['image'][0],
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              child: FlatButton.icon(
-                                  onPressed: () {},
-                                  icon: Icon(
-                                    Icons.edit_location,
-                                  ),
-                                  label: Text(
-                                    '대전',
-                                    style: TextStyle(fontFamily: 'NIX'),
-                                  )),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width / 2,
-                              height: MediaQuery.of(context).size.height / 10,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(width: 0.1),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20))),
-                              child: Row(
+                              Container(
+                                child: FlatButton.icon(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.edit_location,
+                                    ),
+                                    label: Text(
+                                      '대전',
+                                      style: TextStyle(fontFamily: 'NIX'),
+                                    )),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 2,
+                                height: MediaQuery.of(context).size.height / 10,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(width: 0.1),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width:
+                                          MediaQuery.of(context).size.width / 4,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              10,
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: <Widget>[
+                                            Text(
+                                              '방문자',
+                                              style: TextStyle(
+                                                  fontFamily: 'NIX',
+                                                  color: Colors.black45),
+                                            ),
+                                            Text(
+                                              '23',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 20),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width /
+                                          4.1,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              10,
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: <Widget>[
+                                            Text(
+                                              '좋아요',
+                                              style: TextStyle(
+                                                  fontFamily: 'NIX',
+                                                  color: Colors.black45),
+                                            ),
+                                            Text(
+                                              (ds['like'] != null)
+                                                  ? ds['like'].toString()
+                                                  : '0',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 20),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
                                 children: <Widget>[
-                                  Container(
-                                    width: MediaQuery.of(context).size.width / 4,
-                                    height: MediaQuery.of(context).size.height / 10,
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          Text(
-                                            '방문자',
-                                            style: TextStyle(
-                                                fontFamily: 'NIX',
-                                                color: Colors.black45),
-                                          ),
-                                          Text(
-                                            '23',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w900,
-                                                fontSize: 20),
-                                          ),
-                                        ],
+                                  SizedBox(
+                                    width: 95,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      AddChat(
+                                          ds['chattingWith'],
+                                          ds2['chattingWith'],
+                                          ds['id'],
+                                          ds2['id']);
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width /
+                                          4.5,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              25,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(width: 0.1),
+                                          color:
+                                              Color.fromRGBO(247, 64, 106, 1),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20))),
+                                      child: Center(
+                                        child: Text(
+                                          'CHAT',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width / 4.1,
-                                    height: MediaQuery.of(context).size.height / 10,
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          Text(
-                                            '좋아요',
-                                            style: TextStyle(
-                                                fontFamily: 'NIX',
-                                                color: Colors.black45),
-                                          ),
-                                          Text(
-                                            (ds['like'] != null)
-                                                ? ds['like'].toString()
-                                                : '0',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w900,
-                                                fontSize: 20),
-                                          ),
-                                        ],
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      LikeManager(ds['likeperson']);
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width /
+                                          4.5,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              25,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(width: 0.1),
+                                          color: (LikeCheck(ds['likeperson']) ==
+                                                  false)
+                                              ? Colors.black
+                                              : Color.fromRGBO(247, 64, 106, 1),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20))),
+                                      child: Center(
+                                        child: Text(
+                                          'LIKE',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: 95,
-                                ),
-                                InkWell(
-                                  onTap: (){
-                                    AddChat(ds['chattingWith'],ds2['chattingWith'], ds['id'], ds2['id']);
-                                  },
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width / 4.5,
-                                    height: MediaQuery.of(context).size.height / 25,
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2,
+                                    height:
+                                        MediaQuery.of(context).size.height / 25,
                                     decoration: BoxDecoration(
-                                        border: Border.all(width: 0.1),
-                                        color: Color.fromRGBO(247, 64, 106, 1),
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(20))),
+                                      border:
+                                          Border(bottom: BorderSide(width: 1)),
+                                    ),
                                     child: Center(
                                       child: Text(
-                                        'CHAT',
+                                        (ds['today'] == null)?'오늘의 한마디': ds['today'],
                                         style: TextStyle(
-                                            color: Colors.white, fontSize: 20),
+                                            color: (ds['today'] == null)?Colors.black54: Colors.black,
+                                            fontSize: 15,
+                                            fontFamily: 'NIX'),
                                       ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    LikeManager(ds['likeperson']);
-                                  },
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width / 4.5,
-                                    height: MediaQuery.of(context).size.height / 25,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(width: 0.1),
-                                        color: (LikeCheck(ds['likeperson']) == false)
-                                            ? Colors.black
-                                            : Color.fromRGBO(247, 64, 106, 1),
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(20))),
-                                    child: Center(
-                                      child: Text(
-                                        'LIKE',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                  (currentId == usercurrentId)
+                                      ? InkWell(
+                                          onTap: () {
+                                            showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    content: Container(
+                                                      child: Form(
+                                                        key: _formKey,
+                                                        child: TextFormField(
+                                                          maxLength: 12,
+                                                          decoration:
+                                                              InputDecoration(
+                                                            hintText:
+                                                                '오늘의한마디를 입력해주세요.',
+                                                          ),
+                                                          validator: (input) {
+                                                            if (input.isEmpty) {
+                                                              return '내용을입력해주세요';
+                                                            }
+                                                          },
+                                                          onSaved: (value) =>
+                                                              _today = value,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    actions: <Widget>[
+                                                      FlatButton(
+                                                        child: Text('취소'),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        textColor: maincolor,
+//                                                        padding:
+//                                                        EdgeInsets.only(
+//                                                            left: 120),
+                                                      ),
+                                                      FlatButton(
+                                                        child: Text('확인'),
+                                                        onPressed: Posttoday,
+                                                        textColor: Colors.black,
+//                                                        padding:
+//                                                            EdgeInsets.only(
+//                                                                right: 120),
+                                                      )
+                                                    ],
+                                                  );
+                                                });
+                                          },
+                                          child: Icon(Icons.edit),
+                                        )
+                                      : Container(),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            ),
+                      ],
+                    ),
+                  );
+                }),
           );
         });
   }

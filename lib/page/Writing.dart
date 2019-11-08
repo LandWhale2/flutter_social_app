@@ -23,14 +23,17 @@ class _WritingState extends State<Writing> {
   File ImageFile;
   String _ImageUrl;
   final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   _WritingState({Key key, @required this.currentId,@required this.title, @required this.SelectSpace});
 
   Future GETImage() async {
     ImageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    if (ImageFile != null) {
-      print(ImageFile);
+    if(ImageFile != null){
+      setState(() {
+        isLoading = true;
+      });
       UploadImage();
     }
   }
@@ -47,6 +50,7 @@ class _WritingState extends State<Writing> {
         storageTaskSnapshot = value;
         storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
           setState(() {
+            isLoading = false;
             _ImageUrl = downloadUrl;
           });
 //          Firestore.instance
@@ -56,6 +60,9 @@ class _WritingState extends State<Writing> {
 //            'image': FieldValue.arrayUnion([photoUrl])
 //          });
         }, onError: (err) {
+          setState(() {
+            isLoading = false;
+          });
           Fluttertoast.showToast(msg: '이미지파일이 아닙니다.');
           print('123');
         });
