@@ -199,7 +199,6 @@ class _BoardState extends State<Board> {
                                   '인기순',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 25,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'NIX',

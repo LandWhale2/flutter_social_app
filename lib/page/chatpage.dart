@@ -47,6 +47,29 @@ class _ChatpageState extends State<Chatpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+
+        title: Text(
+          'Chatting',
+          style:
+          TextStyle(fontFamily: 'NIX', fontSize: 25, color: Colors.black),
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.ac_unit),
+            onPressed: (){},
+          ),
+        ],
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.ac_unit),
+          onPressed: (){},
+        ),
+        backgroundColor: Colors.white, //Color.fromRGBO(188, 206, 255, 1)
+      ),
       body: Stack(
         children: <Widget>[
           Container(

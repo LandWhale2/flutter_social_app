@@ -19,7 +19,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:geolocator/geolocator.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'scaffoldKey');
 final SnackBar snackBar = const SnackBar(content: Text('Showing Snackbar'));
 int _bottomSelectedIndex = 0;
 
@@ -300,27 +300,27 @@ class _Base extends State<Base> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-//          Color.fromRGBO(255, 125, 128, 1)
-        backgroundColor: Color.fromRGBO(255, 125, 128, 1),
-        centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            tooltip: '',
-            onPressed: () {
-              openPage(context);
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            tooltip: '',
-            onPressed: () {
-              handleSignOut();
-            },
-          ),
-        ],
-      ),
+//      appBar: AppBar(
+////          Color.fromRGBO(255, 125, 128, 1)
+//        backgroundColor: Color.fromRGBO(255, 125, 128, 1),
+//        centerTitle: true,
+//        actions: <Widget>[
+//          IconButton(
+//            icon: const Icon(Icons.shopping_cart),
+//            tooltip: '',
+//            onPressed: () {
+//              openPage(context);
+//            },
+//          ),
+//          IconButton(
+//            icon: const Icon(Icons.exit_to_app),
+//            tooltip: '',
+//            onPressed: () {
+//              handleSignOut();
+//            },
+//          ),
+//        ],
+//      ),
       body: buildPageView(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

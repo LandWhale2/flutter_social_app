@@ -22,10 +22,10 @@ class ProfileDetail extends StatefulWidget {
 
 class _ProfileDetailState extends State<ProfileDetail> {
   final String usercurrentId, currentId;
-  final _formKey = GlobalKey<FormState>();
-  bool LikeState = false;
 
-  String _today;
+  bool LikeState = false;
+  bool back = false;
+  final _today = TextEditingController();
 
   _ProfileDetailState(
       {Key key, @required this.usercurrentId, @required this.currentId});
@@ -47,6 +47,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
 //      });
 //    }
 //  }
+
 
   LikeManager(List tmp) {
     if (tmp == null) {
@@ -97,26 +98,6 @@ class _ProfileDetailState extends State<ProfileDetail> {
     return LikeState;
   }
 
-  Posttoday() {
-    var form = _formKey.currentState;
-    if (form.validate()) {
-      form.save();
-      try {
-        Firestore.instance
-            .collection('users')
-            .document(usercurrentId)
-            .updateData({
-          'today': _today,
-        });
-        Navigator.of(context).pop();
-      } catch (e) {
-        print(e.message);
-      }
-    }
-  }
-
-
-
   AddChat(List profileuser, List user, String profileId, String userId) {
     if (user != null) {
       //저장된게있을때
@@ -126,11 +107,11 @@ class _ProfileDetailState extends State<ProfileDetail> {
           //길이큰쪽으로 검사하기위함
           for (int i = 0; i < profileuser.length; i++) {
             //리스트중복검사
-            if(profileuser[i] == userId){
+            if (profileuser[i] == userId) {
               //원래채팅하던유저
               //채팅방이동페이지
               return print('a');
-            }else if(i == profileuser.length){
+            } else if (i == profileuser.length) {
               Firestore.instance
                   .collection('users')
                   .document(profileId)
@@ -155,7 +136,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
               //원래채팅하던유저
               //채팅방이동페이지
               return print('f');
-            } else if(i ==user.length){
+            } else if (i == user.length) {
               //신규채팅등록
               Firestore.instance
                   .collection('users')
@@ -175,32 +156,20 @@ class _ProfileDetailState extends State<ProfileDetail> {
           }
         }
       } else {
-        Firestore.instance
-            .collection('users')
-            .document(profileId)
-            .updateData({
+        Firestore.instance.collection('users').document(profileId).updateData({
           'chattingWith': FieldValue.arrayUnion([userId]),
         });
-        Firestore.instance
-            .collection('users')
-            .document(userId)
-            .updateData({
+        Firestore.instance.collection('users').document(userId).updateData({
           'chattingWith': FieldValue.arrayUnion([profileId]),
         });
         return print('g');
       }
     } else if (user == null) {
       //아무것도없을때 최초저장
-      Firestore.instance
-          .collection('users')
-          .document(profileId)
-          .updateData({
+      Firestore.instance.collection('users').document(profileId).updateData({
         'chattingWith': FieldValue.arrayUnion([userId]),
       });
-      Firestore.instance
-          .collection('users')
-          .document(userId)
-          .updateData({
+      Firestore.instance.collection('users').document(userId).updateData({
         'chattingWith': FieldValue.arrayUnion([profileId]),
       });
       return print('d');
@@ -350,74 +319,84 @@ class _ProfileDetailState extends State<ProfileDetail> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Row(
-                                children: <Widget>[
-                                  SizedBox(
-                                    width: 95,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      AddChat(
-                                          ds['chattingWith'],
-                                          ds2['chattingWith'],
-                                          ds['id'],
-                                          ds2['id']);
-                                    },
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width /
-                                          4.5,
-                                      height:
-                                          MediaQuery.of(context).size.height /
-                                              25,
-                                      decoration: BoxDecoration(
-                                          border: Border.all(width: 0.1),
-                                          color:
-                                              Color.fromRGBO(247, 64, 106, 1),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20))),
-                                      child: Center(
-                                        child: Text(
-                                          'CHAT',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20),
+                              (usercurrentId != currentId)
+                                  ? Row(
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: 95,
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      LikeManager(ds['likeperson']);
-                                    },
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width /
-                                          4.5,
-                                      height:
-                                          MediaQuery.of(context).size.height /
-                                              25,
-                                      decoration: BoxDecoration(
-                                          border: Border.all(width: 0.1),
-                                          color: (LikeCheck(ds['likeperson']) ==
-                                                  false)
-                                              ? Colors.black
-                                              : Color.fromRGBO(247, 64, 106, 1),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20))),
-                                      child: Center(
-                                        child: Text(
-                                          'LIKE',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20),
+                                        InkWell(
+                                          onTap: () {
+                                            AddChat(
+                                                ds['chattingWith'],
+                                                ds2['chattingWith'],
+                                                ds['id'],
+                                                ds2['id']);
+                                          },
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                4.5,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                25,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(width: 0.1),
+                                                color: Color.fromRGBO(
+                                                    247, 64, 106, 1),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(20))),
+                                            child: Center(
+                                              child: Text(
+                                                'CHAT',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            LikeManager(ds['likeperson']);
+                                          },
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                4.5,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                25,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(width: 0.1),
+                                                color: (LikeCheck(
+                                                            ds['likeperson']) ==
+                                                        false)
+                                                    ? Colors.black
+                                                    : Color.fromRGBO(
+                                                        247, 64, 106, 1),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(20))),
+                                            child: Center(
+                                              child: Text(
+                                                'LIKE',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Container(),
                               SizedBox(
                                 height: 10,
                               ),
@@ -438,9 +417,13 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        (ds['today'] == null)?'오늘의 한마디': ds['today'],
+                                        (ds['today'] == null)
+                                            ? '오늘의 한마디'
+                                            : ds['today'],
                                         style: TextStyle(
-                                            color: (ds['today'] == null)?Colors.black54: Colors.black,
+                                            color: (ds['today'] == null)
+                                                ? Colors.black54
+                                                : Colors.black,
                                             fontSize: 15,
                                             fontFamily: 'NIX'),
                                       ),
@@ -455,23 +438,19 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                                     (BuildContext context) {
                                                   return AlertDialog(
                                                     content: Container(
-                                                      child: Form(
-                                                        key: _formKey,
-                                                        child: TextFormField(
-                                                          maxLength: 12,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            hintText:
-                                                                '오늘의한마디를 입력해주세요.',
-                                                          ),
-                                                          validator: (input) {
-                                                            if (input.isEmpty) {
-                                                              return '내용을입력해주세요';
-                                                            }
-                                                          },
-                                                          onSaved: (value) =>
-                                                              _today = value,
+                                                      child: TextFormField(
+                                                        maxLength: 12,
+                                                        controller: _today,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              '오늘의한마디를 입력해주세요.',
                                                         ),
+                                                        validator: (input) {
+                                                          if (input.isEmpty) {
+                                                            return '내용을입력해주세요';
+                                                          }
+                                                        },
                                                       ),
                                                     ),
                                                     actions: <Widget>[
@@ -488,7 +467,13 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                                       ),
                                                       FlatButton(
                                                         child: Text('확인'),
-                                                        onPressed: Posttoday,
+                                                        onPressed: (){
+                                                          Firestore.instance.collection('users').document(usercurrentId).updateData({
+                                                            'today': _today.text,
+                                                          });
+                                                          Navigator.of(context)
+                                                              .pop(_today);
+                                                        },
                                                         textColor: Colors.black,
 //                                                        padding:
 //                                                            EdgeInsets.only(
@@ -512,5 +497,20 @@ class _ProfileDetailState extends State<ProfileDetail> {
                 }),
           );
         });
+  }
+}
+
+class CustomNavRoute<T> extends MaterialPageRoute<T> {
+  CustomNavRoute({WidgetBuilder builder, RouteSettings settings})
+      : super(builder: builder, settings: settings);
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    if (settings.isInitialRoute) return child;
+    return FadeTransition(
+      opacity: animation,
+      child: child,
+    );
   }
 }

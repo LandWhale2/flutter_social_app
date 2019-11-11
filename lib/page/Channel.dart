@@ -170,6 +170,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                     .orderBy('favorite', descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
+                  if(!snapshot.hasData){
+                    return Container();
+                  }
                   return ListView.builder(
                     primary: false,
                     scrollDirection: Axis.horizontal,

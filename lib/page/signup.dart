@@ -443,30 +443,66 @@ class _SignUpPageState extends State<SignUpPage> {
                           style: TextStyle(color: Colors.red),
                         ),
                       ),
-                      InkWell(
-                        onTap: _next,
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 50),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 3,
-                            height: MediaQuery.of(context).size.height / 20,
-                            alignment: FractionalOffset.center,
-                            decoration: BoxDecoration(
-                              color: const Color.fromRGBO(250, 80, 100, 1),
-                              borderRadius:
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          InkWell(
+                            onTap: (){
+                              Navigator.pop(context);
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 50),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width / 3,
+                                height: MediaQuery.of(context).size.height / 20,
+                                alignment: FractionalOffset.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.black54,
+                                  borderRadius:
                                   BorderRadius.all(const Radius.circular(30)),
-                            ),
-                            child: Text(
-                              "가입완료",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 0.3,
+                                ),
+                                child: Text(
+                                  "뒤로가기",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          InkWell(
+                            onTap: _next,
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 50),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width / 3,
+                                height: MediaQuery.of(context).size.height / 20,
+                                alignment: FractionalOffset.center,
+                                decoration: BoxDecoration(
+                                  color: const Color.fromRGBO(250, 80, 100, 1),
+                                  borderRadius:
+                                      BorderRadius.all(const Radius.circular(30)),
+                                ),
+                                child: Text(
+                                  "가입완료",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

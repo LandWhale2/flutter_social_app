@@ -41,6 +41,7 @@ class LoginScreenState extends State<LoginScreen>
   bool isLoading = false;
   bool isLoggedIn = false;
 
+
   FirebaseUser currentUser;
 
   int check2 = 0;
@@ -53,7 +54,7 @@ class LoginScreenState extends State<LoginScreen>
     int check2 = 0;
   }
 
-  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>(debugLabel: 'LoginScreenState');
   String _email, _password;
   var tmpemail, tmppassword;
   SharedPreferences prefs;
@@ -402,7 +403,6 @@ class LoginScreenState extends State<LoginScreen>
   _SignDB() async {
     final formState = _formkey.currentState;
     if (formState.validate()) {
-      print('asd');
 
       formState.save();
       try {
@@ -412,11 +412,9 @@ class LoginScreenState extends State<LoginScreen>
             .where('password', isEqualTo: _password)
             .snapshots()
             .listen((data) async {
-          print('ddd');
           try {
             tmpemail = await data.documents[0]['email'];
             tmppassword = await data.documents[0]['password'];
-            print('123');
             if (tmpemail == Null) {
               Flushbar(
                 margin: EdgeInsets.all(8),
@@ -432,7 +430,6 @@ class LoginScreenState extends State<LoginScreen>
             } else {
               print('Id 일치');
             }
-            print('456');
 
             if (_email == tmpemail) {
               if (_password == tmppassword) {
@@ -491,7 +488,7 @@ class LoginScreenState extends State<LoginScreen>
             print(e.message);
           }
 
-          return print('fail');
+          return print(' ');
         });
       } catch (e) {
         print(e.message);

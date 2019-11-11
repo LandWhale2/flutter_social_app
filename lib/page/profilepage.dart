@@ -206,6 +206,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         width: 0.1,
                         style: BorderStyle.solid),
                   ),
+                  child: Center(
+                    child: Text(
+                      '마이페이지',
+                      style: TextStyle(
+                        fontFamily: 'NIX',
+                      ),
+                    ),
+                  ),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width/3 ,
@@ -216,6 +224,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         color: Colors.black,
                         width: 0.1,
                         style: BorderStyle.solid),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '공지사항',
+                      style: TextStyle(
+                        fontFamily: 'NIX',
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -317,26 +333,3 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-//Positioned(
-//top: 200,
-//left: 30,
-//child: Container(
-//width: MediaQuery.of(context).size.width / 2.5,
-//height: MediaQuery.of(context).size.height / 6,
-//decoration: BoxDecoration(
-//color: Colors.white,
-//border: Border.all(
-//color: Colors.black,
-//width: 0.3,
-//style: BorderStyle.solid),
-//),
-//child: Center(
-//child: Text(
-//'공지사항',
-//style: TextStyle(
-//fontFamily: 'NIX'
-//),
-//),
-//),
-//),
-//),

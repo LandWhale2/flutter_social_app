@@ -90,7 +90,7 @@ class _WritingState extends State<Writing> {
             'context': _CONTEXT,
             'image': data.documents[0]['image'][0],
             'time': DateTime.now().millisecondsSinceEpoch,
-            'space': title,
+            'title': title,
             'nickname': data.documents[0]['nickname'],
             'contextImage' : _ImageUrl,
             'id' : data.documents[0]['id'],
@@ -100,6 +100,7 @@ class _WritingState extends State<Writing> {
             'likeperson': null,
             'latitude' : data.documents[0]['latitude'],
             'longitude' : data.documents[0]['longitude'],
+            'space': SelectSpace,
           });
         });
 
