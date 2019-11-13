@@ -5,15 +5,18 @@ import 'dart:ui' as prefix0;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socialapp/model/data.dart';
 import 'package:socialapp/page/Rewriteprofile2.dart';
 import 'package:socialapp/page/contextpage.dart';
 import 'package:socialapp/page/writeprofile.dart';
 import 'package:socialapp/widgets/database_create.dart';
 import 'dart:convert';
+import '../main.dart';
 import 'Rewriteprofile.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -60,6 +63,19 @@ class _ProfilePageState extends State<ProfilePage> {
 //      });
 //    }
 //  }
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+
+  Future<Null> handleSignOut() async {
+
+    await FirebaseAuth.instance.signOut();
+    await googleSignIn.disconnect();
+    await googleSignIn.signOut();
+
+
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => MyApp()),
+            (Route<dynamic> route) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,44 +133,33 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(//설정네모칸 전체컨테이너
       width: MediaQuery.of(context).size.width /1.1,
       height: MediaQuery.of(context).size.height / 2,
-//                          decoration: BoxDecoration(
-//                            color: Colors.white,
-//                            border: Border.all(
-//                                color: Colors.black,
-//                                width: 0.3,
-//                                style: BorderStyle.solid),
-//                          ),
       child: Column(//전체 column
         children: <Widget>[
           Container(//Row 컨테이너
             width: MediaQuery.of(context).size.width/1.1 ,
             height: MediaQuery.of(context).size.height / 4,
-//                                decoration: BoxDecoration(
-//                                  color: Colors.white,
-//                                  border: Border.all(
-//                                      color: Colors.black,
-//                                      width: 0.3,
-//                                      style: BorderStyle.solid),
-//                                ),
             child: Row(//위에 두개
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width/3 ,
-                  height: MediaQuery.of(context).size.height / 6,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                        color: Colors.black,
-                        width: 0.1,
-                        style: BorderStyle.solid),
-                  ),
-                  child: Center(
-                    child: Text(
-                        '설정',
-                      style: TextStyle(
-                        fontFamily: 'NIX',
+                InkWell(
+                  onTap: handleSignOut,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width/3 ,
+                    height: MediaQuery.of(context).size.height / 6,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                          color: Colors.black,
+                          width: 0.1,
+                          style: BorderStyle.solid),
+                    ),
+                    child: Center(
+                      child: Text(
+                          '설정',
+                        style: TextStyle(
+                          fontFamily: 'NIX',
+                        ),
                       ),
                     ),
                   ),
@@ -184,13 +189,6 @@ class _ProfilePageState extends State<ProfilePage> {
           Container(//아래 row 컨테이너
             width: MediaQuery.of(context).size.width/1.1 ,
             height: MediaQuery.of(context).size.height /4.1,
-//                                decoration: BoxDecoration(
-//                                  color: Colors.white,
-//                                  border: Border.all(
-//                                      color: Colors.black,
-//                                      width: 0.3,
-//                                      style: BorderStyle.solid),
-//                                ),
             child: Row(//아래 두개
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -305,9 +303,6 @@ class _ProfilePageState extends State<ProfilePage> {
           Container(
             width: MediaQuery.of(context).size.width / 2.2,
             height: MediaQuery.of(context).size.height / 6,
-//                            decoration: BoxDecoration(
-//                              border: Border.all(width: 1)
-//                            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,

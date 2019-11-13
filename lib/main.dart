@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:socialapp/page/home.dart';
 import 'package:socialapp/page/loginscreen.dart';
+import 'package:socialapp/page/signup.dart' as prefix0;
 import 'package:socialapp/page/writeprofile.dart';
 import 'package:socialapp/page/Channel.dart';
 import 'package:socialapp/page/writeprofile2.dart';
@@ -18,10 +20,12 @@ class MyApp extends StatelessWidget{
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<BlocProvider>.value(value: BlocProvider()),
-        ChangeNotifierProvider<ProfileLikeState>.value(value: ProfileLikeState()),
-        ChangeNotifierProvider<ContextLikeState>.value(value:ContextLikeState()),
+        ChangeNotifierProvider<IdProvider>.value(value: IdProvider()),
       ],
       child: MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/home' : (BuildContext context) => Mainhome(currentId: prefix0.currentId,),
+      },
         debugShowCheckedModeBanner: false,
         title: _title,
         home: LoginScreen(),

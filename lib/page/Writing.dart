@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -9,14 +10,16 @@ import 'package:image_picker/image_picker.dart';
 class Writing extends StatefulWidget {
   final String currentId;
   String title, SelectSpace;
+  String contextId;
 
-  Writing({Key key, @required this.currentId, @required this.title, @required this.SelectSpace}) : super(key: key);
+  Writing({Key key, @required this.currentId, @required this.title, @required this.SelectSpace, @required this.contextId}) : super(key: key);
 
   @override
-  _WritingState createState() => _WritingState(currentId: currentId, title: title, SelectSpace: SelectSpace);
+  _WritingState createState() => _WritingState(currentId: currentId, title: title, SelectSpace: SelectSpace,contextId: contextId);
 }
 
 class _WritingState extends State<Writing> {
+  String contextId;
   String title, SelectSpace;
   final String currentId;
   String _CONTEXT;
@@ -24,8 +27,9 @@ class _WritingState extends State<Writing> {
   String _ImageUrl;
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
+  TextEditingController _controller = TextEditingController();
 
-  _WritingState({Key key, @required this.currentId,@required this.title, @required this.SelectSpace});
+  _WritingState({Key key, @required this.currentId,@required this.title, @required this.SelectSpace, @required this.contextId});
 
   Future GETImage() async {
     ImageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -45,7 +49,6 @@ class _WritingState extends State<Writing> {
     StorageUploadTask uploadTask = reference.putFile(ImageFile);
     StorageTaskSnapshot storageTaskSnapshot;
     uploadTask.onComplete.then((value) async {
-      print(value);
       if (value.error == null) {
         storageTaskSnapshot = value;
         storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
@@ -64,7 +67,6 @@ class _WritingState extends State<Writing> {
             isLoading = false;
           });
           Fluttertoast.showToast(msg: '이미지파일이 아닙니다.');
-          print('123');
         });
       } else
         Fluttertoast.showToast(msg: '이미지파일이 아닙니다.');
@@ -110,111 +112,177 @@ class _WritingState extends State<Writing> {
       }
     }
   }
+  RePostcontext(){
+    var form = _formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      try {
+        Firestore.instance.collection(SelectSpace).document(contextId).updateData({
+          'context' : _CONTEXT,
+          'contextImage': _ImageUrl,
+        });
+
+        Navigator.pop(context);
+      } catch (e) {
+        print(e.message);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 30),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 13,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border(
-                      bottom: BorderSide(width: 1, color: Colors.black26),
-                    ),
-                  ),
-                  child: Row(
+        child: StreamBuilder(
+          stream: Firestore.instance.collection(SelectSpace).document(contextId).snapshots(),
+          builder: (context, snapshot) {
+            var ds = snapshot.data;
+            if(!snapshot.hasData){
+              return Container();
+            }
+            return Container(
+              child: Stack(
+                children: <Widget>[
+                  Column(
                     children: <Widget>[
-                      IconButton(
-                          icon: Icon(Icons.clear),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          }),
                       Padding(
-                        padding: const EdgeInsets.only(left: 250),
-                        child: InkWell(
-                          onTap: () {
-                            Postcontext();
-                          },
-                          child: Container(
-                            width: 70,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                color: Color.fromRGBO(123, 198, 250, 1),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20))),
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 3),
-                              child: Text(
-                                '등록',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
+                        padding: const EdgeInsets.only(top: 30),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height / 13,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border(
+                              bottom: BorderSide(width: 1, color: Colors.black26),
                             ),
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              IconButton(
+                                  icon: Icon(Icons.clear),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  }),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 250),
+                                child: InkWell(
+                                  onTap: () {
+                                    if(contextId != null){
+                                      RePostcontext();
+                                    }else{
+                                      Postcontext();
+                                    }
+
+                                  },
+                                  child: Container(
+                                    width: 70,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                        color: Color.fromRGBO(123, 198, 250, 1),
+                                        borderRadius:
+                                            BorderRadius.all(Radius.circular(20))),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 3),
+                                      child: Text(
+                                        '등록',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height / 18,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border(
+                            bottom: BorderSide(width: 1, color: Colors.black26),
+                          ),
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.image),
+                          onPressed: GETImage,
+                        ),
+                      ),
+                      Form(
+                        key: _formKey,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            maxLength: 500,
+                            controller: (contextId == null)?_controller: asd(_controller, ds['context']),
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              hintStyle: TextStyle(
+                                fontSize: 15,
+                              ),
+                              hintText: '내용을 입력해주세요.',
+                              border: InputBorder.none,
+                            ),
+                            validator: (input) {
+                              if (input.isEmpty) {
+                                return '내용을입력해주세요';
+                              }
+                            },
+                            onSaved: (value) => _CONTEXT = value,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: (_ImageUrl != null)?CachedNetworkImage(
+                            placeholder: (context, url) => Container(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.black87),
+                              ),
+//                          decoration: BoxDecoration(
+//                            color: Colors.black12,
+//                            borderRadius: BorderRadius.all(
+//                              Radius.circular(8.0),
+//                            ),
+//                          ),
+                            ),
+                            imageUrl: _ImageUrl,
+                          ): null,)
                     ],
                   ),
-                ),
+                  buildLoading(),
+                ],
               ),
-              Container(
-                alignment: Alignment.centerLeft,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 18,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                    bottom: BorderSide(width: 1, color: Colors.black26),
-                  ),
-                ),
-                child: IconButton(
-                  icon: Icon(Icons.image),
-                  onPressed: GETImage,
-                ),
-              ),
-              Form(
-                key: _formKey,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    maxLength: 500,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                      hintStyle: TextStyle(
-                        fontSize: 15,
-                      ),
-                      hintText: '내용을 입력해주세요.',
-                      border: InputBorder.none,
-                    ),
-                    validator: (input) {
-                      if (input.isEmpty) {
-                        return '내용을입력해주세요';
-                      }
-                    },
-                    onSaved: (value) => _CONTEXT = value,
-                  ),
-                ),
-              ),
-              Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: (_ImageUrl != null)
-                      ? Image.network(
-                          _ImageUrl,
-                          fit: BoxFit.fill,
-                        )
-                      : null)
-            ],
-          ),
+            );
+          }
         ),
       ),
+    );
+  }
+
+  TextEditingController asd(TextEditingController controller, String text){
+    controller.text= text;
+    return controller;
+  }
+
+  Widget buildLoading(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        isLoading
+            ?Container(
+          child: Center(
+            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.grey)),
+          ),
+          color: Colors.white.withOpacity(0.8),
+        )
+            :Container(),
+      ],
     );
   }
 }

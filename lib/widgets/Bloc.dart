@@ -10,56 +10,27 @@ class BlocProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  select1(){
-    _MenuController = 1;
-    notifyListeners();
-  }
-
-  select2(){
-    _MenuController = 2;
-    notifyListeners();
-  }
-
-}
-
-class ProfileLikeState extends ChangeNotifier{
-  bool _LikeState = false;
-  bool get LikeState => _LikeState;
-
-  set LikeState(bool val){
-    _LikeState = val;
-    notifyListeners();
-  }
-
-  on(){
-    _LikeState = true;
-    notifyListeners();
-  }
-
-  off(){
-    _LikeState = false;
+  select(int num){
+    _MenuController = num;
     notifyListeners();
   }
 }
 
-class ContextLikeState extends ChangeNotifier{
-  bool _LikeState = false;
-  bool get LikeState2 => _LikeState;
+class IdProvider extends ChangeNotifier{
+  String _currentId;
+  String get CurrentId => _currentId;
 
-  set LikeState2(bool val){
-    _LikeState = val;
-    notifyListeners();
-  }
-  on2(){
-    _LikeState = true;
+  set CurrentId(String val){
+    _currentId = val;
     notifyListeners();
   }
 
-  off2(){
-    _LikeState = false;
+  saveId(String Id){
+    _currentId = Id;
     notifyListeners();
   }
 }
+
 
 
 

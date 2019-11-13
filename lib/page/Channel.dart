@@ -64,10 +64,10 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
             children: <Widget>[
               Text(
                 //타이틀이름
-                "화제의 인물",
+                "스포트라이트",
                 style: TextStyle(
-                  fontSize: 23,
-                  fontWeight: FontWeight.w500,
+                  fontSize: MediaQuery.of(context).textScaleFactor*30,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               FlatButton(
@@ -143,10 +143,10 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                "내 주변",
+                "인기",
                 style: TextStyle(
-                  fontSize: 23,
-                  fontWeight: FontWeight.w500,
+                  fontSize: MediaQuery.of(context).textScaleFactor*28,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               FlatButton(
@@ -180,23 +180,34 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                     itemCount: snapshot.data.documents.length,
                     itemBuilder: (BuildContext context, int index) {
                       DocumentSnapshot ds = snapshot.data.documents[index];
-                      return Padding(
-                        padding: EdgeInsets.only(right: 10),
-                        child: Stack(
-                          children: <Widget>[
-                            Container(
-                              height: MediaQuery.of(context).size.height / 6,
-                              width: MediaQuery.of(context).size.height / 6,
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                child: CachedNetworkImage(
-                                  imageUrl: ds['image'][0],
-                                  fit: BoxFit.cover,
+                      return InkWell(
+                        onTap: (){
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfileDetail(
+                                    usercurrentId: ds['id'],
+                                    currentId: currentId,
+                                  )));
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 10),
+                          child: Stack(
+                            children: <Widget>[
+                              Container(
+                                height: MediaQuery.of(context).size.height / 6,
+                                width: MediaQuery.of(context).size.height / 6,
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20)),
+                                  child: CachedNetworkImage(
+                                    imageUrl: ds['image'][0],
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     },

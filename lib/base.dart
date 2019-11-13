@@ -7,9 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 import 'package:socialapp/main.dart';
 import 'package:socialapp/model/data.dart';
+import 'package:socialapp/page/ProfileDetail.dart';
 import 'package:socialapp/page/chatpage.dart';
+import 'package:socialapp/page/contextpage.dart';
 import 'package:socialapp/page/home.dart';
 import 'package:socialapp/page/NewsFeed.dart';
 import 'package:socialapp/page/Channel.dart';
@@ -18,6 +21,7 @@ import 'package:socialapp/page/chat.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:socialapp/widgets/Bloc.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'scaffoldKey');
 final SnackBar snackBar = const SnackBar(content: Text('Showing Snackbar'));
@@ -278,9 +282,7 @@ class _Base extends State<Base> {
 //        NewsFeed(),
         Mainhome(currentId: currentUserId),
         Chatpage(currentId: currentUserId,),
-        ProfilePage(
-          currentId: currentUserId,
-        ),
+        ProfileDetail(currentId: currentUserId, usercurrentId: currentUserId,),
       ],
     );
   }
@@ -298,59 +300,39 @@ class _Base extends State<Base> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-//      appBar: AppBar(
-////          Color.fromRGBO(255, 125, 128, 1)
-//        backgroundColor: Color.fromRGBO(255, 125, 128, 1),
-//        centerTitle: true,
-//        actions: <Widget>[
-//          IconButton(
-//            icon: const Icon(Icons.shopping_cart),
-//            tooltip: '',
-//            onPressed: () {
-//              openPage(context);
-//            },
-//          ),
-//          IconButton(
-//            icon: const Icon(Icons.exit_to_app),
-//            tooltip: '',
-//            onPressed: () {
-//              handleSignOut();
-//            },
-//          ),
-//        ],
-//      ),
-      body: buildPageView(),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _bottomSelectedIndex,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.apps),
-            title: Text('Channel'),
-          ),
-//          BottomNavigationBarItem(
-//            icon: Icon(Icons.assignment_ind),
-//            title:Text('Feed'),
-//          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.turned_in),
-            title: Text('Card'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.send),
-            title: Text('Chat'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            title: Text('Profile'),
-          ),
-        ],
-        selectedItemColor: Colors.amber[800],
-        onTap: (index) {
-          bottomTapped(index);
-        },
+    return WillPopScope(
+      onWillPop: ()async{
+        return false;
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: buildPageView(),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _bottomSelectedIndex,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.apps),
+              title: Text('Channel'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat),
+              title: Text('Home'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.send),
+              title: Text('Chat'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+              title: Text('Profile'),
+            ),
+          ],
+          selectedItemColor: maincolor,
+          onTap: (index) {
+            bottomTapped(index);
+          },
+        ),
       ),
     );
   }

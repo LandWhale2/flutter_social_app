@@ -3,10 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong/latlong.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:socialapp/page/Writing.dart';
 import 'package:socialapp/page/signup.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:socialapp/page/signup.dart' as prefix0;
 import 'package:socialapp/widgets/Bloc.dart';
 import 'ProfileDetail.dart';
 import 'contextpage.dart';
@@ -73,16 +75,30 @@ class _BoardState extends State<Board> {
       LatLng(l2, g2),
     );
 
-    text = '$meter' + 'm';
+    text = '${meter.toInt()}' + 'm';
 
     if (meter >= 1000) {
       double km =
           distance.as(LengthUnit.Kilometer, LatLng(l1, g1), LatLng(l2, g2));
 
-      text = '$km' + 'km';
+      text = '${km.toInt()}' + 'km';
       return text;
     }
     return text;
+  }
+
+  Location(double l1, double g1, double l2, double g2) {
+    Distance distance = Distance();
+    var value;
+
+    double meter = distance(
+      LatLng(l1, g1),
+      LatLng(l2, g2),
+    );
+
+    value = meter.toInt();
+
+    return value;
   }
 
   @override
@@ -117,15 +133,9 @@ class _BoardState extends State<Board> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(
-                      width: 20,
-                    ),
-                    SizedBox(
-                      width: 30,
-                    ),
                     InkWell(
                       onTap: () {
-                        blocProvider.select1();
+                        blocProvider.select(1);
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width / 3.5,
@@ -170,7 +180,7 @@ class _BoardState extends State<Board> {
                     ),
                     InkWell(
                       onTap: () {
-                        blocProvider.select2();
+                        blocProvider.select(2);
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width / 3.5,
@@ -210,6 +220,51 @@ class _BoardState extends State<Board> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        blocProvider.select(3);
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 3.5,
+                        height: MediaQuery.of(context).size.height / 13,
+                        decoration: BoxDecoration(
+                            border: (blocProvider.MenuController == 3)
+                                ? Border(
+                                    bottom: BorderSide(
+                                      color: Colors.redAccent,
+                                      width: 1,
+                                    ),
+                                  )
+                                : null),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  '내 주변',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'NIX',
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -233,7 +288,9 @@ class _BoardState extends State<Board> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: maincolor,
-        child: Icon(Icons.border_color,),
+        child: Icon(
+          Icons.border_color,
+        ),
         onPressed: () {
           Navigator.push(
               context,
@@ -250,168 +307,562 @@ class _BoardState extends State<Board> {
 
   Widget PostList(BuildContext context) {
     final BlocProvider blocProvider = Provider.of<BlocProvider>(context);
-    return StreamBuilder<QuerySnapshot>(
-        stream: (blocProvider.MenuController == 1)
-            ? Firestore.instance
-                .collection(SelectSpace)
-                .orderBy('time', descending: true)
-                .snapshots()
-            : Firestore.instance
-                .collection(SelectSpace)
-                .orderBy('like', descending: true)
-                .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data.documents.length,
-              padding: EdgeInsets.only(top: 10, left: 8),
-              itemBuilder: (BuildContext context, int index) {
-                if (!snapshot.hasData) {
-                  return Container();
-                }
-                DocumentSnapshot ds = snapshot.data.documents[index];
-                var latitude2 = ds['latitude'];
-                var longitude2 = ds['longitude'];
-
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 5,
+    return Container(
+      child: StreamBuilder<QuerySnapshot>(
+          stream: (blocProvider.MenuController == 1)
+              ? Firestore.instance
+                  .collection(SelectSpace)
+                  .orderBy('time', descending: true)
+                  .snapshots()
+              : (blocProvider.MenuController == 2)
+                  ? Firestore.instance
+                      .collection(SelectSpace)
+                      .orderBy('like', descending: true)
+                      .snapshots()
+                  : Firestore.instance
+                      .collection(SelectSpace)
+                      .orderBy('time', descending: true)
+                      .snapshots(),
+          builder: (context, snapshot2) {
+            if (snapshot2.hasData) {
+              return LiquidPullToRefresh(
+                onRefresh: ()async{
+                  await refreshList();
+                },
+                color: maincolor,
+                springAnimationDurationInMilliseconds: 100,
+                child: ListView.builder(
+                  itemCount: snapshot2.data.documents.length,
+                  padding: EdgeInsets.only(top: 10, left: 8),
+                  itemBuilder: (BuildContext context, int index) {
+                    DocumentSnapshot ds = snapshot2.data.documents[index];
+                    var latitude2 = ds['latitude'];
+                    var longitude2 = ds['longitude'];
+                    if (!snapshot2.hasData) {
+                      return Container();
+                    }
+                    if (blocProvider.MenuController == 3) {
+                      //거리순정렬을 위한 if
+                      if (Location(latitude1, longitude1, latitude2, longitude2) <
+                          30000) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height / 5,
 //                  decoration: BoxDecoration(
 //                      color: Colors.white, //Color.fromRGBO(123, 198, 250, 1)
 //                      border: Border.all(width: 0.5),
 //                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                    child: Row(
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ProfileDetail(
-                                              usercurrentId: ds['id'],
-                                              currentId: currentId,
-                                            )));
-                              },
-                              child: Container(
-                                width: MediaQuery.of(context).size.width / 5,
-                                height: MediaQuery.of(context).size.height / 10,
-                                child: ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
-                                  child: CachedNetworkImage(
-                                    imageUrl: ds['image'],
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              //이름
-                              padding: EdgeInsets.only(top: 5),
+                            child: Row(
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    InkWell(
+                                      onTap: () async {
+                                        var navigationResult =
+                                            await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProfileDetail(
+                                                          usercurrentId: ds['id'],
+                                                          currentId: currentId,
+                                                        )));
 
-                              child: Text(
-                                ds['nickname'],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontFamily: 'SIL'),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            if (snapshot.hasData) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ContextPage(
-                                            currentId: currentUserId,
-                                            contextId: ds['contextID'],
-                                            SelectSpace: SelectSpace,
-                                            title: title,
-                                          )));
-                            }
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 1.38,
-                            height: MediaQuery.of(context).size.height / 5,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                //Color.fromRGBO(123, 198, 250, 1)
+                                        if (navigationResult == true) {
+                                          print('asd');
+                                        }
+                                      },
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width / 5,
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                10,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5)),
+                                          child: CachedNetworkImage(
+                                            imageUrl: ds['image'],
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      //이름
+                                      padding: EdgeInsets.only(top: 5),
+
+                                      child: Text(
+                                        ds['nickname'],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w800,
+                                            fontFamily: 'SIL'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    if (snapshot2.hasData) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => ContextPage(
+                                                    currentId: currentUserId,
+                                                    contextId: ds['contextID'],
+                                                    SelectSpace: SelectSpace,
+                                                    title: title,
+                                                  )));
+                                    }
+                                  },
+                                  child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 1.38,
+                                    height:
+                                        MediaQuery.of(context).size.height / 5,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        //Color.fromRGBO(123, 198, 250, 1)
 //                            border: Border.all(width: 0.5),
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    color: Colors.black38,
-                                    offset: Offset(3.0, 3.0),
-                                    blurRadius: 1,
+                                        boxShadow: <BoxShadow>[
+                                          BoxShadow(
+                                            color: Colors.black38,
+                                            offset: Offset(3.0, 3.0),
+                                            blurRadius: 1,
+                                          ),
+                                        ],
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10))),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Container(
+                                          //맨위 row
+                                          width:
+                                              MediaQuery.of(context).size.width /
+                                                  1.38,
+                                          height:
+                                              MediaQuery.of(context).size.height /
+                                                  23,
+                                          child: Row(
+                                            //맨위 row
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Container(
+                                                //댓글이랑좋아요
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    2.2,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    23,
+                                                child: Row(
+                                                  //댓글이랑좋아요
+                                                  children: <Widget>[
+                                                    Container(
+                                                      //좋아요
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width /
+                                                              4.5,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              23,
+                                                      child: Row(
+                                                        //좋아요
+                                                        children: <Widget>[
+                                                          Icon(
+                                                            Icons.favorite,
+                                                            color: maincolor,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Text(
+                                                            (ds['like'] != null)
+                                                                ? ds['like']
+                                                                    .toString()
+                                                                : '0',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black54,
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      //댓글
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width /
+                                                              5,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              23,
+                                                      child: Row(
+                                                        //댓글
+                                                        children: <Widget>[
+                                                          Icon(
+                                                            Icons.comment,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Text(
+                                                            (ds['comment'] !=
+                                                                    null)
+                                                                ? ds['comment']
+                                                                    .toString()
+                                                                : '0',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black54,
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                //위치
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    5,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    23,
+                                                child: Center(
+                                                  child: (LocationCalcul(
+                                                              latitude1,
+                                                              longitude1,
+                                                              latitude2,
+                                                              longitude2) !=
+                                                          null)
+                                                      ? Text(
+                                                          LocationCalcul(
+                                                              latitude1,
+                                                              longitude1,
+                                                              latitude2,
+                                                              longitude2),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Color.fromRGBO(
+                                                                      255,
+                                                                      125,
+                                                                      128,
+                                                                      99)),
+                                                        )
+                                                      : Text(
+                                                          '???m',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Color.fromRGBO(
+                                                                      255,
+                                                                      125,
+                                                                      128,
+                                                                      99)),
+                                                        ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          //텍스트
+                                          width:
+                                              MediaQuery.of(context).size.width /
+                                                  1.38,
+                                          height:
+                                              MediaQuery.of(context).size.height /
+                                                  11,
+                                          color: Colors.white,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              ds['context'],
+                                              maxLines: 3,
+                                              style: TextStyle(fontFamily: 'NIX'),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          //맨밑
+                                          width:
+                                              MediaQuery.of(context).size.width /
+                                                  1.38,
+                                          height:
+                                              MediaQuery.of(context).size.height /
+                                                  15.5,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Container(
+                                                //이미지
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    7,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    16,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                ),
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(10)),
+                                                  child: (ds['contextImage'] !=
+                                                          null)
+                                                      ? CachedNetworkImage(
+                                                          imageUrl:
+                                                              ds['contextImage'],
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : null,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 10),
+                                                child: Container(
+                                                  //시간
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      5,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height /
+                                                      40,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            bottom: 0),
+                                                    child: Text(
+                                                      TimeDuration(ds['time'],
+                                                          DateTime.now()),
+                                                      style: TextStyle(
+                                                          color: Colors.black54),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      } else {
+                        //거리 이내가 아닌건 제외
+                        return Container();
+                      }
+                    } else {
+                      //거리순 아닌 모든것
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height / 5,
+                          child: Row(
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => ProfileDetail(
+                                                    usercurrentId: ds['id'],
+                                                    currentId: currentId,
+                                                  )));
+                                    },
+                                    child: Container(
+                                      width:
+                                          MediaQuery.of(context).size.width / 5,
+                                      height:
+                                          MediaQuery.of(context).size.height / 10,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.all(Radius.circular(5)),
+                                        child: CachedNetworkImage(
+                                          imageUrl: ds['image'],
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    //이름
+                                    padding: EdgeInsets.only(top: 5),
+
+                                    child: Text(
+                                      ds['nickname'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w800,
+                                          fontFamily: 'SIL'),
+                                    ),
                                   ),
                                 ],
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            child: Column(
-                              children: <Widget>[
-                                Container(
-                                  //맨위 row
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.38,
-                                  height:
-                                      MediaQuery.of(context).size.height / 23,
-                                  child: Row(
-                                    //맨위 row
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  if (snapshot2.hasData) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ContextPage(
+                                                  currentId: currentUserId,
+                                                  contextId: ds['contextID'],
+                                                  SelectSpace: SelectSpace,
+                                                  title: title,
+                                                )));
+                                  }
+                                },
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width / 1.38,
+                                  height: MediaQuery.of(context).size.height / 5,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      //Color.fromRGBO(123, 198, 250, 1)
+//                            border: Border.all(width: 0.5),
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                          color: Colors.black38,
+                                          offset: Offset(3.0, 3.0),
+                                          blurRadius: 1,
+                                        ),
+                                      ],
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10))),
+                                  child: Column(
                                     children: <Widget>[
                                       Container(
-                                        //댓글이랑좋아요
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                2.2,
+                                        //맨위 row
+                                        width: MediaQuery.of(context).size.width /
+                                            1.38,
                                         height:
                                             MediaQuery.of(context).size.height /
                                                 23,
                                         child: Row(
-                                          //댓글이랑좋아요
+                                          //맨위 row
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
                                             Container(
-                                              //좋아요
+                                              //댓글이랑좋아요
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width /
-                                                  4.5,
+                                                  2.2,
                                               height: MediaQuery.of(context)
                                                       .size
                                                       .height /
                                                   23,
                                               child: Row(
-                                                //좋아요
+                                                //댓글이랑좋아요
                                                 children: <Widget>[
-                                                  Icon(
-                                                    Icons.favorite,
-                                                    color: maincolor,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Text(
-                                                    (ds['like'] != null)
-                                                        ? ds['like'].toString()
-                                                        : '0',
-                                                    style: TextStyle(
-                                                      color: Colors.black54,
+                                                  Container(
+                                                    //좋아요
+                                                    width: MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        4.5,
+                                                    height: MediaQuery.of(context)
+                                                            .size
+                                                            .height /
+                                                        23,
+                                                    child: Row(
+                                                      //좋아요
+                                                      children: <Widget>[
+                                                        Icon(
+                                                          Icons.favorite,
+                                                          color: maincolor,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Text(
+                                                          (ds['like'] != null)
+                                                              ? ds['like']
+                                                                  .toString()
+                                                              : '0',
+                                                          style: TextStyle(
+                                                            color: Colors.black54,
+                                                          ),
+                                                        )
+                                                      ],
                                                     ),
-                                                  )
+                                                  ),
+                                                  Container(
+                                                    //댓글
+                                                    width: MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        5,
+                                                    height: MediaQuery.of(context)
+                                                            .size
+                                                            .height /
+                                                        23,
+                                                    child: Row(
+                                                      //댓글
+                                                      children: <Widget>[
+                                                        Icon(
+                                                          Icons.comment,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Text(
+                                                          (ds['comment'] != null)
+                                                              ? ds['comment']
+                                                                  .toString()
+                                                              : '0',
+                                                          style: TextStyle(
+                                                            color: Colors.black54,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
                                             ),
                                             Container(
-                                              //댓글
+                                              //위치
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width /
@@ -420,152 +871,146 @@ class _BoardState extends State<Board> {
                                                       .size
                                                       .height /
                                                   23,
-                                              child: Row(
-                                                //댓글
-                                                children: <Widget>[
-                                                  Icon(
-                                                    Icons.comment,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Text(
-                                                    (ds['comment'] != null)
-                                                        ? ds['comment']
-                                                            .toString()
-                                                        : '0',
-                                                    style: TextStyle(
-                                                      color: Colors.black54,
-                                                    ),
-                                                  )
-                                                ],
+                                              child: Center(
+                                                child: (LocationCalcul(
+                                                            latitude1,
+                                                            longitude1,
+                                                            latitude2,
+                                                            longitude2) !=
+                                                        null)
+                                                    ? Text(
+                                                        LocationCalcul(
+                                                            latitude1,
+                                                            longitude1,
+                                                            latitude2,
+                                                            longitude2),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color: Color.fromRGBO(
+                                                                255,
+                                                                125,
+                                                                128,
+                                                                99)),
+                                                      )
+                                                    : Text(
+                                                        '???m',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color: Color.fromRGBO(
+                                                                255,
+                                                                125,
+                                                                128,
+                                                                99)),
+                                                      ),
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
                                       Container(
-                                        //위치
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                5,
+                                        //텍스트
+                                        width: MediaQuery.of(context).size.width /
+                                            1.38,
                                         height:
                                             MediaQuery.of(context).size.height /
-                                                23,
-                                        child: Center(
-                                          child: (LocationCalcul(
-                                                      latitude1,
-                                                      longitude1,
-                                                      latitude2,
-                                                      longitude2) !=
-                                                  null)
-                                              ? Text(
-                                                  LocationCalcul(
-                                                      latitude1,
-                                                      longitude1,
-                                                      latitude2,
-                                                      longitude2),
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          255, 125, 128, 99)),
-                                                )
-                                              : Text(
-                                                  '???m',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          255, 125, 128, 99)),
-                                                ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  //텍스트
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.38,
-                                  height:
-                                      MediaQuery.of(context).size.height / 11,
-                                  color: Colors.white,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      ds['context'],
-                                      maxLines: 3,
-                                      style: TextStyle(fontFamily: 'NIX'),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  //맨밑
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.38,
-                                  height:
-                                      MediaQuery.of(context).size.height / 15.5,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Container(
-                                        //이미지
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                7,
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                16,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10)),
-                                          child: (ds['contextImage'] != null)
-                                              ? CachedNetworkImage(
-                                                  imageUrl: ds['contextImage'],
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : null,
-                                        ),
-                                      ),
-                                      Container(
-                                        //시간
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                5,
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                40,
-                                        margin: EdgeInsets.only(top: 20),
+                                                11,
+                                        color: Colors.white,
                                         child: Padding(
-                                          padding: const EdgeInsets.all(3.0),
+                                          padding: const EdgeInsets.all(8.0),
                                           child: Text(
-                                            TimeDuration(
-                                                ds['time'], DateTime.now()),
-                                            style: TextStyle(
-                                                color: Colors.black54),
+                                            ds['context'],
+                                            maxLines: 3,
+                                            style: TextStyle(fontFamily: 'NIX'),
                                           ),
                                         ),
                                       ),
+                                      Container(
+                                        //맨밑
+                                        width: MediaQuery.of(context).size.width /
+                                            1.38,
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                15.5,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Container(
+                                              //이미지
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  7,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  16,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10)),
+                                                child: (ds['contextImage'] !=
+                                                        null)
+                                                    ? CachedNetworkImage(
+                                                        imageUrl:
+                                                            ds['contextImage'],
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : null,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 20),
+                                              child: Container(
+                                                //시간
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    5,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    40,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(0),
+                                                  child: Text(
+                                                    TimeDuration(ds['time'],
+                                                        DateTime.now()),
+                                                    style: TextStyle(
+                                                        color: Colors.black54),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              )
+                            ],
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          } else {
-            return Container();
-          }
-        });
+                        ),
+                      );
+                    }
+                  },
+                ),
+              );
+            } else {
+              return Container();
+            }
+          }),
+    );
+  }
+  Future<Null> refreshList() async{
+    await Future.delayed(Duration(milliseconds: 1));
   }
 }
 
@@ -594,4 +1039,3 @@ String TimeDuration(int timestamp, var now) {
   }
   return time;
 }
-

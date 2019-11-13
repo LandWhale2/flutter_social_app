@@ -119,6 +119,7 @@ class _ChatScreenState extends State<ChatScreen> {
       setState(() {
         isLoading = true;
       });
+      print(isLoading);
       uploadFile();
     }
   }

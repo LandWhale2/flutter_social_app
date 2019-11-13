@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:socialapp/base.dart';
 import 'package:socialapp/page/contextpage.dart';
 
@@ -25,6 +26,13 @@ class _ChatpageState extends State<Chatpage> {
 
   bool isLoading = false;
 
+  deleteMessages(String peerId){
+    var groupChat = readLocal(peerId);
+    Firestore.instance.collection('messages').document(groupChatId).updateData({
+      'delete' : 'ss',
+    });
+  }
+
 
   @override
   void initState() {
@@ -42,6 +50,9 @@ class _ChatpageState extends State<Chatpage> {
       groupChatId = '$peerId-$currentId';
       return groupChatId;
     }
+  }
+  Future<Null> refreshList() async{
+    await Future.delayed(Duration(milliseconds: 1));
   }
 
   @override
@@ -82,19 +93,44 @@ class _ChatpageState extends State<Chatpage> {
                 if (!snapshot.hasData) {
                   return Container();
                 } else {
-                  return ListView.builder(
-                    itemBuilder: (context, index) {
-                      if (snapshot.data['chattingWith'][index] == null) {
-                        return Container();
-                      } else {
-                        return buildItem(
-                            context, snapshot.data['chattingWith'][index]);
-                      }
+                  return LiquidPullToRefresh(
+                    onRefresh: ()async{
+                      await refreshList();
                     },
-                    padding: EdgeInsets.all(10),
-                    itemCount: (snapshot.data['chattingWith'] != null)
-                        ? snapshot.data['chattingWith'].length
-                        : 0,
+                    color: Colors.blue,
+                    springAnimationDurationInMilliseconds: 500,
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        if (snapshot.data['chattingWith'][index] == null) {
+                          return Container();
+                        } else {
+                          return Dismissible(
+                            key: ObjectKey(snapshot.data['chattingWith'][index]),
+                            onDismissed: (direction){
+                              deleteMessages(snapshot.data['chattingWith'][index]);
+                              setState(() {
+                                snapshot.data['chattingWith'].removeAt(index);
+                              });
+                            },
+                            background: Container(
+                              alignment: Alignment.centerRight,
+                              padding: EdgeInsets.only(right: 20),
+                              color: Colors.red,
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
+                            ),
+                            child: buildItem(
+                                context, snapshot.data['chattingWith'][index]),
+                          );
+                        }
+                      },
+                      padding: EdgeInsets.all(10),
+                      itemCount: (snapshot.data['chattingWith'] != null)
+                          ? snapshot.data['chattingWith'].length
+                          : 0,
+                    ),
                   );
                 }
               },
