@@ -8,7 +8,7 @@ import 'dart:convert';
 class SlideItem extends StatefulWidget {
   String image;
   final String nickname;
-  final String age;
+  final int age;
   String intro;
 
   SlideItem({
@@ -55,7 +55,7 @@ class _SlideItemState extends State<SlideItem> {
                 ),
               ),
               Positioned(
-                bottom: 50,
+                bottom: 20,
                 left: 10,
                 child: Text(
                   '${widget.nickname}, ${widget.age}''세',
@@ -66,18 +66,18 @@ class _SlideItemState extends State<SlideItem> {
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 20,
-                left: 10,
-                child: Text(
-                  '${widget.intro}',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 25,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
+//              Positioned(
+//                bottom: 20,
+//                left: 10,
+//                child: Text(
+//                  '${widget.intro}',
+//                  style: TextStyle(
+//                    color: Colors.white,
+//                    fontSize: 25,
+//                    fontWeight: FontWeight.w500,
+//                  ),
+//                ),
+//              ),
 //              Positioned(
 //                top: 6,
 //                right: 6,

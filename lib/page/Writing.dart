@@ -90,7 +90,7 @@ class _WritingState extends State<Writing> {
               .document(documentName)
               .setData({
             'context': _CONTEXT,
-            'image': data.documents[0]['image'][0],
+            'image': data.documents[0]['image'],
             'time': DateTime.now().millisecondsSinceEpoch,
             'title': title,
             'nickname': data.documents[0]['nickname'],

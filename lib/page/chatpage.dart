@@ -172,7 +172,7 @@ class _ChatpageState extends State<Chatpage> {
               child: Row(
                 children: <Widget>[
                   Material(
-                    child: document['image'][0] != null
+                    child: document['image'] != null
                         ? CachedNetworkImage(
                             placeholder: (context, url) => Container(
                               child: CircularProgressIndicator(
@@ -187,7 +187,7 @@ class _ChatpageState extends State<Chatpage> {
                                 borderRadius: BorderRadius.all(Radius.circular(10)),
                               ),
                             ),
-                            imageUrl: document['image'][0],
+                            imageUrl: document['image'],
                             width: 50,
                             height: 50,
                             fit: BoxFit.cover,
@@ -245,7 +245,7 @@ class _ChatpageState extends State<Chatpage> {
                         builder: (context) => Chat(
                               currentId: currentId,
                               peerId: document['id'],
-                              peerAvatar: document['image'][0],
+                              peerAvatar: document['image'],
                             )));
               },
               color: Colors.white30,

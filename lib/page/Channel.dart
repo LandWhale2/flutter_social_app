@@ -96,7 +96,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
             child: StreamBuilder(
                 stream: Firestore.instance
                     .collection('users')
-                    .orderBy('favorite', descending: true)
+                    .orderBy('like', descending: true)
                     .snapshots(),
                 builder: (BuildContext context, snapshot) {
                   if (snapshot.hasData) {
@@ -124,7 +124,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                             child: Padding(
                               padding: EdgeInsets.only(right: 10),
                               child: SlideItem(
-                                image: ds['image'][0],
+                                image: ds['image'],
                                 nickname: ds['nickname'],
                                 intro: ds['intro'],
                                 age: ds['age'],
@@ -201,7 +201,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(20)),
                                   child: CachedNetworkImage(
-                                    imageUrl: ds['image'][0],
+                                    imageUrl: ds['image'],
                                     fit: BoxFit.cover,
                                   ),
                                 ),

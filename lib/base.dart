@@ -23,9 +23,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:socialapp/widgets/Bloc.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'scaffoldKey');
-final SnackBar snackBar = const SnackBar(content: Text('Showing Snackbar'));
-int _bottomSelectedIndex = 0;
+
+
+
 
 class Base extends StatefulWidget {
   final String currentUserId;
@@ -38,6 +38,9 @@ class Base extends StatefulWidget {
 
 class _Base extends State<Base> {
   _Base({Key key, @required this.currentUserId});
+  int _bottomSelectedIndex = 0;
+  final SnackBar snackBar = const SnackBar(content: Text('Showing Snackbar'));
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'scaffoldKey');
 
   Geolocator geolocator = Geolocator();
 
@@ -282,7 +285,7 @@ class _Base extends State<Base> {
 //        NewsFeed(),
         Mainhome(currentId: currentUserId),
         Chatpage(currentId: currentUserId,),
-        ProfileDetail(currentId: currentUserId, usercurrentId: currentUserId,),
+        ProfileDetail(currentId: currentUserId, usercurrentId: currentUserId, check: 1,),
       ],
     );
   }

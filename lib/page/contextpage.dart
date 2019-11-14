@@ -198,7 +198,7 @@ class _ContextPageState extends State<ContextPage> {
               .document(documentName)
               .setData({
             'context': _comment,
-            'image': data.documents[0]['image'][0],
+            'image': data.documents[0]['image'],
             'time': DateTime.now().millisecondsSinceEpoch,
             'space': title,
             'nickname': data.documents[0]['nickname'],
@@ -753,7 +753,7 @@ class _ContextPageState extends State<ContextPage> {
                                                 child: Text('삭제'),
                                                 onPressed: (){
                                                   delete(ds2['commentID']);
-                                                  Navigator.pop(context);
+                                                  Navigator.pop(context, true);
                                                 },
                                               ),
                                             ],

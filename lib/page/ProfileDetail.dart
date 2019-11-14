@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:socialapp/page/ProfileEdit.dart';
 import 'package:socialapp/page/contextpage.dart';
 import 'package:socialapp/widgets/Bloc.dart';
 import 'package:socialapp/base.dart';
@@ -10,25 +11,27 @@ import 'chatpage.dart';
 
 class ProfileDetail extends StatefulWidget {
   final String usercurrentId, currentId;
+  final int check;
 
   ProfileDetail(
-      {Key key, @required this.usercurrentId, @required this.currentId})
+      {Key key, @required this.usercurrentId, @required this.currentId, @required this.check})
       : super(key: key);
 
   @override
   _ProfileDetailState createState() =>
-      _ProfileDetailState(usercurrentId: usercurrentId, currentId: currentId);
+      _ProfileDetailState(usercurrentId: usercurrentId, currentId: currentId, check: check);
 }
 
 class _ProfileDetailState extends State<ProfileDetail> {
   final String usercurrentId, currentId;
+  final int check;
 
   bool LikeState = false;
   bool back = false;
   final _today = TextEditingController();
 
   _ProfileDetailState(
-      {Key key, @required this.usercurrentId, @required this.currentId});
+      {Key key, @required this.usercurrentId, @required this.currentId, @required this.check});
 
 //  LikeControll(bool state, String userId) async {
 //    if (state == false) {
@@ -47,7 +50,6 @@ class _ProfileDetailState extends State<ProfileDetail> {
 //      });
 //    }
 //  }
-
 
   LikeManager(List tmp) {
     if (tmp == null) {
@@ -177,6 +179,17 @@ class _ProfileDetailState extends State<ProfileDetail> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (mounted) {
+      isLoading = false;
+    } else {
+      isLoading = true;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream: Firestore.instance
@@ -189,9 +202,10 @@ class _ProfileDetailState extends State<ProfileDetail> {
           }
           var ds = snapshot.data;
           return Scaffold(
-            appBar:AppBar(
+            appBar: AppBar(
               iconTheme: IconThemeData(
-                color: Colors.black,
+                color:
+                    (currentId == usercurrentId && check ==1) ?Colors.white  : Colors.black,
               ),
               title: Text(
                 ds['nickname'],
@@ -227,59 +241,85 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     height: 20,
                                   ),
                                   Container(
-                                    width: MediaQuery.of(context).size.width / 5,
-                                    height: MediaQuery.of(context).size.height / 10,
+                                    width:
+                                        MediaQuery.of(context).size.width / 5,
+                                    height:
+                                        MediaQuery.of(context).size.height / 10,
                                     child: ClipRRect(
                                       borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
+                                          BorderRadius.all(Radius.circular(10)),
                                       child: CachedNetworkImage(
-                                        imageUrl: ds['image'][0],
+                                        imageUrl: ds['image'],
                                         fit: BoxFit.cover,
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    child: FlatButton.icon(
-                                        onPressed: () {},
-                                        icon: Icon(
-                                          Icons.edit_location,
-                                        ),
-                                        label: Text(
-                                          '대전',
-                                          style: TextStyle(fontFamily: 'NIX'),
-                                        )),
+                                  Row(
+                                    children: <Widget>[
+                                      Container(
+                                        child: FlatButton.icon(
+                                            onPressed: () {},
+                                            icon: Icon(
+                                              Icons.edit_location,
+                                            ),
+                                            label: Text(
+                                              ds['location'] ?? '',
+                                              style:
+                                                  TextStyle(fontFamily: 'NIX'),
+                                            )),
+                                      ),
+                                      Container(
+                                        child: FlatButton.icon(
+                                            onPressed: () {},
+                                            icon: Icon(
+                                              Icons.person,
+                                            ),
+                                            label: Text(
+                                              '${ds['age']}세' ?? '',
+                                              style:
+                                              TextStyle(fontFamily: 'NIX'),
+                                            )),
+                                      ),
+                                    ],
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                   ),
                                   Container(
-                                    width: MediaQuery.of(context).size.width / 2,
-                                    height: MediaQuery.of(context).size.height / 10,
+                                    width:
+                                        MediaQuery.of(context).size.width / 2,
+                                    height:
+                                        MediaQuery.of(context).size.height / 10,
                                     decoration: BoxDecoration(
                                         color: Colors.white,
                                         border: Border.all(width: 0.1),
-                                        borderRadius:
-                                        BorderRadius.all(Radius.circular(20))),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10))),
                                     child: Row(
                                       children: <Widget>[
                                         Container(
-                                          width:
-                                          MediaQuery.of(context).size.width / 4,
-                                          height:
-                                          MediaQuery.of(context).size.height /
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              4,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
                                               10,
                                           child: Center(
                                             child: Column(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
+                                                  MainAxisAlignment.spaceEvenly,
                                               children: <Widget>[
                                                 Text(
                                                   '방문자',
                                                   style: TextStyle(
                                                       fontFamily: 'NIX',
-                                                      color: Colors.black45),
+                                                      color: Colors.black),
                                                 ),
                                                 Text(
                                                   '23',
                                                   style: TextStyle(
-                                                      fontWeight: FontWeight.w900,
+                                                      fontWeight:
+                                                          FontWeight.w900,
                                                       fontSize: 20),
                                                 ),
                                               ],
@@ -287,28 +327,32 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                           ),
                                         ),
                                         Container(
-                                          width: MediaQuery.of(context).size.width /
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
                                               4.1,
-                                          height:
-                                          MediaQuery.of(context).size.height /
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
                                               10,
                                           child: Center(
                                             child: Column(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
+                                                  MainAxisAlignment.spaceEvenly,
                                               children: <Widget>[
                                                 Text(
                                                   '좋아요',
                                                   style: TextStyle(
                                                       fontFamily: 'NIX',
-                                                      color: Colors.black45),
+                                                      color: Colors.black),
                                                 ),
                                                 Text(
                                                   (ds['like'] != null)
                                                       ? ds['like'].toString()
                                                       : '0',
                                                   style: TextStyle(
-                                                      fontWeight: FontWeight.w900,
+                                                      fontWeight:
+                                                          FontWeight.w900,
                                                       fontSize: 20),
                                                 ),
                                               ],
@@ -323,118 +367,144 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                   ),
                                   (usercurrentId != currentId)
                                       ? Row(
-                                    children: <Widget>[
-                                      SizedBox(
-                                        width: 95,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          AddChat(
-                                              ds['chattingWith'],
-                                              ds2['chattingWith'],
-                                              ds['id'],
-                                              ds2['id']);
-                                        },
-                                        child: Container(
-                                          width: MediaQuery.of(context)
-                                              .size
-                                              .width /
-                                              4.5,
-                                          height: MediaQuery.of(context)
-                                              .size
-                                              .height /
-                                              25,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(width: 0.1),
-                                              color: Color.fromRGBO(
-                                                  247, 64, 106, 1),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(20))),
-                                          child: Center(
-                                            child: Text(
-                                              'CHAT',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20),
+                                          children: <Widget>[
+                                            SizedBox(
+                                              width: 95,
                                             ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 20,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          LikeManager(ds['likeperson']);
-                                        },
-                                        child: Container(
-                                          width: MediaQuery.of(context)
-                                              .size
-                                              .width /
-                                              4.5,
-                                          height: MediaQuery.of(context)
-                                              .size
-                                              .height /
-                                              25,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(width: 0.1),
-                                              color: (LikeCheck(
-                                                  ds['likeperson']) ==
-                                                  false)
-                                                  ? Colors.black
-                                                  : Color.fromRGBO(
-                                                  247, 64, 106, 1),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(20))),
-                                          child: Center(
-                                            child: Text(
-                                              'LIKE',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20),
+                                            InkWell(
+                                              onTap: () {
+                                                AddChat(
+                                                    ds['chattingWith'],
+                                                    ds2['chattingWith'],
+                                                    ds['id'],
+                                                    ds2['id']);
+                                              },
+                                              child: Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    4.5,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    25,
+                                                decoration: BoxDecoration(
+                                                    border:
+                                                        Border.all(width: 0.1),
+                                                    color: Color.fromRGBO(
+                                                        247, 64, 106, 1),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                20))),
+                                                child: Center(
+                                                  child: Text(
+                                                    'CHAT',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20),
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  )
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                LikeManager(ds['likeperson']);
+                                              },
+                                              child: Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    4.5,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    25,
+                                                decoration: BoxDecoration(
+                                                    border:
+                                                        Border.all(width: 0.1),
+                                                    color: (LikeCheck(ds[
+                                                                'likeperson']) ==
+                                                            false)
+                                                        ? Colors.black
+                                                        : Color.fromRGBO(
+                                                            247, 64, 106, 1),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                20))),
+                                                child: Center(
+                                                  child: Text(
+                                                    'LIKE',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
                                       : Container(),
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width / 4,
-                                    height: MediaQuery.of(context).size.height / 25,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(width: 0.1),
-                                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        '프로필 수정',
-                                        style: TextStyle(
-                                          fontFamily: 'NIX'
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  (currentId == usercurrentId)
+                                      ? InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProfileEdit(
+                                                          currentId: currentId,
+                                                        )));
+                                          },
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                4,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                25,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width: 0.4,
+                                                  color: Colors.red),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(7)),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                '프로필 수정',
+                                                style: TextStyle(
+                                                    fontFamily: 'NIX'),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      : Container(),
                                   SizedBox(
                                     height: 10,
                                   ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                      SizedBox(
-                                        width: 15,
-                                      ),
                                       Container(
                                         width:
-                                        MediaQuery.of(context).size.width / 2,
+                                            MediaQuery.of(context).size.width /
+                                                2,
                                         height:
-                                        MediaQuery.of(context).size.height / 25,
+                                            MediaQuery.of(context).size.height /
+                                                25,
                                         decoration: BoxDecoration(
-                                          border:
-                                          Border(bottom: BorderSide(width: 1)),
+                                          border: Border(
+                                              bottom: BorderSide(width: 1)),
                                         ),
                                         child: Center(
                                           child: Text(
@@ -450,68 +520,108 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                           ),
                                         ),
                                       ),
-                                      (currentId == usercurrentId)
-                                          ? InkWell(
-                                        onTap: () {
-                                          showDialog(
-                                              context: context,
-                                              builder:
-                                                  (BuildContext context) {
-                                                return AlertDialog(
-                                                  content: Container(
-                                                    child: TextFormField(
-                                                      maxLength: 12,
-                                                      controller: _today,
-                                                      decoration:
-                                                      InputDecoration(
-                                                        hintText:
-                                                        '오늘의한마디를 입력해주세요.',
-                                                      ),
-                                                      validator: (input) {
-                                                        if (input.isEmpty) {
-                                                          return '내용을입력해주세요';
-                                                        }
-                                                      },
-                                                    ),
-                                                  ),
-                                                  actions: <Widget>[
-                                                    FlatButton(
-                                                      child: Text('취소'),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                      textColor: maincolor,
-//                                                        padding:
-//                                                        EdgeInsets.only(
-//                                                            left: 120),
-                                                    ),
-                                                    FlatButton(
-                                                      child: Text('확인'),
-                                                      onPressed: (){
-                                                        Firestore.instance.collection('users').document(usercurrentId).updateData({
-                                                          'today': _today.text,
-                                                        });
-                                                        Navigator.of(context)
-                                                            .pop(_today);
-                                                      },
-                                                      textColor: Colors.black,
-//                                                        padding:
-//                                                            EdgeInsets.only(
-//                                                                right: 120),
-                                                    )
-                                                  ],
-                                                );
-                                              });
-                                        },
-                                        child: Icon(Icons.edit),
-                                      )
-                                          : Container(),
+//                                      (currentId == usercurrentId)
+//                                          ? InkWell(
+//                                        onTap: () {
+//                                          showDialog(
+//                                              context: context,
+//                                              builder:
+//                                                  (BuildContext context) {
+//                                                return AlertDialog(
+//                                                  content: Container(
+//                                                    child: TextFormField(
+//                                                      maxLength: 12,
+//                                                      controller: _today,
+//                                                      decoration:
+//                                                      InputDecoration(
+//                                                        hintText:
+//                                                        '오늘의한마디를 입력해주세요.',
+//                                                      ),
+//                                                      validator: (input) {
+//                                                        if (input.isEmpty) {
+//                                                          return '내용을입력해주세요';
+//                                                        }
+//                                                      },
+//                                                    ),
+//                                                  ),
+//                                                  actions: <Widget>[
+//                                                    FlatButton(
+//                                                      child: Text('취소'),
+//                                                      onPressed: () {
+//                                                        Navigator.of(context)
+//                                                            .pop();
+//                                                      },
+//                                                      textColor: maincolor,
+////                                                        padding:
+////                                                        EdgeInsets.only(
+////                                                            left: 120),
+//                                                    ),
+//                                                    FlatButton(
+//                                                      child: Text('확인'),
+//                                                      onPressed: (){
+//                                                        Firestore.instance.collection('users').document(usercurrentId).updateData({
+//                                                          'today': _today.text,
+//                                                        });
+//                                                        Navigator.of(context)
+//                                                            .pop(_today);
+//                                                      },
+//                                                      textColor: Colors.black,
+////                                                        padding:
+////                                                            EdgeInsets.only(
+////                                                                right: 120),
+//                                                    )
+//                                                  ],
+//                                                );
+//                                              });
+//                                        },
+//                                        child: Icon(Icons.edit),
+//                                      )
+//                                          : Container(),
                                     ],
+                                  ),
+                                  SizedBox(height: 20,),
+                                  Container(
+                                    child: FlatButton.icon(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.edit,
+                                        ),
+                                        label: Text(
+                                          '작성글 보기',
+                                          style:
+                                          TextStyle(fontFamily: 'SIL', fontSize: MediaQuery.of(context).textScaleFactor*25),
+                                        )),
+                                  ),
+                                  SizedBox(height: 20,),
+                                  Container(
+                                    child: FlatButton.icon(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.chat,
+                                        ),
+                                        label: Text(
+                                          '공지사항',
+                                          style:
+                                          TextStyle(fontFamily: 'SIL', fontSize: MediaQuery.of(context).textScaleFactor*25),
+                                        )),
+                                  ),
+                                  SizedBox(height: 20,),
+                                  Container(
+                                    child: FlatButton.icon(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.settings,
+                                        ),
+                                        label: Text(
+                                          '환경설정',
+                                          style:
+                                          TextStyle(fontFamily: 'SIL', fontSize: MediaQuery.of(context).textScaleFactor*25),
+                                        )),
                                   ),
                                 ],
                               ),
                             ),
+                            buildLoading(),
                           ],
                         ),
                       );
@@ -521,6 +631,22 @@ class _ProfileDetailState extends State<ProfileDetail> {
           );
         });
   }
+
+  Widget buildLoading() {
+    return Positioned(
+      child: isLoading
+          ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.grey)),
+              ),
+              color: Colors.white.withOpacity(0.8),
+            )
+          : Container(),
+    );
+  }
+
+  bool isLoading = false;
 }
 
 class CustomNavRoute<T> extends MaterialPageRoute<T> {
