@@ -123,6 +123,7 @@ class LoginScreenState extends State<LoginScreen>
           'intro': null,
           'like': 0,
           'likeperson': null,
+          'block': null,
         });
 
         //write data local

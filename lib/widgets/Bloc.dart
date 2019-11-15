@@ -16,6 +16,27 @@ class BlocProvider extends ChangeNotifier{
   }
 }
 
+class AlertProvider extends ChangeNotifier{
+  int _Alert = 0;
+  int get AlertController => _Alert;
+
+  set AlertController(int val){
+    _Alert = val;
+    notifyListeners();
+  }
+
+  IncreaseCount(){
+    _Alert++;
+    notifyListeners();
+  }
+
+  ReadAlert(){
+    _Alert = 0;
+    notifyListeners();
+  }
+}
+
+
 class IdProvider extends ChangeNotifier{
   String _currentId;
   String get CurrentId => _currentId;

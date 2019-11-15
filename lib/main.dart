@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget{
       providers: [
         ChangeNotifierProvider<BlocProvider>.value(value: BlocProvider()),
         ChangeNotifierProvider<IdProvider>.value(value: IdProvider()),
+        ChangeNotifierProvider<AlertProvider>.value(value: AlertProvider()),
       ],
       child: MaterialApp(
         routes: <String, WidgetBuilder>{

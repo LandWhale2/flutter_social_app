@@ -110,7 +110,13 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                             return Text('없습니다');
                           }
                           DocumentSnapshot ds = snapshot.data.documents[index];
-
+                          if(ds['block'] != null){
+                            for(int i=0; i<ds['block'].length ; i++){
+                              if(ds['block'][i] == currentId){
+                                return Container();
+                              }
+                            }
+                          }
                           return InkWell(
                             onTap: (){
                               Navigator.push(
@@ -167,7 +173,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
             child: StreamBuilder<QuerySnapshot>(
                 stream: Firestore.instance
                     .collection('users')
-                    .orderBy('favorite', descending: true)
+                    .orderBy('like', descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if(!snapshot.hasData){
@@ -180,6 +186,13 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                     itemCount: snapshot.data.documents.length,
                     itemBuilder: (BuildContext context, int index) {
                       DocumentSnapshot ds = snapshot.data.documents[index];
+                      if(ds['block'] != null){
+                        for(int i=0; i<ds['block'].length ; i++){
+                          if(ds['block'][i] == currentId){
+                            return Container();
+                          }
+                        }
+                      }
                       return InkWell(
                         onTap: (){
                           Navigator.push(

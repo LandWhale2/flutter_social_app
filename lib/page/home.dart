@@ -2,6 +2,7 @@ import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:socialapp/base.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:socialapp/main.dart';
 import 'package:socialapp/page/contextpage.dart';
 import 'package:socialapp/page/signup.dart';
 import 'package:socialapp/page/signup.dart' as prefix0;
+import 'package:socialapp/widgets/Bloc.dart';
 
 import 'ProfileDetail.dart';
 import 'board.dart';
@@ -33,6 +35,7 @@ class MainhomeState extends State<Mainhome> {
 
   @override
   Widget build(BuildContext context) {
+    final AlertProvider alertProvider = Provider.of<AlertProvider>(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -41,10 +44,8 @@ class MainhomeState extends State<Mainhome> {
               height: 50,
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                SizedBox(
-                  width: 10,
-                ),
                 Container(
                   child: Text(
                     '커뮤니티',
@@ -53,6 +54,34 @@ class MainhomeState extends State<Mainhome> {
                       fontWeight: FontWeight.w800,
                     ),
                   ),
+                ),
+                Stack(
+                  children: <Widget>[
+                    Container(
+                      child: Icon(
+                        Icons.notifications,
+                        size: 40,
+                      ),
+                    ),
+                    (alertProvider.AlertController != 0)?Positioned(
+                      top: 1,
+                      right: 1,
+                      child: Container(
+                        width: 23,
+                        height:23,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(100)),
+                          color: Colors.red
+                        ),
+                        child: Center(
+                          child: Text(
+                            alertProvider.AlertController.toString(),
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ):Container(),
+                  ],
                 ),
               ],
             ),
@@ -182,112 +211,128 @@ class MainhomeState extends State<Mainhome> {
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (BuildContext context, int index) {
                           DocumentSnapshot ds = snapshot.data.documents[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: Container(
-                              width: MediaQuery.of(context).size.width / 2,
-                              height: MediaQuery.of(context).size.height / 6,
-                              decoration: BoxDecoration(
-                                  border: Border.all(width: 0.1),
-                                  color: Colors.black54,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(15))),
-                              child: Row(
-                                children: <Widget>[
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Column(
+                          return StreamBuilder(
+                            stream: Firestore.instance.collection('users').document(ds['id']).snapshots(),
+                            builder: (context, snapshot) {
+                              if(!snapshot.hasData){
+                                return Container();
+                              }
+                              var ds2 = snapshot.data;
+                              if(ds2['block'] != null){
+                                for(int i=0; i<ds2['block'].length ; i++){
+                                  if(ds2['block'][i] == currentId){
+                                    return Container();
+                                  }
+                                }
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width / 2,
+                                  height: MediaQuery.of(context).size.height / 6,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(width: 0.1),
+                                      color: Colors.black54,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(15))),
+                                  child: Row(
                                     children: <Widget>[
                                       SizedBox(
-                                        height: 10,
+                                        width: 5,
                                       ),
+                                      Column(
+                                        children: <Widget>[
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ProfileDetail(
+                                                            usercurrentId: ds['id'],
+                                                            currentId: currentId,
+                                                          )));
+                                            },
+                                            child: Container(
+                                              width:
+                                                  MediaQuery.of(context).size.width /
+                                                      7,
+                                              height:
+                                                  MediaQuery.of(context).size.height /
+                                                      14,
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(15)),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: ds['image'],
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(width: 5,),
                                       InkWell(
-                                        onTap: () {
+                                        onTap: (){
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ProfileDetail(
-                                                        usercurrentId: ds['id'],
-                                                        currentId: currentId,
-                                                      )));
+                                                  builder: (context) => ContextPage(
+                                                    currentId: currentId,
+                                                    contextId: ds['contextID'],
+                                                    SelectSpace: ds['space'],
+                                                    title: ds['title'],
+                                                  )));
                                         },
-                                        child: Container(
-                                          width:
-                                              MediaQuery.of(context).size.width /
-                                                  7,
-                                          height:
-                                              MediaQuery.of(context).size.height /
-                                                  14,
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(15)),
-                                            child: CachedNetworkImage(
-                                              imageUrl: ds['image'],
-                                              fit: BoxFit.cover,
+                                        child: Column(
+                                          children: <Widget>[
+                                            SizedBox(
+                                              height: 10,
                                             ),
-                                          ),
+                                            Container(
+                                              //아이콘텏트
+                                              width:
+                                                  MediaQuery.of(context).size.width / 3.5,
+                                              height:
+                                                  MediaQuery.of(context).size.height / 40,
+                                              child: Text(
+                                                ds['nickname'],
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    fontFamily: 'SIL',
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w800),
+                                              ),
+                                            ),
+                                            Container(
+                                              width:
+                                              MediaQuery.of(context).size.width / 3.5,
+                                              height:
+                                              MediaQuery.of(context).size.height / 7,
+
+                                              child: Text(
+                                                (ds['context'] != null)?ds['context']: ' ',
+                                                textAlign: TextAlign.start,
+                                                maxLines: 6,
+                                                style: TextStyle(
+                                                    fontFamily: 'NIX',
+                                                    fontSize: MediaQuery.of(context).textScaleFactor*18,
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w500),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
                                   ),
-                                  SizedBox(width: 5,),
-                                  InkWell(
-                                    onTap: (){
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => ContextPage(
-                                                currentId: currentId,
-                                                contextId: ds['contextID'],
-                                                SelectSpace: ds['space'],
-                                                title: ds['title'],
-                                              )));
-                                    },
-                                    child: Column(
-                                      children: <Widget>[
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Container(
-                                          //아이콘텏트
-                                          width:
-                                              MediaQuery.of(context).size.width / 3.5,
-                                          height:
-                                              MediaQuery.of(context).size.height / 40,
-                                          child: Text(
-                                            ds['nickname'],
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(
-                                                fontFamily: 'SIL',
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w800),
-                                          ),
-                                        ),
-                                        Container(
-                                          width:
-                                          MediaQuery.of(context).size.width / 3.5,
-                                          height:
-                                          MediaQuery.of(context).size.height / 7,
-
-                                          child: Text(
-                                            (ds['context'] != null)?ds['context']: ' ',
-                                            textAlign: TextAlign.start,
-                                            maxLines: 6,
-                                            style: TextStyle(
-                                                fontFamily: 'NIX',
-                                                fontSize: MediaQuery.of(context).textScaleFactor*18,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                ),
+                              );
+                            }
                           );
                         });
                   }),
@@ -329,112 +374,128 @@ class MainhomeState extends State<Mainhome> {
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (BuildContext context, int index) {
                           DocumentSnapshot ds = snapshot.data.documents[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: Container(
-                              width: MediaQuery.of(context).size.width / 2,
-                              height: MediaQuery.of(context).size.height / 6,
-                              decoration: BoxDecoration(
-                                  border: Border.all(width: 0.1),
-                                  color: Colors.black87,
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(15))),
-                              child: Row(
-                                children: <Widget>[
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Column(
+                          return StreamBuilder(
+                            stream: Firestore.instance.collection('users').document(ds['id']).snapshots(),
+                            builder: (context, snapshot) {
+                              if(!snapshot.hasData){
+                                return Container();
+                              }
+                              var ds2 = snapshot.data;
+                              if(ds2['block'] != null){
+                                for(int i=0; i<ds2['block'].length ; i++){
+                                  if(ds2['block'][i] == currentId){
+                                    return Container();
+                                  }
+                                }
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width / 2,
+                                  height: MediaQuery.of(context).size.height / 6,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(width: 0.1),
+                                      color: Colors.black87,
+                                      borderRadius:
+                                      BorderRadius.all(Radius.circular(15))),
+                                  child: Row(
                                     children: <Widget>[
                                       SizedBox(
-                                        height: 10,
+                                        width: 5,
                                       ),
+                                      Column(
+                                        children: <Widget>[
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ProfileDetail(
+                                                            usercurrentId: ds['id'],
+                                                            currentId: currentId,
+                                                          )));
+                                            },
+                                            child: Container(
+                                              width:
+                                              MediaQuery.of(context).size.width /
+                                                  7,
+                                              height:
+                                              MediaQuery.of(context).size.height /
+                                                  14,
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(15)),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: ds['image'],
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(width: 5,),
                                       InkWell(
-                                        onTap: () {
+                                        onTap: (){
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ProfileDetail(
-                                                        usercurrentId: ds['id'],
-                                                        currentId: currentId,
-                                                      )));
+                                                  builder: (context) => ContextPage(
+                                                    currentId: currentId,
+                                                    contextId: ds['contextID'],
+                                                    SelectSpace: ds['space'],
+                                                    title: ds['title'],
+                                                  )));
                                         },
-                                        child: Container(
-                                          width:
-                                          MediaQuery.of(context).size.width /
-                                              7,
-                                          height:
-                                          MediaQuery.of(context).size.height /
-                                              14,
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(15)),
-                                            child: CachedNetworkImage(
-                                              imageUrl: ds['image'],
-                                              fit: BoxFit.cover,
+                                        child: Column(
+                                          children: <Widget>[
+                                            SizedBox(
+                                              height: 10,
                                             ),
-                                          ),
+                                            Container(
+                                              //아이콘텏트
+                                              width:
+                                              MediaQuery.of(context).size.width / 3.5,
+                                              height:
+                                              MediaQuery.of(context).size.height / 40,
+                                              child: Text(
+                                                ds['nickname'],
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    fontFamily: 'SIL',
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w800),
+                                              ),
+                                            ),
+                                            Container(
+                                              width:
+                                              MediaQuery.of(context).size.width / 3.5,
+                                              height:
+                                              MediaQuery.of(context).size.height / 7,
+
+                                              child: Text(
+                                                (ds['context'] != null)?ds['context']: ' ',
+                                                textAlign: TextAlign.start,
+                                                maxLines: 6,
+                                                style: TextStyle(
+                                                    fontFamily: 'NIX',
+                                                    fontSize: MediaQuery.of(context).textScaleFactor*18,
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w500),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
                                   ),
-                                  SizedBox(width: 5,),
-                                  InkWell(
-                                    onTap: (){
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => ContextPage(
-                                                currentId: currentId,
-                                                contextId: ds['contextID'],
-                                                SelectSpace: ds['space'],
-                                                title: ds['title'],
-                                              )));
-                                    },
-                                    child: Column(
-                                      children: <Widget>[
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Container(
-                                          //아이콘텏트
-                                          width:
-                                          MediaQuery.of(context).size.width / 3.5,
-                                          height:
-                                          MediaQuery.of(context).size.height / 40,
-                                          child: Text(
-                                            ds['nickname'],
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(
-                                                fontFamily: 'SIL',
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w800),
-                                          ),
-                                        ),
-                                        Container(
-                                          width:
-                                          MediaQuery.of(context).size.width / 3.5,
-                                          height:
-                                          MediaQuery.of(context).size.height / 7,
-
-                                          child: Text(
-                                            (ds['context'] != null)?ds['context']: ' ',
-                                            textAlign: TextAlign.start,
-                                            maxLines: 6,
-                                            style: TextStyle(
-                                                fontFamily: 'NIX',
-                                                fontSize: MediaQuery.of(context).textScaleFactor*18,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                ),
+                              );
+                            }
                           );
                         });
                   }),

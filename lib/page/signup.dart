@@ -544,6 +544,7 @@ class _SignUpPageState extends State<SignUpPage> {
               'intro': null,
               'like' : 0,
               'likeperson' : null,
+              'block': null,
             });
           }
           Navigator.push(
