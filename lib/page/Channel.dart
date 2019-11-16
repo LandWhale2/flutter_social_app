@@ -80,8 +80,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                       color: Colors.pinkAccent),
                 ),
                 onPressed: () {
-                  print(getTop[2]);
-                  print(getTop.length);
                 },
               ),
             ],

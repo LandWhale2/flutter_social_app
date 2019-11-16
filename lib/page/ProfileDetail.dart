@@ -109,24 +109,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
       //저장된게있을때
       if(user.length == 0){
         //차단기능을 한번 사용했다가 전부 비운경우
-        Firestore.instance
-            .collection('users')
-            .document(profileId)
-            .updateData({
-          'block': FieldValue.arrayUnion([userId]),
-        });
-        Firestore.instance
-            .collection('users')
-            .document(userId)
-            .updateData({
-          'block': FieldValue.arrayUnion([profileId]),
-        });
-        return print('sd');
-      }
-
-      if (profileuser != null) {
-        if(profileuser.length ==0){
-          //차단기능을 한번 사용했다가 전부 비운경우
+        if(mounted){
           Firestore.instance
               .collection('users')
               .document(profileId)
@@ -139,7 +122,30 @@ class _ProfileDetailState extends State<ProfileDetail> {
               .updateData({
             'block': FieldValue.arrayUnion([profileId]),
           });
-          return print('aa');;
+          return print('sd');
+        }
+
+      }
+
+      if (profileuser != null) {
+        if(profileuser.length ==0){
+          //차단기능을 한번 사용했다가 전부 비운경우
+          if(mounted){
+
+            Firestore.instance
+                .collection('users')
+                .document(profileId)
+                .updateData({
+              'block': FieldValue.arrayUnion([userId]),
+            });
+            Firestore.instance
+                .collection('users')
+                .document(userId)
+                .updateData({
+              'block': FieldValue.arrayUnion([profileId]),
+            });
+            return print('aa');
+          }
         }
 
         //프로필유저 저장된게있을때
@@ -153,20 +159,22 @@ class _ProfileDetailState extends State<ProfileDetail> {
               //원래차단된유저
               return print('a');
             } else if (i == user.length) {
-              Firestore.instance
-                  .collection('users')
-                  .document(profileId)
-                  .updateData({
-                'block': FieldValue.arrayUnion([userId]),
-              });
-              Firestore.instance
-                  .collection('users')
-                  .document(userId)
-                  .updateData({
-                'block': FieldValue.arrayUnion([profileId]),
-              });
-              //채팅방이동페이지
-              return print('b');
+              if(mounted){
+                Firestore.instance
+                    .collection('users')
+                    .document(profileId)
+                    .updateData({
+                  'block': FieldValue.arrayUnion([userId]),
+                });
+                Firestore.instance
+                    .collection('users')
+                    .document(userId)
+                    .updateData({
+                  'block': FieldValue.arrayUnion([profileId]),
+                });
+                //채팅방이동페이지
+                return print('b');
+              }
             }
           }
         } else {
@@ -179,41 +187,51 @@ class _ProfileDetailState extends State<ProfileDetail> {
               return print('f');
             } else if (i == profileuser.length) {
               //신규차단
-              Firestore.instance
-                  .collection('users')
-                  .document(profileId)
-                  .updateData({
-                'block': FieldValue.arrayUnion([userId]),
-              });
-              Firestore.instance
-                  .collection('users')
-                  .document(userId)
-                  .updateData({
-                'block': FieldValue.arrayUnion([profileId]),
-              });
-              return print('c');
+
+              if(mounted){
+
+                Firestore.instance
+                    .collection('users')
+                    .document(profileId)
+                    .updateData({
+                  'block': FieldValue.arrayUnion([userId]),
+                });
+                Firestore.instance
+                    .collection('users')
+                    .document(userId)
+                    .updateData({
+                  'block': FieldValue.arrayUnion([profileId]),
+                });
+                return print('c');
+              }
               //채팅방 이동페이지
             }
           }
         }
       } else {
+        if(mounted){
+
+          Firestore.instance.collection('users').document(profileId).updateData({
+            'block': FieldValue.arrayUnion([userId]),
+          });
+          Firestore.instance.collection('users').document(userId).updateData({
+            'block': FieldValue.arrayUnion([profileId]),
+          });
+          return print('g');
+        }
+      }
+    } else if (user == null || user.length == 0) {
+      //아무것도없을때 최초저장
+      if(mounted){
+
         Firestore.instance.collection('users').document(profileId).updateData({
           'block': FieldValue.arrayUnion([userId]),
         });
         Firestore.instance.collection('users').document(userId).updateData({
           'block': FieldValue.arrayUnion([profileId]),
         });
-        return print('g');
+        return print('d');
       }
-    } else if (user == null || user.length == 0) {
-      //아무것도없을때 최초저장
-      Firestore.instance.collection('users').document(profileId).updateData({
-        'block': FieldValue.arrayUnion([userId]),
-      });
-      Firestore.instance.collection('users').document(userId).updateData({
-        'block': FieldValue.arrayUnion([profileId]),
-      });
-      return print('d');
     }
   }
 
@@ -302,14 +320,12 @@ class _ProfileDetailState extends State<ProfileDetail> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (mounted) {
+    if (this.mounted) {
       isLoading = false;
     } else {
       isLoading = true;
     }
-
-
-      BlockBlock();
+    BlockBlock();
   }
 
 
@@ -382,8 +398,11 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 style: TextStyle(
                                 color: Colors.red),),
                               onPressed: (){
-                                Blockuser(ds['block'], ds2['block'], ds['id'], ds2['id']);
                                 Navigator.pop(context);
+                                Future.delayed(Duration(seconds: 1), (){
+                                  Blockuser(ds['block'], ds2['block'], ds['id'], ds2['id']);
+                                });
+
                               },
                             ),
 

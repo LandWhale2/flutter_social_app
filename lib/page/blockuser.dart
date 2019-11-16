@@ -19,13 +19,16 @@ class _BlockUserState extends State<BlockUser> {
 
   BlockClear(String peerId) {
     try {
-      Firestore.instance.collection('users').document(peerId).updateData({
-        'block': FieldValue.arrayRemove([currentId]),
-      });
+      if(mounted){
+        Firestore.instance.collection('users').document(peerId).updateData({
+          'block': FieldValue.arrayRemove([currentId]),
+        });
 
-      Firestore.instance.collection('users').document(currentId).updateData({
-        'block': FieldValue.arrayRemove([peerId]),
-      });
+        Firestore.instance.collection('users').document(currentId).updateData({
+          'block': FieldValue.arrayRemove([peerId]),
+        });
+        return print('차단해제완료');
+      }
     } catch (e) {
       print(e.message);
     }

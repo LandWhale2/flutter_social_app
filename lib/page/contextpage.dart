@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:latlong/latlong.dart';
@@ -247,6 +248,7 @@ class _ContextPageState extends State<ContextPage> {
     CommentSum();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -311,7 +313,7 @@ class _ContextPageState extends State<ContextPage> {
                                       height:
                                           MediaQuery.of(context).size.height / 30,
                                       child: Text(
-                                        ds1['nickname'],
+                                        (ds1['nickname'] != null)?ds1['nickname']:'',
                                         textAlign: TextAlign.start,
                                         style: TextStyle(),
                                       ),
@@ -363,10 +365,15 @@ class _ContextPageState extends State<ContextPage> {
                                                       CupertinoDialogAction(
                                                         child: Text('삭제'),
                                                         onPressed: (){
-                                                          Navigator.of(context).pushAndRemoveUntil(
-                                                              MaterialPageRoute(builder: (context) => Base(currentUserId: currentId,)),
-                                                                  (Route<dynamic> route) => false);
-                                                          deleteContext();
+//                                                          Navigator.of(context).pushAndRemoveUntil(
+//                                                              MaterialPageRoute(builder: (context) => Base(currentUserId: currentId,)),
+//                                                                  (Route<dynamic> route) => false);
+                                                        Navigator.pop(context);
+                                                        Navigator.pop(context);
+                                                        Navigator.pop(context);
+                                                          Future.delayed(Duration(seconds: 1), (){
+                                                            deleteContext();
+                                                          });
 
                                                         },
                                                       ),
@@ -377,6 +384,7 @@ class _ContextPageState extends State<ContextPage> {
                                               CupertinoActionSheetAction(
                                                 child: Text('글 수정'),
                                                 onPressed: (){
+                                                  Navigator.pop(context);
                                                   Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
@@ -405,7 +413,7 @@ class _ContextPageState extends State<ContextPage> {
                             ),
                             Text(
                               //텍스트
-                              ds1['context'],
+                              (ds1['context'] != null)?ds1['context']:'',
                               maxLines: null,
                               style: TextStyle(fontFamily: 'NIX'),
                             ),

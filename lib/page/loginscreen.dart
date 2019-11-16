@@ -132,7 +132,7 @@ class LoginScreenState extends State<LoginScreen>
         await prefs.setString('nickname', currentUser.displayName);
         await prefs.setString('photoUrl', currentUser.photoUrl);
       } else {
-        print('기존유');
+        //기존유저
         check2 = 1;
 
         Navigator.push(
@@ -151,7 +151,6 @@ class LoginScreenState extends State<LoginScreen>
         isLoading = false;
       });
 
-      print(firebaseUser.uid);
 
       await Future.delayed(Duration(seconds: 1));
       if (check2 == 0) {

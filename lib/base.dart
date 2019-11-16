@@ -220,16 +220,14 @@ class _Base extends State<Base> {
   }
 
   AddLocation() async {
-    _getLocation().then((position) async {
-      print('위치저장 시작');
-      await Firestore.instance
+    _getLocation().then((position) {
+      Firestore.instance
           .collection('users')
           .document(currentUserId)
           .updateData({
         'longitude': position.longitude,
         'latitude': position.latitude,
       });
-      print('사용자 위치저장');
     });
   }
 
