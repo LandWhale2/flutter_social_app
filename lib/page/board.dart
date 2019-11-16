@@ -770,7 +770,7 @@ class _BoardState extends State<Board> {
                                   ),
                                   InkWell(
                                     onTap: () {
-                                      if (snapshot2.hasData) {
+
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -780,7 +780,6 @@ class _BoardState extends State<Board> {
                                                       SelectSpace: SelectSpace,
                                                       title: title,
                                                     )));
-                                      }
                                     },
                                     child: Container(
                                       width: MediaQuery.of(context).size.width / 1.38,

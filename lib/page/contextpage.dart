@@ -112,7 +112,8 @@ class _ContextPageState extends State<ContextPage> {
         .document(commentId)
         .delete();
   }
-  deleteContext(String commentId) {
+
+  deleteContext(){
     Firestore.instance
         .collection(SelectSpace)
         .document(contextId)
@@ -365,7 +366,8 @@ class _ContextPageState extends State<ContextPage> {
                                                           Navigator.of(context).pushAndRemoveUntil(
                                                               MaterialPageRoute(builder: (context) => Base(currentUserId: currentId,)),
                                                                   (Route<dynamic> route) => false);
-                                                          deleteContext(contextId);
+                                                          deleteContext();
+
                                                         },
                                                       ),
                                                     ],

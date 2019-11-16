@@ -139,7 +139,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                           );
                         });
                   } else {
-                    return Container();
+                    return CircularProgressIndicator();
                   }
                 }),
           ),

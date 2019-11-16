@@ -105,8 +105,6 @@ class _ProfileDetailState extends State<ProfileDetail> {
 
 
   Blockuser(List profileuser, List user, String profileId, String userId) {
-
-
     if (user != null) {
       //저장된게있을때
       if(user.length == 0){
@@ -123,7 +121,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
             .updateData({
           'block': FieldValue.arrayUnion([profileId]),
         });
-        return null;
+        return print('sd');
       }
 
       if (profileuser != null) {
@@ -141,7 +139,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
               .updateData({
             'block': FieldValue.arrayUnion([profileId]),
           });
-          return null;
+          return print('aa');;
         }
 
         //프로필유저 저장된게있을때
@@ -310,7 +308,8 @@ class _ProfileDetailState extends State<ProfileDetail> {
       isLoading = true;
     }
 
-    BlockBlock();
+
+      BlockBlock();
   }
 
 

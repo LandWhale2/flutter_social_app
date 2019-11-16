@@ -55,6 +55,7 @@ dependencies:
   pull_to_refresh: ^1.4.5
   liquid_pull_to_refresh: ^1.1.0
   flutter_swiper: ^1.1.6
+  loading : ^1.0.1
 
 
 dev_dependencies:
