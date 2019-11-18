@@ -186,88 +186,91 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget buildItem(int index, DocumentSnapshot document) {
     if (document['idFrom'] == id) {
       // Right (my message)
-      return Row(
-        children: <Widget>[
-          Container(
-            child: Text(
-              DateFormat('dd MMM kk:mm')
-                  .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document['timestamp']))),
-              style: TextStyle(color: Colors.black54, fontSize: 12.0),
-            ),
-            margin: EdgeInsets.only(right: 10),
-          ),
-          document['type'] == 0
-          // Text
-              ? Container(
-            child: Text(
-              document['content'],
-              style: TextStyle(color: Colors.white),
-            ),
-            padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-            width: 200.0,
-            decoration: BoxDecoration(color: Colors.lightBlueAccent, borderRadius: BorderRadius.circular(8.0)),
-            margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
-          )
-              : document['type'] == 1
-          // Image
-              ? Container(
-            child: FlatButton(
-              child: Material(
-                child: CachedNetworkImage(
-                  placeholder: (context, url) => Container(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.black87),
+      return Container(
+        child: Column(
+          children: <Widget>[
+            document['type'] == 0
+            // Text
+                ? Container(
+              child: Text(
+                document['content'],
+                style: TextStyle(color: Colors.white),
+              ),
+              padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+              width: 200.0,
+              decoration: BoxDecoration(color: Colors.lightBlueAccent, borderRadius: BorderRadius.circular(8.0)),
+              margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 10.0 : 10.0, right: 10.0),
+            )
+                : document['type'] == 1
+            // Image
+                ? Container(
+              child: FlatButton(
+                child: Material(
+                  child: CachedNetworkImage(
+                    placeholder: (context, url) => Container(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black87),
+                      ),
+                      width: 200.0,
+                      height: 200.0,
+                      padding: EdgeInsets.all(70.0),
+                      decoration: BoxDecoration(
+                        color: Colors.pinkAccent,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8.0),
+                        ),
+                      ),
                     ),
-                    width: 200.0,
-                    height: 200.0,
-                    padding: EdgeInsets.all(70.0),
-                    decoration: BoxDecoration(
-                      color: Colors.pinkAccent,
+                    errorWidget: (context, url, error) => Material(
+                      child: Image.asset(
+                        'images/img_not_available.jpeg',
+                        width: 200.0,
+                        height: 200.0,
+                        fit: BoxFit.cover,
+                      ),
                       borderRadius: BorderRadius.all(
                         Radius.circular(8.0),
                       ),
+                      clipBehavior: Clip.hardEdge,
                     ),
+                    imageUrl: document['content'],
+                    width: 200.0,
+                    height: 200.0,
+                    fit: BoxFit.cover,
                   ),
-                  errorWidget: (context, url, error) => Material(
-                    child: Image.asset(
-                      'images/img_not_available.jpeg',
-                      width: 200.0,
-                      height: 200.0,
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
-                    ),
-                    clipBehavior: Clip.hardEdge,
-                  ),
-                  imageUrl: document['content'],
-                  width: 200.0,
-                  height: 200.0,
-                  fit: BoxFit.cover,
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  clipBehavior: Clip.hardEdge,
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                clipBehavior: Clip.hardEdge,
+                onPressed: () {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => FullPhoto(url: document['content'])));
+                },
+                padding: EdgeInsets.all(0),
               ),
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => FullPhoto(url: document['content'])));
-              },
-              padding: EdgeInsets.all(0),
+              margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
+            )
+            // Sticker
+                : Container(
+              child: new Image.asset(
+                'assets/${document['content']}.gif',
+                width: 100.0,
+                height: 100.0,
+                fit: BoxFit.cover,
+              ),
+              margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
             ),
-            margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
-          )
-          // Sticker
-              : Container(
-            child: new Image.asset(
-              'images/${document['content']}.gif',
-              width: 100.0,
-              height: 100.0,
-              fit: BoxFit.cover,
+            Container(
+              child: Text(
+                DateFormat('dd MMM kk:mm')
+                    .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document['timestamp']))),
+                style: TextStyle(color: Colors.black54, fontSize: 12.0),
+              ),
+              margin: EdgeInsets.only(right: 10),
             ),
-            margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
-          ),
-        ],
-        mainAxisAlignment: MainAxisAlignment.end,
+          ],
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+        ),
       );
     } else {
       // Left (peer message)
@@ -360,7 +363,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 )
                     : Container(
                   child: new Image.asset(
-                    'images/${document['content']}.gif',
+                    'assets/${document['content']}.gif',
                     width: 100.0,
                     height: 100.0,
                     fit: BoxFit.cover,

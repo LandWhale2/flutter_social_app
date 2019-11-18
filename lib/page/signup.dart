@@ -545,6 +545,7 @@ class _SignUpPageState extends State<SignUpPage> {
               'like' : 0,
               'likeperson' : null,
               'block': null,
+              'phone': _phoneNumberController.text,
             });
           }
           Navigator.push(

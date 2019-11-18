@@ -8,6 +8,7 @@ import 'package:socialapp/base.dart';
 import 'package:flutter/material.dart';
 import 'package:socialapp/main.dart';
 import 'package:socialapp/page/contextpage.dart';
+import 'package:socialapp/page/notification.dart';
 import 'package:socialapp/page/signup.dart';
 import 'package:socialapp/page/signup.dart' as prefix0;
 import 'package:socialapp/widgets/Bloc.dart';
@@ -55,33 +56,38 @@ class MainhomeState extends State<Mainhome> {
                     ),
                   ),
                 ),
-                Stack(
-                  children: <Widget>[
-                    Container(
-                      child: Icon(
-                        Icons.notifications,
-                        size: 40,
-                      ),
-                    ),
-                    (alertProvider.AlertController != 0)?Positioned(
-                      top: 1,
-                      right: 1,
-                      child: Container(
-                        width: 23,
-                        height:23,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(100)),
-                          color: Colors.red
+                InkWell(
+                  onTap: (){
+                    Navigator.of(context).push(notifiRoute(currentId));
+                  },
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        child: Icon(
+                          Icons.notifications,
+                          size: 40,
                         ),
-                        child: Center(
-                          child: Text(
-                            alertProvider.AlertController.toString(),
-                            style: TextStyle(color: Colors.white),
+                      ),
+                      (alertProvider.AlertController != 0)?Positioned(
+                        top: 1,
+                        right: 1,
+                        child: Container(
+                          width: 23,
+                          height:23,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(100)),
+                            color: Colors.red
+                          ),
+                          child: Center(
+                            child: Text(
+                              alertProvider.AlertController.toString(),
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
-                      ),
-                    ):Container(),
-                  ],
+                      ):Container(),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -540,14 +546,7 @@ class ItemBox extends StatelessWidget {
           padding: EdgeInsets.only(right: 10, left: 8, top: 5),
           child: InkWell(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Board(
-                            currentUserId: currentId,
-                            SelectSpace: SelectSpace,
-                            title: title,
-                          )));
+              Navigator.of(context).push(notifiRoute(currentId));
             },
             child: Column(
               children: <Widget>[
@@ -634,4 +633,23 @@ class CityItem extends StatelessWidget {
       ),
     );
   }
+}
+
+
+Route notifiRoute(String currentId){
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => NotificationPage(currentId: currentId,),
+    transitionsBuilder: (context, animation, secondaryAnimation, child){
+      var begin = Offset(0, 1);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+      
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    }
+  );
 }

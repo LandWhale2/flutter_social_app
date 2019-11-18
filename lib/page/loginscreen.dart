@@ -10,7 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/base.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:socialapp/main.dart';
 import 'package:socialapp/model/todo.dart';
+import 'package:socialapp/page/contextpage.dart';
 import 'package:socialapp/page/signup.dart';
 import 'package:socialapp/page/writeprofile2.dart';
 import 'package:socialapp/widgets/database_create.dart';
@@ -124,7 +126,9 @@ class LoginScreenState extends State<LoginScreen>
           'like': 0,
           'likeperson': null,
           'block': null,
+          'email' : currentUser.displayName,
         });
+
 
         //write data local
         currentUser = firebaseUser;
@@ -173,14 +177,17 @@ class LoginScreenState extends State<LoginScreen>
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          image: backgroundImage,
+//          image: backgroundImage,
+        color: Colors.grey
         ),
         child: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
             colors: <Color>[
-              const Color.fromRGBO(162, 146, 199, 0.8),
-              const Color.fromRGBO(51, 51, 63, 0.9),
+//              const Color.fromRGBO(162, 146, 199, 0.8),
+//              const Color.fromRGBO(51, 51, 63, 0.9),
+            maincolor,
+              Colors.blue,
             ],
             stops: [0.2, 1.0],
             begin: const FractionalOffset(0, 0),
@@ -327,7 +334,7 @@ class LoginScreenState extends State<LoginScreen>
                         height: 60,
                         alignment: FractionalOffset.center,
                         decoration: BoxDecoration(
-                          color: const Color.fromRGBO(247, 64, 106, 1),
+                          color: Colors.redAccent,
                           borderRadius:
                               BorderRadius.all(const Radius.circular(30)),
                         ),

@@ -48,6 +48,7 @@ class _ContextPageState extends State<ContextPage> {
   int commentNum;
   String _comment;
   String reply;
+  String replyname;
   final _formKey = GlobalKey<FormState>();
   final replyKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
@@ -139,47 +140,47 @@ class _ContextPageState extends State<ContextPage> {
 //    }
 //  }
 
-//  PostReply(String commentId) async {
-//    var _form = replyKey.currentState;
-//    if (_form.validate()) {
-//      _form.save();
-//      try {
-//        var documentName =
-//            'R' + DateTime.now().millisecondsSinceEpoch.toString();
-//
-//        await Firestore.instance
-//            .collection('users')
-//            .where('id', isEqualTo: currentId)
-//            .snapshots()
-//            .listen((data) async {
-//          await Firestore.instance
-//              .collection(SelectSpace)
-//              .document(contextId)
-//              .collection('comment')
-//              .document(commentId)
-//              .collection('reply')
-//              .document(documentName)
-//              .setData({
-//            'commentID': commentId,
-//            'contextID': contextId,
-//            'replyID': documentName,
-//            'context': reply,
-//            'time': DateTime.now().millisecondsSinceEpoch,
-//            'space': title,
-//            'id': currentId,
-//            'image': data.documents[0]['image'][0],
-//            'nickname': data.documents[0]['nickname'],
-//          });
-//        });
-//
-//        setState(() {
-//          _form.reset();
-//        });
-//      } catch (e) {
-//        print(e.message);
-//      }
-//    }
-//  }
+  PostReply(String commentId) async {
+    var _form = replyKey.currentState;
+    if (_form.validate()) {
+      _form.save();
+      try {
+        var documentName =
+            'R' + DateTime.now().millisecondsSinceEpoch.toString();
+
+        await Firestore.instance
+            .collection('users')
+            .where('id', isEqualTo: currentId)
+            .snapshots()
+            .listen((data) async {
+          await Firestore.instance
+              .collection(SelectSpace)
+              .document(contextId)
+              .collection('comment')
+              .document(commentId)
+              .collection('reply')
+              .document(documentName)
+              .setData({
+            'commentID': commentId,
+            'contextID': contextId,
+            'replyID': documentName,
+            'context': reply,
+            'time': DateTime.now().millisecondsSinceEpoch,
+            'space': title,
+            'id': currentId,
+            'image': data.documents[0]['image'][0],
+            'nickname': data.documents[0]['nickname'],
+          });
+        });
+
+        setState(() {
+          _form.reset();
+        });
+      } catch (e) {
+        print(e.message);
+      }
+    }
+  }
 
   PostComment() async {
     var form = _formKey.currentState;
@@ -612,175 +613,171 @@ class _ContextPageState extends State<ContextPage> {
               itemBuilder: (BuildContext context, int index) {
                 DocumentSnapshot ds2 = snapshot.data.documents[index];
                 var textlength = ds2['context'].length;
-                return Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 1.38,
-                    height: MediaQuery.of(context).size.height / 9,
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 0.3),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    child: Stack(
-                      children: <Widget>[
-                        Positioned(
-                          top: 5,
-                          left: 5,
-                          child: Container(
-                            //작성자프로필사진
-                            width: MediaQuery.of(context).size.width / 6,
-                            height: MediaQuery.of(context).size.height / 12,
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              child: (ds2['image'] != null)
-                                  ? CachedNetworkImage(
-                                      imageUrl: ds2['image'],
-                                      fit: BoxFit.cover,
-                                    )
-                                  : null,
+                return Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 1,
+                        height: MediaQuery.of(context).size.height / 9,
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 0.3),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                        child: Stack(
+                          children: <Widget>[
+                            Positioned(
+                              top: 5,
+                              left: 5,
+                              child: Container(
+                                //작성자프로필사진
+                                width: MediaQuery.of(context).size.width / 6,
+                                height: MediaQuery.of(context).size.height / 12,
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                  child: (ds2['image'] != null)
+                                      ? CachedNetworkImage(
+                                          imageUrl: ds2['image'],
+                                          fit: BoxFit.cover,
+                                        )
+                                      : null,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 5,
-                          left: 70,
-                          child: Container(
-                            //닉네임
-                            width: MediaQuery.of(context).size.width / 6,
-                            height: MediaQuery.of(context).size.height / 40,
-                            decoration: BoxDecoration(
+                            Positioned(
+                              top: 5,
+                              left: 70,
+                              child: Container(
+                                //닉네임
+                                width: MediaQuery.of(context).size.width / 6,
+                                height: MediaQuery.of(context).size.height / 40,
+                                decoration: BoxDecoration(
 //                              border: Border(
 //                                  bottom: BorderSide(
 //                                width: 1,
 //                                color: Color.fromRGBO(255, 125, 128, 1),
 //                              )),
-                              color: Colors.white,
+                                  color: Colors.white,
+                                ),
+                                child: Text(
+                                  ds2['nickname'],
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                      fontFamily: 'NIX'),
+                                ),
+                              ),
                             ),
-                            child: Text(
-                              ds2['nickname'],
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black,
-                                  fontFamily: 'NIX'),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 5,
-                          right: 10,
-                          child: Container(
-                            //작성자프로필사진
-                            width: MediaQuery.of(context).size.width / 5,
-                            height: MediaQuery.of(context).size.height / 40,
+                            Positioned(
+                              top: 5,
+                              right: 10,
+                              child: Container(
+                                //작성자프로필사진
+                                width: MediaQuery.of(context).size.width / 5,
+                                height: MediaQuery.of(context).size.height / 40,
 //                          decoration: BoxDecoration(
 //                            border: Border.all(width: 1),
 //                            color: Colors.white,
 //                          ),
-                            child: Text(
-                              TimeDuration(ds2['time'], DateTime.now()),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 30,
-                          left: 70,
-                          child: InkWell(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      content: Text(
-                                        ds2['context'],
-                                        textAlign: TextAlign.center,
-                                      ),
-//                                      actions: <Widget>[
-//                                        FlatButton(
-//                                          child: Text('확인'),
-//                                          onPressed: () {
-//                                            Navigator.of(context).pop();
-//                                          },
-//                                          textColor: maincolor,
-//                                          padding: EdgeInsets.only(right: 120),
-//                                        )
-//                                      ],
-                                    );
-                                  });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Container(
-                                //텍스트
-                                width: MediaQuery.of(context).size.width / 1.5,
-                                height: MediaQuery.of(context).size.height / 20,
-                                child: (textlength < 41)
-                                    ? Text(
-                                        ds2['context'],
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(),
-                                      )
-                                    : Text(
-                                        ds2['context'].substring(1, 45) + '...',
-                                        textAlign: TextAlign.start,
-                                      ),
+                                child: Text(
+                                  TimeDuration(ds2['time'], DateTime.now()),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        (currentId == ds2['id'] || currentId == 'admin')?Positioned(
-                          right: 5,
-                          bottom: 5,
-                          child: InkWell(
-                            onTap: (){
-                              showDialog(context: context,
-                                builder: (BuildContext context) => CupertinoActionSheet(
-                                  cancelButton: CupertinoActionSheetAction(
-                                    child: Text('취소'),
-                                    onPressed: (){
-                                      Navigator.pop(context);
-                                    },
+                            Positioned(
+                              top: 30,
+                              left: 70,
+                              child: InkWell(
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          content: Text(
+                                            ds2['context'],
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        );
+                                      });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Container(
+                                    //텍스트
+                                    width: MediaQuery.of(context).size.width / 1.5,
+                                    height: MediaQuery.of(context).size.height / 20,
+                                    child: (textlength < 41)
+                                        ? Text(
+                                            ds2['context'],
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(),
+                                          )
+                                        : Text(
+                                            ds2['context'].substring(1, 45) + '...',
+                                            textAlign: TextAlign.start,
+                                          ),
                                   ),
-                                  actions: <Widget>[
-                                    CupertinoActionSheetAction(
-                                      child: Text('댓글 삭제', style: TextStyle(color: Colors.red),),
-                                      onPressed: (){
-                                        showDialog(context: context,
-                                          builder: (BuildContext context)=> CupertinoAlertDialog(
-                                            title: Text('정말 삭제하시겠습니까?'),
-                                            content: Text('삭제시 되돌릴수없습니다.'),
-                                            actions: <Widget>[
-                                              CupertinoDialogAction(
-                                                child: Text('취소'),
-                                                onPressed: (){
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                              CupertinoDialogAction(
-                                                child: Text('삭제'),
-                                                onPressed: (){
-                                                  delete(ds2['commentID']);
-                                                  Navigator.pop(context, true);
-                                                },
-                                              ),
-                                            ],
-                                          ),);
-                                      },
-                                    ),
-                                  ],
-                                ),);
-                            },
-                            child: Icon(
-                              Icons.view_headline
+                                ),
+                              ),
                             ),
-                          ),
-                        ):Container(),
-                      ],
+                            (currentId == ds2['id'] || currentId == 'admin')?Positioned(
+                              right: 5,
+                              bottom: 5,
+                              child: InkWell(
+                                onTap: (){
+                                  showDialog(context: context,
+                                    builder: (BuildContext context) => CupertinoActionSheet(
+                                      cancelButton: CupertinoActionSheetAction(
+                                        child: Text('취소'),
+                                        onPressed: (){
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      actions: <Widget>[
+                                        CupertinoActionSheetAction(
+                                          child: Text('댓글 삭제', style: TextStyle(color: Colors.red),),
+                                          onPressed: (){
+                                            showDialog(context: context,
+                                              builder: (BuildContext context)=> CupertinoAlertDialog(
+                                                title: Text('정말 삭제하시겠습니까?'),
+                                                content: Text('삭제시 되돌릴수없습니다.'),
+                                                actions: <Widget>[
+                                                  CupertinoDialogAction(
+                                                    child: Text('취소'),
+                                                    onPressed: (){
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                  CupertinoDialogAction(
+                                                    child: Text('삭제'),
+                                                    onPressed: (){
+                                                      delete(ds2['commentID']);
+                                                      Navigator.pop(context, true);
+                                                    },
+                                                  ),
+                                                ],
+                                              ),);
+                                          },
+                                        ),
+                                      ],
+                                    ),);
+                                },
+                                child: Icon(
+                                  Icons.view_headline
+                                ),
+                              ),
+                            ):Container(),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                    Container(
+                    ),
+                  ],
                 );
               });
         });
