@@ -37,6 +37,22 @@ class _BoardState extends State<Board> {
   String SelectSpace, title;
   String commentNum;
 
+
+  PageController controller = PageController(
+    initialPage: 0,
+    keepPage: true,
+  );
+  void Tapped(int index) {
+    setState(() {
+      SelectIndex = index;
+      controller.animateToPage(
+        index,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    });
+  }
+
   _BoardState(
       {Key key,
       @required this.currentUserId,
@@ -101,6 +117,14 @@ class _BoardState extends State<Board> {
     return value;
   }
 
+  int SelectIndex;
+
+  void pageChanged(int index) {
+    setState(() {
+      SelectIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final BlocProvider blocProvider = Provider.of<BlocProvider>(context);
@@ -136,12 +160,13 @@ class _BoardState extends State<Board> {
                     InkWell(
                       onTap: () {
                         blocProvider.select(1);
+                        Tapped(0);
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width / 3.5,
                         height: MediaQuery.of(context).size.height / 13,
                         decoration: BoxDecoration(
-                            border: (blocProvider.MenuController == 1)
+                            border: (SelectIndex ==0)
                                 ? Border(
                                     bottom: BorderSide(
                                       color: Colors.redAccent,
@@ -181,12 +206,13 @@ class _BoardState extends State<Board> {
                     InkWell(
                       onTap: () {
                         blocProvider.select(2);
+                        Tapped(1);
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width / 3.5,
                         height: MediaQuery.of(context).size.height / 13,
                         decoration: BoxDecoration(
-                            border: (blocProvider.MenuController == 2)
+                            border: (SelectIndex ==1)
                                 ? Border(
                                     bottom: BorderSide(
                                       color: Colors.redAccent,
@@ -226,12 +252,13 @@ class _BoardState extends State<Board> {
                     InkWell(
                       onTap: () {
                         blocProvider.select(3);
+                        Tapped(2);
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width / 3.5,
                         height: MediaQuery.of(context).size.height / 13,
                         decoration: BoxDecoration(
-                            border: (blocProvider.MenuController == 3)
+                            border: (SelectIndex == 2)
                                 ? Border(
                                     bottom: BorderSide(
                                       color: Colors.redAccent,
@@ -281,7 +308,17 @@ class _BoardState extends State<Board> {
               height: 10,
             ),
             Expanded(
-              child: PostList(context),
+              child: PageView(
+                onPageChanged: (index) {
+                  pageChanged(index);
+                },
+                controller: controller,
+                children: <Widget>[
+                  PostList(context),
+                  PostList(context),
+                  PostList(context),
+                ],
+              ),
             ),
           ],
         ),
@@ -309,19 +346,19 @@ class _BoardState extends State<Board> {
     final BlocProvider blocProvider = Provider.of<BlocProvider>(context);
     return Container(
       child: StreamBuilder<QuerySnapshot>(
-          stream: (blocProvider.MenuController == 1)
+          stream: (SelectIndex == 0)
               ? Firestore.instance
                   .collection(SelectSpace)
-                  .orderBy('time', descending: true)
+                  .orderBy('time', descending: true).limit(30)
                   .snapshots()
-              : (blocProvider.MenuController == 2)
+              : (SelectIndex == 1)
                   ? Firestore.instance
                       .collection(SelectSpace)
-                      .orderBy('like', descending: true)
+                      .orderBy('like', descending: true).limit(30)
                       .snapshots()
                   : Firestore.instance
                       .collection(SelectSpace)
-                      .orderBy('time', descending: true)
+                      .orderBy('time', descending: true).limit(30)
                       .snapshots(),
           builder: (context, snapshot2) {
             if (snapshot2.hasData) {

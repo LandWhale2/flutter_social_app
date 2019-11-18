@@ -79,9 +79,6 @@ class _ProfileEditState extends State<ProfileEdit> {
 
 
   uploadtask()async{
-    print(_nickname);
-    print(_selectage);
-    print(_location);
     if(_nickname != null){
       if(_selectage ==null){
         return Fluttertoast.showToast(msg: '나이를 입력해주세요.');
@@ -89,32 +86,32 @@ class _ProfileEditState extends State<ProfileEdit> {
       if(_location ==null){
         return Fluttertoast.showToast(msg: '지역을 입력해주세요.');
       }
-      setState(() {
-        isLoading = true;
-      });
       try{
-        if(_ImageUrl == null){
-          Firestore.instance.collection('users').document(currentId).updateData({
-            'nickname':_nickname,
-            'age': _selectage,
-            'location': _location,
-            'today': _today,
-          });
-        }else{
-          Firestore.instance.collection('users').document(currentId).updateData({
-            'nickname':_nickname,
-            'age': _selectage,
-            'location': _location,
-            'today': _today,
-            'image': _ImageUrl,
-          });
+        if(mounted){
+          if(_ImageUrl == null){
+            Firestore.instance.collection('users').document(currentId).updateData({
+              'nickname':_nickname,
+              'age': _selectage,
+              'location': _location,
+              'today': _today,
+            });
+          }else{
+            Firestore.instance.collection('users').document(currentId).updateData({
+              'nickname':_nickname,
+              'age': _selectage,
+              'location': _location,
+              'today': _today,
+              'image': _ImageUrl,
+            });
+          }
         }
 
-        setState(() {
-          isLoading = false;
-        });
 
+        if(mounted){
           Navigator.pop(context);
+        }
+
+
 
 
       }catch(e){
