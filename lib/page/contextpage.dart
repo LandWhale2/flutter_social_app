@@ -13,11 +13,14 @@ import 'package:socialapp/main.dart';
 import 'package:socialapp/page/Writing.dart';
 import 'package:socialapp/page/home.dart';
 import 'package:socialapp/widgets/Bloc.dart';
+import 'package:socialapp/widgets/Post.dart';
 import 'board.dart';
 import 'package:socialapp/widgets/Hero.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 var maincolor = Color.fromRGBO(255, 125, 128, 1);
+
+String tmpcommetId;
 
 class ContextPage extends StatefulWidget {
   String SelectSpace, title;
@@ -59,6 +62,10 @@ class _ContextPageState extends State<ContextPage> {
       @required this.contextId,
       @required this.title,
       @required this.SelectSpace});
+
+
+
+  bool replymode = false;
 
   LikeManager(List tmp) {
     if (tmp == null) {
@@ -141,19 +148,19 @@ class _ContextPageState extends State<ContextPage> {
 //  }
 
   PostReply(String commentId) async {
-    var _form = replyKey.currentState;
-    if (_form.validate()) {
-      _form.save();
+
+    if (replymode == true) {
       try {
+
         var documentName =
             'R' + DateTime.now().millisecondsSinceEpoch.toString();
 
-        await Firestore.instance
+        Firestore.instance
             .collection('users')
             .where('id', isEqualTo: currentId)
             .snapshots()
             .listen((data) async {
-          await Firestore.instance
+           Firestore.instance
               .collection(SelectSpace)
               .document(contextId)
               .collection('comment')
@@ -164,21 +171,24 @@ class _ContextPageState extends State<ContextPage> {
             'commentID': commentId,
             'contextID': contextId,
             'replyID': documentName,
-            'context': reply,
+            'context': _comment,
             'time': DateTime.now().millisecondsSinceEpoch,
             'space': title,
             'id': currentId,
-            'image': data.documents[0]['image'][0],
+            'image': data.documents[0]['image'],
             'nickname': data.documents[0]['nickname'],
           });
         });
 
         setState(() {
-          _form.reset();
+          _controller.clear();
         });
+
       } catch (e) {
         print(e.message);
       }
+    }else{
+      PostComment();
     }
   }
 
@@ -220,6 +230,7 @@ class _ContextPageState extends State<ContextPage> {
 
         setState(() {
           form.reset();
+          _controller.clear();
         });
       } catch (e) {
         print(e.message);
@@ -567,15 +578,29 @@ class _ContextPageState extends State<ContextPage> {
                                         return '내용을입력해주세요';
                                       }
                                     },
-                                    onSaved: (value) =>
-                                    _comment = value,
+                                    onChanged: (String value){
+                                      setState(() {
+                                        _comment = value;
+                                      });
+                                    },
                                   ),
                                 ),
                               ),
                             ),
                           ),
                           InkWell(
-                            onTap: PostComment,
+                            onTap: (){
+                              if(_controller.text[0] =='@'){
+                                if(tmpcommetId != null){
+                                  PostReply(tmpcommetId);
+                                  setState(() {
+                                    replymode =false;
+                                  });
+                                }
+                              }else{
+                                PostComment();
+                              }
+                            },
                             child: Icon(
                               Icons.send,
                               size: MediaQuery.of(context).textScaleFactor*50,
@@ -693,16 +718,13 @@ class _ContextPageState extends State<ContextPage> {
                               left: 70,
                               child: InkWell(
                                 onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          content: Text(
-                                            ds2['context'],
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        );
-                                      });
+                                  setState(() {
+                                    replymode = true;
+                                    replyname = ds2['nickname'];
+                                    _controller.clear();
+                                    _controller.text = '@${replyname} ';
+                                    tmpcommetId =ds2['commentID'];
+                                  });
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 10),
@@ -757,6 +779,7 @@ class _ContextPageState extends State<ContextPage> {
                                                     onPressed: (){
                                                       delete(ds2['commentID']);
                                                       Navigator.pop(context, true);
+                                                      Navigator.pop(context, true);
                                                     },
                                                   ),
                                                 ],
@@ -775,7 +798,119 @@ class _ContextPageState extends State<ContextPage> {
                         ),
                       ),
                     ),
-                    Container(
+                    StreamBuilder<QuerySnapshot>(
+                      stream: Firestore.instance
+                          .collection(SelectSpace)
+                          .document(contextId).collection('comment').document(ds2['commentID']).collection('reply').snapshots(),
+                      builder: (context, snapshot) {
+                        if(!snapshot.hasData){
+                          return Container();
+                        }
+                        return ListView.builder(
+                        padding: EdgeInsets.only(top: 2),
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          DocumentSnapshot ds3 = snapshot.data.documents[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(top:10.0),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(Icons.subdirectory_arrow_right),
+                                SizedBox(width: 10,),
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 1.17,
+                                  height: MediaQuery.of(context).size.height / 9,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(width: 0.3),
+                                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.only(bottom: 5,left: 5),
+                                        child: Container(
+                                          width: MediaQuery.of(context).size.width / 6,
+                                          height: MediaQuery.of(context).size.height / 12,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                            BorderRadius.all(Radius.circular(10)),
+                                            child: (ds3['image'] != null)
+                                                ? CachedNetworkImage(
+                                              imageUrl: ds3['image'],
+                                              fit: BoxFit.cover,
+                                            )
+                                                : null,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 10,),
+                                      Container(
+                                        width: MediaQuery.of(context).size.width / 1.6,
+                                        height: MediaQuery.of(context).size.height /5,
+                                        child: Column(
+                                          children: <Widget>[
+                                            SizedBox(height:5,),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Container(
+                                                  child: Text(
+                                                    (ds3['nickname'] != null)?ds3['nickname']:'',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.black,
+                                                        fontFamily: 'NIX'),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  child: Text(
+                                                    TimeDuration(ds3['time'], DateTime.now()),
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 5,),
+                                            InkWell(
+                                              onTap: (){
+                                                setState(() {
+//                                                  replymode = true;
+//                                                  replyname = ds3['nickname'];
+//                                                  _controller.clear();
+//                                                  _controller.text = '@${replyname} ';
+//                                                  tmpcommetId =ds3['commentID'];
+                                                });
+                                              },
+                                              child: Container(
+                                                width: MediaQuery.of(context).size.width / 1.6,
+                                                height: MediaQuery.of(context).size.height /15,
+                                                child: (textlength < 41)
+                                                    ? Text(
+                                                  ds3['context'],
+                                                  textAlign: TextAlign.start,
+                                                  style: TextStyle(),
+                                                )
+                                                    : Text(
+                                                  ds3['context'].substring(1, 45) + '...',
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        );
+                      }
                     ),
                   ],
                 );
