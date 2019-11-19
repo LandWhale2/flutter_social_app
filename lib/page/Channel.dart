@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:socialapp/model/data.dart';
 import 'package:socialapp/page/ProfileDetail.dart';
 import 'package:socialapp/page/signup.dart';
+import 'package:socialapp/page/spotlight.dart';
 import 'package:socialapp/widgets/slide_item.dart';
 
 class Home extends StatefulWidget {
@@ -80,6 +81,13 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                       color: Colors.pinkAccent),
                 ),
                 onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Spotlight(
+                            currentId: currentId,
+                            title: '스포트라이트',
+                          )));
                 },
               ),
             ],
@@ -161,7 +169,15 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                       fontWeight: FontWeight.w300,
                       color: Colors.pinkAccent),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Spotlight(
+                            currentId: currentId,
+                            title: '인기',
+                          )));
+                },
               ),
             ],
           ),

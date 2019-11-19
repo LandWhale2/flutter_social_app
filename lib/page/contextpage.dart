@@ -717,40 +717,7 @@ class _ContextPageState extends State<ContextPage> {
                               top: 30,
                               left: 70,
                               child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    replymode = true;
-                                    replyname = ds2['nickname'];
-                                    _controller.clear();
-                                    _controller.text = '@${replyname} ';
-                                    tmpcommetId =ds2['commentID'];
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: Container(
-                                    //텍스트
-                                    width: MediaQuery.of(context).size.width / 1.5,
-                                    height: MediaQuery.of(context).size.height / 20,
-                                    child: (textlength < 41)
-                                        ? Text(
-                                            ds2['context'],
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(),
-                                          )
-                                        : Text(
-                                            ds2['context'].substring(1, 45) + '...',
-                                            textAlign: TextAlign.start,
-                                          ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            (currentId == ds2['id'] || currentId == 'admin')?Positioned(
-                              right: 5,
-                              bottom: 5,
-                              child: InkWell(
-                                onTap: (){
+                                onLongPress: (){
                                   showDialog(context: context,
                                     builder: (BuildContext context) => CupertinoActionSheet(
                                       cancelButton: CupertinoActionSheetAction(
@@ -788,6 +755,41 @@ class _ContextPageState extends State<ContextPage> {
                                         ),
                                       ],
                                     ),);
+                                },
+                                onTap: () {
+                                  setState(() {
+                                    replymode = true;
+                                    replyname = ds2['nickname'];
+                                    _controller.clear();
+                                    _controller.text = '@${replyname} ';
+                                    tmpcommetId =ds2['commentID'];
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Container(
+                                    //텍스트
+                                    width: MediaQuery.of(context).size.width / 1.5,
+                                    height: MediaQuery.of(context).size.height / 20,
+                                    child: (textlength < 41)
+                                        ? Text(
+                                            ds2['context'],
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(),
+                                          )
+                                        : Text(
+                                            ds2['context'].substring(1, 45) + '...',
+                                            textAlign: TextAlign.start,
+                                          ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            (currentId == ds2['id'] || currentId == 'admin')?Positioned(
+                              right: 5,
+                              bottom: 5,
+                              child: InkWell(
+                                onTap: (){
                                 },
                                 child: Icon(
                                   Icons.view_headline
