@@ -87,8 +87,10 @@ class _ProfileEditState extends State<ProfileEdit> {
         return Fluttertoast.showToast(msg: '지역을 입력해주세요.');
       }
       try{
+        if(this.mounted){
+          Navigator.pop(context);
+        }
 
-        Navigator.pop(context);
 
         if(this.mounted){
           if(_ImageUrl == null){
@@ -192,7 +194,6 @@ class _ProfileEditState extends State<ProfileEdit> {
                                     }else{
                                       if(this.mounted){
                                         uploadtask();
-
                                       }
 
                                     }

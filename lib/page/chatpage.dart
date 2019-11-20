@@ -64,7 +64,7 @@ class _ChatpageState extends State<Chatpage> {
         ),
 
         title: Text(
-          'Chatting',
+          '채팅',
           style:
           TextStyle(fontFamily: 'NIX', fontSize: 25, color: Colors.black),
         ),

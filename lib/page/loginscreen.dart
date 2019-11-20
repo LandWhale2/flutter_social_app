@@ -202,7 +202,7 @@ class LoginScreenState extends State<LoginScreen>
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Tick(image: tick),
+//                      Tick(image: tick),
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 20),
                         child: Column(

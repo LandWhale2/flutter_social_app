@@ -28,14 +28,29 @@ class Chat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'CHAT',
-        ),
-        centerTitle: true,
-      ),
-      body:ChatScreen(peerId: peerId, peerAvatar: peerAvatar, currentId: currentId,),
+    return StreamBuilder(
+      stream: Firestore.instance.collection('users').document(peerId).snapshots(),
+      builder: (context, snapshot) {
+        if(!snapshot.hasData){
+          return Container();
+        }
+        var ds=snapshot.data;
+        return Scaffold(
+          appBar: AppBar(
+            iconTheme: IconThemeData(
+              color: Colors.black,
+            ),
+            title: Text(
+              ds['nickname'],
+              style:
+              TextStyle(fontFamily: 'NIX', fontSize: 25, color: Colors.black),
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.white, //Color.fromRGBO(188, 206, 255, 1)
+          ),
+          body:ChatScreen(peerId: peerId, peerAvatar: peerAvatar, currentId: currentId,),
+        );
+      }
     );
   }
 }
