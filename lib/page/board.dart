@@ -1,19 +1,27 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong/latlong.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
+import 'package:socialapp/main.dart';
 import 'package:socialapp/page/Writing.dart';
 import 'package:socialapp/page/signup.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:socialapp/page/signup.dart' as prefix0;
 import 'package:socialapp/widgets/Bloc.dart';
+import 'package:socialapp/widgets/adHelper.dart';
 import 'ProfileDetail.dart';
 import 'contextpage.dart';
 import 'test.dart';
 import 'package:socialapp/widgets/tool.dart';
+import 'package:admob_flutter/admob_flutter.dart';
+
+
+AdmobBannerSize bannerSize = AdmobBannerSize.FULL_BANNER;
+
 
 class Board extends StatefulWidget {
   final String currentUserId;
@@ -53,6 +61,57 @@ class _BoardState extends State<Board> {
     });
   }
 
+  void showSnackBar(String contemt){
+    _caffoldState.currentState.showSnackBar(SnackBar(
+      content: Text(contemt),
+      duration: Duration(milliseconds: 1500),
+    ));
+  }
+
+  GlobalKey<ScaffoldState> _caffoldState = GlobalKey();
+
+  void handleEvent(
+      AdmobAdEvent event, Map<String, dynamic> args, String adType) {
+    switch (event) {
+      case AdmobAdEvent.loaded:
+        showSnackBar('New Admob $adType Ad loaded!');
+        break;
+      case AdmobAdEvent.opened:
+        showSnackBar('Admob $adType Ad opened!');
+        break;
+      case AdmobAdEvent.closed:
+        showSnackBar('Admob $adType Ad closed!');
+        break;
+      case AdmobAdEvent.failedToLoad:
+        showSnackBar('Admob $adType failed to load. :(');
+        break;
+      case AdmobAdEvent.rewarded:
+        showDialog(
+          context: _caffoldState.currentContext,
+          builder: (BuildContext context) {
+            return WillPopScope(
+              child: AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('Reward callback fired. Thanks !'),
+                    Text('Type: ${args['type']}'),
+                    Text('Amount: ${args['amount']}'),
+                  ],
+                ),
+              ),
+              onWillPop: () async {
+                _caffoldState.currentState.hideCurrentSnackBar();
+                return true;
+              },
+            );
+          },
+        );
+        break;
+      default:
+    }
+  }
+
   _BoardState(
       {Key key,
       @required this.currentUserId,
@@ -64,6 +123,8 @@ class _BoardState extends State<Board> {
     // TODO: implement initState
     super.initState();
     getlatlong();
+    Ads.hideBannerAd();
+    SelectIndex =0;
   }
 
   double latitude1;
@@ -137,10 +198,11 @@ class _BoardState extends State<Board> {
         title: Text(
           title,
           style:
-              TextStyle(fontFamily: 'NIX', fontSize: 25, color: Colors.black),
+          TextStyle(fontFamily: 'NIX', fontSize: 25, color: Colors.black),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white, //Color.fromRGBO(188, 206, 255, 1)
+        backgroundColor: Colors.white, //
+        // Color.fromRGBO(188, 206, 255, 1)
       ),
       body: Container(
 //        color: Color.fromRGBO(255, 125, 128, 99),
@@ -336,7 +398,9 @@ class _BoardState extends State<Board> {
                         currentId: currentUserId,
                         title: title,
                         SelectSpace: SelectSpace,
-                      )));
+                      ))).then((value){
+                        Ads.showBannerAd();
+          });
         },
       ),
     );
@@ -378,6 +442,26 @@ class _BoardState extends State<Board> {
                     if (!snapshot2.hasData) {
                       return Container();
                     }
+//                    if(index != 0 && index % 6 ==0){
+//                      return Padding(
+//                        padding: const EdgeInsets.only(bottom:10.0),
+//                        child: Container(
+//                          width: MediaQuery.of(context).size.width/1.2,
+//                          height: MediaQuery.of(context).size.height/7,
+////                          decoration: BoxDecoration(
+////                            border: Border.all(width: 1)
+////                          ),
+//                          child: AdmobBanner(
+//                            adUnitId: getBannerAdUnitId(),
+//                            adSize: AdmobBannerSize.SMART_BANNER,
+////                            listener: (AdmobAdEvent event, Map<String, dynamic> args){
+////                              handleEvent(event, args, 'Banner');
+////                            },
+//                          ),
+//                        ),
+//                      );
+//                    }
+
                     if (blocProvider.MenuController == 3) {
                       //거리순정렬을 위한 if
                       if (Location(latitude1, longitude1, latitude2, longitude2) <
@@ -807,7 +891,6 @@ class _BoardState extends State<Board> {
                                   ),
                                   InkWell(
                                     onTap: () {
-
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -1107,3 +1190,5 @@ String TimeDuration(int timestamp, var now) {
   }
   return time;
 }
+
+

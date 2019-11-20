@@ -14,6 +14,7 @@ import 'package:socialapp/page/loginscreen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:socialapp/widgets/adHelper.dart';
 
 
 
@@ -85,7 +86,7 @@ class _ChatScreenState extends State<ChatScreen> {
     isLoading = false;
     isShowSticker = false;
     imageUrl = '';
-
+    Ads.hideBannerAd();
     readLocal();
   }
 

@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:socialapp/widgets/adHelper.dart';
 
 class Writing extends StatefulWidget {
   final String currentId;
@@ -41,6 +42,8 @@ class _WritingState extends State<Writing> {
       UploadImage();
     }
   }
+
+
 
   Future UploadImage() async {
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
@@ -127,6 +130,13 @@ class _WritingState extends State<Writing> {
         print(e.message);
       }
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Ads.hideBannerAd();
   }
 
   @override

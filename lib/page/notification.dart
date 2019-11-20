@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:socialapp/page/contextpage.dart';
+
+import 'board.dart';
 
 class NotificationPage extends StatefulWidget {
   final String currentId;
@@ -86,72 +89,90 @@ class _NotificationPageState extends State<NotificationPage> {
                                       if(ds2['id'] ==currentId){
                                         return Container();
                                       }
-                                      return Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                1.1,
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                10,
-                                        child: Row(
-                                          children: <Widget>[
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  6,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height /
-                                                  12,
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10)),
-                                                child: (ds2['image'] != null)
-                                                    ? CachedNetworkImage(
-                                                        imageUrl: ds2['image'],
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                    : null,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: Stack(
-                                                children: <Widget>[
-                                                  Container(
-                                                    width: MediaQuery.of(context)
+                                      return InkWell(
+                                        onTap: (){
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => ContextPage(
+                                                    currentId: currentId,
+                                                    contextId: ds['contextID'],
+                                                    SelectSpace: ds['space'],
+                                                    title: ds['title'],
+                                                  )));
+                                        },
+                                        child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width /
+                                                  1.1,
+                                          height:
+                                              MediaQuery.of(context).size.height /
+                                                  10,
+                                          child: Row(
+                                            children: <Widget>[
+                                              Container(
+                                                width: MediaQuery.of(context)
                                                         .size
                                                         .width /
-                                                        1.5,
-                                                    height: MediaQuery.of(context)
+                                                    6,
+                                                height: MediaQuery.of(context)
                                                         .size
                                                         .height /
-                                                        10,
-                                                    child: Column(
-                                                      children: <Widget>[
-                                                        Text(
-                                                          '${ds2['nickname']}님이 ${ds['context'].substring(0,9)}... 에 댓글을 남겼습니다',
-                                                          style: TextStyle(
-                                                              fontSize: MediaQuery.of(context).textScaleFactor*20,
-                                                              fontWeight: FontWeight.w500,
-                                                              fontFamily: 'NIX'
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Positioned(
-                                                    bottom: 5,
-                                                    right: 5,
-                                                    child: Container(
-
-                                                    ),
-                                                  ),
-                                                ],
+                                                    12,
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(10)),
+                                                  child: (ds2['image'] != null)
+                                                      ? CachedNetworkImage(
+                                                          imageUrl: ds2['image'],
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : null,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                              Padding(
+                                                padding: const EdgeInsets.all(10.0),
+                                                child: Stack(
+                                                  children: <Widget>[
+                                                    Container(
+                                                      width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                          1.5,
+                                                      height: MediaQuery.of(context)
+                                                          .size
+                                                          .height /
+                                                          10,
+                                                      child: Column(
+                                                        children: <Widget>[
+                                                          Text(
+                                                            '${ds2['nickname']}님이 ${ds['context'].substring(0,6)}... 에 댓글을 남겼습니다',
+                                                            style: TextStyle(
+                                                                fontSize: MediaQuery.of(context).textScaleFactor*20,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontFamily: 'NIX'
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Positioned(
+                                                      bottom: 5,
+                                                      right: 1,
+                                                      child: Container(
+                                                        child: Text(
+                                                          TimeDuration(ds2['time'],
+                                                              DateTime.now()),
+                                                          style: TextStyle(
+                                                              color: Colors.black54),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       );
                                     });

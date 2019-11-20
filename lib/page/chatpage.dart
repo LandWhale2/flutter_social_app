@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:socialapp/base.dart';
 import 'package:socialapp/page/contextpage.dart';
+import 'package:socialapp/widgets/adHelper.dart';
 
 import 'chat.dart';
 
@@ -39,7 +40,6 @@ class _ChatpageState extends State<Chatpage> {
     // TODO: implement initState
     super.initState();
     groupChatId = '';
-
   }
 
   readLocal(String peerId) async{
@@ -246,7 +246,9 @@ class _ChatpageState extends State<Chatpage> {
                               currentId: currentId,
                               peerId: document['id'],
                               peerAvatar: document['image'],
-                            )));
+                            ))).then((value){
+                              Ads.showBannerAd();
+                });
               },
               color: Colors.white30,
               padding: EdgeInsets.fromLTRB(25, 10, 25, 10),

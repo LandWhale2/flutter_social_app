@@ -87,7 +87,10 @@ class _ProfileEditState extends State<ProfileEdit> {
         return Fluttertoast.showToast(msg: '지역을 입력해주세요.');
       }
       try{
-        if(mounted){
+
+        Navigator.pop(context);
+
+        if(this.mounted){
           if(_ImageUrl == null){
             Firestore.instance.collection('users').document(currentId).updateData({
               'nickname':_nickname,
@@ -107,9 +110,9 @@ class _ProfileEditState extends State<ProfileEdit> {
         }
 
 
-        if(mounted){
-          Navigator.pop(context);
-        }
+
+
+
 
 
 
@@ -187,7 +190,11 @@ class _ProfileEditState extends State<ProfileEdit> {
                                     if(ds['image'] ==null){
                                       Fluttertoast.showToast(msg: '프로필 사진을 올려주세요.');
                                     }else{
-                                      uploadtask();
+                                      if(this.mounted){
+                                        uploadtask();
+
+                                      }
+
                                     }
 
                                   },

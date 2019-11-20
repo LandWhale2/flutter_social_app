@@ -9,6 +9,7 @@ import 'package:socialapp/model/data.dart';
 import 'package:socialapp/page/ProfileDetail.dart';
 import 'package:socialapp/page/signup.dart';
 import 'package:socialapp/page/spotlight.dart';
+import 'package:socialapp/widgets/adHelper.dart';
 import 'package:socialapp/widgets/slide_item.dart';
 
 class Home extends StatefulWidget {
@@ -30,6 +31,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
   void initState() {
     super.initState();
 //    futureget();
+
   }
 
 //  futureget() async {
@@ -102,7 +104,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
             child: StreamBuilder(
                 stream: Firestore.instance
                     .collection('users')
-                    .orderBy('like', descending: true)
+                .limit(30)
                     .snapshots(),
                 builder: (BuildContext context, snapshot) {
                   if (snapshot.hasData) {
@@ -188,6 +190,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                 stream: Firestore.instance
                     .collection('users')
                     .orderBy('like', descending: true)
+                .limit(20)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if(!snapshot.hasData){

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -22,6 +23,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:socialapp/widgets/Bloc.dart';
+import 'package:socialapp/widgets/adHelper.dart';
 
 
 
@@ -253,10 +255,24 @@ class _Base extends State<Base> {
 
 
 
+  BannerAd myBanner;
+  static bool isShown = false;
+  static bool _isGoingToBeShown = false;
+
+
   @override
   void initState() {
     super.initState();
-    AddLocation();
+  }
+
+
+
+
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   void pageChanged(int index) {
@@ -365,3 +381,4 @@ class Choice {
   final String title;
   final IconData icon;
 }
+

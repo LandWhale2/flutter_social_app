@@ -12,6 +12,7 @@ import 'package:socialapp/page/notification.dart';
 import 'package:socialapp/page/signup.dart';
 import 'package:socialapp/page/signup.dart' as prefix0;
 import 'package:socialapp/widgets/Bloc.dart';
+import 'package:socialapp/widgets/adHelper.dart';
 
 import 'ProfileDetail.dart';
 import 'board.dart';
@@ -108,7 +109,9 @@ class MainhomeState extends State<Mainhome> {
                                   currentUserId: currentId,
                                   title: '구한다',
                                   SelectSpace: 'find',
-                                )));
+                                ))).then((value){
+                                  Ads.showBannerAd();
+                    });
                   },
                   child: Column(
                     //구한다
@@ -149,7 +152,9 @@ class MainhomeState extends State<Mainhome> {
                                   currentUserId: currentId,
                                   title: '말한다',
                                   SelectSpace: 'say',
-                                )));
+                                ))).then((value){
+                                  Ads.showBannerAd();
+                    });
                   },
                   child: Column(
                     //말한다
@@ -205,7 +210,7 @@ class MainhomeState extends State<Mainhome> {
             Container(
               height: MediaQuery.of(context).size.height / 5,
               child: StreamBuilder<QuerySnapshot>(
-                  stream: Firestore.instance.collection('find').snapshots(),
+                  stream: Firestore.instance.collection('find').limit(10).snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return Container();
@@ -260,7 +265,9 @@ class MainhomeState extends State<Mainhome> {
                                                           ProfileDetail(
                                                             usercurrentId: ds['id'],
                                                             currentId: currentId,
-                                                          )));
+                                                          ))).then((value){
+                                                            Ads.showBannerAd();
+                                              });
                                             },
                                             child: Container(
                                               width:
@@ -292,7 +299,9 @@ class MainhomeState extends State<Mainhome> {
                                                     contextId: ds['contextID'],
                                                     SelectSpace: ds['space'],
                                                     title: ds['title'],
-                                                  )));
+                                                  ))).then((value){
+                                                    Ads.showBannerAd();
+                                          });
                                         },
                                         child: Column(
                                           children: <Widget>[
@@ -368,7 +377,7 @@ class MainhomeState extends State<Mainhome> {
             Container(
               height: MediaQuery.of(context).size.height / 5,
               child: StreamBuilder<QuerySnapshot>(
-                  stream: Firestore.instance.collection('say').where('like', isGreaterThan:9 ).orderBy('like', descending: true).snapshots(),
+                  stream: Firestore.instance.collection('say').where('like', isGreaterThan:9 ).orderBy('like', descending: true).limit(10).snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return Container();

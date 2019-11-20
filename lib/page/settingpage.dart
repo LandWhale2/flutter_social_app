@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:socialapp/page/Notice.dart';
 import 'package:socialapp/page/blockuser.dart';
 
 class SettingPage extends StatefulWidget {
@@ -104,6 +105,56 @@ class _SettingPageState extends State<SettingPage> {
                 Icon(Icons.arrow_forward_ios),
               ],
             ),
+          ),
+          SizedBox(height: 20,),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 10,),
+              Container(
+                child: Text(
+                  '공지사항',
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).textScaleFactor*25,
+                      fontFamily: 'NIX',
+                      fontWeight: FontWeight.w300,
+                      color: Colors.blue
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20,),
+          Row(//공지사항
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              InkWell(
+                onTap: (){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              Notice()));
+                },
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.event),
+                    SizedBox(width: 10,),
+                    Container(
+                      child: Text(
+                        '공지사항',
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).textScaleFactor*20,
+                          fontFamily: 'NIX',
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Icon(Icons.arrow_forward_ios),
+            ],
           ),
         ],
       ),

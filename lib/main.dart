@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:socialapp/page/home.dart';
 import 'package:socialapp/page/loginscreen.dart';
@@ -9,8 +12,13 @@ import 'package:socialapp/base.dart';
 import 'package:provider/provider.dart';
 import 'widgets/Bloc.dart';
 import 'Routes.dart';
+import 'package:admob_flutter/admob_flutter.dart';
 
-void main() => runApp(MyApp());
+String testAppId ='ca-app-pub-3940256099942544/6300978111';
+
+void main(){
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget{
 
@@ -34,4 +42,5 @@ class MyApp extends StatelessWidget{
     );
   }
 }
+
 

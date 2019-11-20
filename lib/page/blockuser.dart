@@ -19,7 +19,7 @@ class _BlockUserState extends State<BlockUser> {
 
   BlockClear(String peerId) {
     try {
-      if(mounted){
+      if(this.mounted){
         Firestore.instance.collection('users').document(peerId).updateData({
           'block': FieldValue.arrayRemove([currentId]),
         });
@@ -148,7 +148,11 @@ class _BlockUserState extends State<BlockUser> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        BlockClear(ds['id']);
+                                        Navigator.pop(context);
+                                        if(this.mounted){
+                                          BlockClear(ds['id']);
+                                        }
+
                                       },
                                       child: Container(
                                         width:

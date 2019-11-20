@@ -14,6 +14,7 @@ import 'package:socialapp/page/Writing.dart';
 import 'package:socialapp/page/home.dart';
 import 'package:socialapp/widgets/Bloc.dart';
 import 'package:socialapp/widgets/Post.dart';
+import 'package:socialapp/widgets/adHelper.dart';
 import 'board.dart';
 import 'package:socialapp/widgets/Hero.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -258,6 +259,7 @@ class _ContextPageState extends State<ContextPage> {
     // TODO: implement initState
     super.initState();
     CommentSum();
+    Ads.hideBannerAd();
   }
 
 

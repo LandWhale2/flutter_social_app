@@ -10,19 +10,19 @@ import 'package:socialapp/page/contextpage.dart';
 import 'package:socialapp/widgets/Bloc.dart';
 
 class UserWrite extends StatefulWidget {
-  final String currentId, username,userId, Selectspace, title;
-  UserWrite({Key key, @required this.currentId, @required this.username, @required this.userId,@required this.Selectspace, @required this.title}):super(key:key);
+  final String currentId, username,userId;
+  UserWrite({Key key, @required this.currentId, @required this.username, @required this.userId}):super(key:key);
 
 
 
   @override
-  _UserWriteState createState() => _UserWriteState(currentId: currentId,userId: userId,username: username, Selectspace: Selectspace, title: title);
+  _UserWriteState createState() => _UserWriteState(currentId: currentId,userId: userId,username: username);
 }
 
 class _UserWriteState extends State<UserWrite> {
-  final String currentId, username,userId,Selectspace, title;
+  final String currentId, username, userId;
 
-  _UserWriteState({Key key, @required this.currentId, @required this.username, @required this.userId, @required this.Selectspace, @required this.title});
+  _UserWriteState({Key key, @required this.currentId, @required this.username, @required this.userId});
   @override
   void initState() {
     // TODO: implement initState
@@ -30,8 +30,15 @@ class _UserWriteState extends State<UserWrite> {
     getlatlong();
   }
 
+  PageController _pageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+  );
+
   double latitude1;
   double longitude1;
+
+  int pageSelect = 0;
 
   getlatlong() async {
     Firestore.instance
@@ -116,7 +123,51 @@ class _UserWriteState extends State<UserWrite> {
                   children: <Widget>[
                     InkWell(
                       onTap: () {
+                        blocProvider.select(0);
+                        Tapped(0);
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 3.5,
+                        height: MediaQuery.of(context).size.height / 13,
+                        decoration: BoxDecoration(
+                            border: (blocProvider.MenuController == 0)
+                                ? Border(
+                              bottom: BorderSide(
+                                color: Colors.redAccent,
+                                width: 1,
+                              ),
+                            )
+                                : null),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(30)),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  '구한다',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'NIX',
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
                         blocProvider.select(1);
+                        Tapped(1);
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width / 3.5,
@@ -142,7 +193,7 @@ class _UserWriteState extends State<UserWrite> {
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(
-                                  title,
+                                  '말한다',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Colors.black,
@@ -172,7 +223,16 @@ class _UserWriteState extends State<UserWrite> {
               height: 10,
             ),
             Expanded(
-              child: PostList(context),
+              child: PageView(
+                onPageChanged: (index) {
+                  pageChanged(index);
+                },
+                controller: _pageController,
+                children: <Widget>[
+                  PostList(context),
+                  PostList(context),
+                ],
+              ),
             ),
           ],
         ),
@@ -180,11 +240,30 @@ class _UserWriteState extends State<UserWrite> {
     );
   }
 
+  void pageChanged(int index) {
+    final BlocProvider blocProvider = Provider.of<BlocProvider>(context);
+    blocProvider.select(index);
+  }
+
+  void Tapped(int index) {
+    final BlocProvider blocProvider = Provider.of<BlocProvider>(context);
+    blocProvider.select(index);
+    setState(() {
+      _pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    });
+  }
+
+
   Widget PostList(BuildContext context) {
     final BlocProvider blocProvider = Provider.of<BlocProvider>(context);
     return Container(
       child: StreamBuilder<QuerySnapshot>(
-          stream: Firestore.instance.collection(Selectspace).where('id',isEqualTo: userId).orderBy('time', descending: true).snapshots(),
+          stream: (blocProvider.MenuController == 0)?Firestore.instance.collection('find').where('id',isEqualTo: userId).orderBy('time', descending: true).snapshots()
+              :Firestore.instance.collection('say').where('id',isEqualTo: userId).orderBy('time', descending: true).snapshots(),
           builder: (context, snapshot2) {
             if (snapshot2.hasData) {
               return LiquidPullToRefresh(
@@ -255,8 +334,8 @@ class _UserWriteState extends State<UserWrite> {
                                             builder: (context) => ContextPage(
                                               currentId: currentId,
                                               contextId: ds['contextID'],
-                                              SelectSpace: Selectspace,
-                                              title: title,
+                                              SelectSpace: (blocProvider.MenuController == 0)?'find':'say',
+                                              title: (blocProvider.MenuController == 0)?'구한다':'말한다',
                                             )));
                                   }
                                 },

@@ -3,12 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:socialapp/page/Notice.dart';
 import 'package:socialapp/page/ProfileEdit.dart';
 import 'package:socialapp/page/contextpage.dart';
 import 'package:socialapp/page/settingpage.dart';
 import 'package:socialapp/page/userwrite.dart';
 import 'package:socialapp/widgets/Bloc.dart';
 import 'package:socialapp/base.dart';
+import 'package:socialapp/widgets/adHelper.dart';
 
 import 'chatpage.dart';
 
@@ -325,7 +327,10 @@ class _ProfileDetailState extends State<ProfileDetail> {
     } else {
       isLoading = true;
     }
-    BlockBlock();
+    if(this.mounted){
+      BlockBlock();
+    }
+
   }
 
 
@@ -382,7 +387,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                   centerTitle: true,
                   backgroundColor: Colors.white,
                   actions: <Widget>[
-                    InkWell(
+                    (currentId != usercurrentId)?InkWell(
                       onTap: (){
                         showDialog(context: context,
                         builder: (_) => AlertDialog(
@@ -403,6 +408,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                   Blockuser(ds['block'], ds2['block'], ds['id'], ds2['id']);
                                 });
 
+
                               },
                             ),
 
@@ -410,7 +416,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                         ),);
                       },
                         child: Icon(Icons.block)
-                    ),
+                    ):Container(),
                     SizedBox(width: 10,),
                   ],
                 ),
@@ -772,128 +778,54 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                       Container(
                                         child: FlatButton.icon(
                                             onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          UserWrite(
+                                                            currentId: currentId,
+                                                            userId: ds['id'],
+                                                            username: ds['nickname'],
+                                                          )));
                                             },
                                             icon: Icon(
                                               Icons.edit,
                                             ),
                                             label: Text(
-                                              '작성글 보기',
+                                              '작성글보기',
                                               style:
-                                              TextStyle(fontFamily: 'SIL', fontSize: MediaQuery.of(context).textScaleFactor*25),
+                                              TextStyle(fontFamily: 'NIX', fontSize: MediaQuery.of(context).textScaleFactor*25),
                                             )),
                                       ),
                                       SizedBox(height: 10,),
+                                      SizedBox(height: 10,),
 
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
                                           Container(
-                                            width:
-                                            MediaQuery.of(context).size.width / 2,
-                                            height:
-                                            MediaQuery.of(context).size.height / 20,
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                border: Border.all(width: 0.3,color: Colors.black),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10))),
-                                            child: Row(
-                                              children: <Widget>[
-                                                InkWell(
-                                                  child: Container(
-                                                    width:
-                                                    MediaQuery.of(context).size.width /4,
-                                                    height:
-                                                    MediaQuery.of(context).size.height / 20,
-                                                    decoration: BoxDecoration(
-                                                        border: Border(
-                                                          right: BorderSide(
-                                                            width: 0.2
-                                                          )
-                                                        )),
-                                                    child: Center(
-                                                      child: Text(
-                                                        '구한다',
-                                                        style: TextStyle(fontFamily: 'SIL', fontSize: MediaQuery.of(context).textScaleFactor*18),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  onTap: (){
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                UserWrite(
-                                                                  currentId: currentId,
-                                                                  username: ds['nickname'],
-                                                                  userId: ds['id'],
-                                                                  title: '구한다',
-                                                                  Selectspace: 'find',
-                                                                )));
-                                                  },
+                                            child: FlatButton.icon(
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              SettingPage(
+                                                                currentId: currentId,
+                                                              )));
+                                                },
+                                                icon: Icon(
+                                                  Icons.settings,
                                                 ),
-                                                InkWell(
-                                                  child: Container(
-                                                    width:
-                                                    MediaQuery.of(context).size.width /4.1,
-                                                    height:
-                                                    MediaQuery.of(context).size.height / 20,
-                                                    child: Center(
-                                                      child: Text(
-                                                        '말한다',
-                                                        style: TextStyle(fontFamily: 'SIL', fontSize: MediaQuery.of(context).textScaleFactor*18),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  onTap: (){
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                UserWrite(
-                                                                  currentId: currentId,
-                                                                  username: ds['nickname'],
-                                                                  userId: ds['id'],
-                                                                  title: '말한다',
-                                                                  Selectspace: 'say',
-                                                                )));
-                                                  },
-                                                ),
-                                              ],
-                                            ),
+                                                label: Text(
+                                                  '환경설정',
+                                                  style:
+                                                  TextStyle(fontFamily: 'NIX', fontSize: MediaQuery.of(context).textScaleFactor*25),
+                                                )),
                                           ),
-                                      SizedBox(height: 10,),
+                                        ],
+                                      ),
 
-                                      Container(
-                                        child: FlatButton.icon(
-                                            onPressed: () {},
-                                            icon: Icon(
-                                              Icons.chat,
-                                            ),
-                                            label: Text(
-                                              '공지사항',
-                                              style:
-                                              TextStyle(fontFamily: 'SIL', fontSize: MediaQuery.of(context).textScaleFactor*25),
-                                            )),
-                                      ),
-                                      SizedBox(height: 20,),
-                                      Container(
-                                        child: FlatButton.icon(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          SettingPage(
-                                                            currentId: currentId,
-                                                          )));
-                                            },
-                                            icon: Icon(
-                                              Icons.settings,
-                                            ),
-                                            label: Text(
-                                              '환경설정',
-                                              style:
-                                              TextStyle(fontFamily: 'SIL', fontSize: MediaQuery.of(context).textScaleFactor*25),
-                                            )),
-                                      ),
                                     ],
                                   ),
                                 ),
