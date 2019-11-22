@@ -27,7 +27,6 @@ class _BlockUserState extends State<BlockUser> {
         Firestore.instance.collection('users').document(currentId).updateData({
           'block': FieldValue.arrayRemove([peerId]),
         });
-        return print('차단해제완료');
       }
     } catch (e) {
       print(e.message);
@@ -148,7 +147,7 @@ class _BlockUserState extends State<BlockUser> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        Navigator.pop(context);
+//                                        Navigator.pop(context);
                                         if(this.mounted){
                                           BlockClear(ds['id']);
                                         }

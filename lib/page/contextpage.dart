@@ -259,6 +259,7 @@ class _ContextPageState extends State<ContextPage> {
     // TODO: implement initState
     super.initState();
     CommentSum();
+    Ads.initialize();
     Ads.hideBannerAd();
   }
 
@@ -327,7 +328,7 @@ class _ContextPageState extends State<ContextPage> {
                                       height:
                                           MediaQuery.of(context).size.height / 30,
                                       child: Text(
-                                        (ds1['nickname'] != null)?ds1['nickname']:'',
+                                        (ds1['nickname'] != null)?ds1['nickname']:'찾을 수 없는 유저',
                                         textAlign: TextAlign.start,
                                         style: TextStyle(),
                                       ),
@@ -688,7 +689,7 @@ class _ContextPageState extends State<ContextPage> {
                                   color: Colors.white,
                                 ),
                                 child: Text(
-                                  ds2['nickname'],
+                                  (ds2['nickname'] != null)?ds2['nickname']:'찾을 수 없는 유저',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 15,
@@ -860,7 +861,7 @@ class _ContextPageState extends State<ContextPage> {
                                               children: <Widget>[
                                                 Container(
                                                   child: Text(
-                                                    (ds3['nickname'] != null)?ds3['nickname']:'',
+                                                    (ds3['nickname'] != null)?ds3['nickname']:'찾을 수 없는 유저',
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                         fontSize: 15,

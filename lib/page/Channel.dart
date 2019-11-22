@@ -3,10 +3,13 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:socialapp/main.dart';
 import 'package:socialapp/model/data.dart';
 import 'package:socialapp/page/ProfileDetail.dart';
+import 'package:socialapp/page/loginscreen.dart';
 import 'package:socialapp/page/signup.dart';
 import 'package:socialapp/page/spotlight.dart';
 import 'package:socialapp/widgets/adHelper.dart';
@@ -54,7 +57,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Padding(
+    return (FirebaseAuth.instance.currentUser() != null)?Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: ListView(
         children: <Widget>[
@@ -179,6 +182,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                             currentId: currentId,
                             title: '인기',
                           )));
+
                 },
               ),
             ],
@@ -295,7 +299,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
 //          SizedBox(height: 30),
         ],
       ),
-    );
+    ):Container();
   }
 
   @override

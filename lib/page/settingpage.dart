@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:socialapp/page/Notice.dart';
+import 'package:socialapp/page/accountpage.dart';
 import 'package:socialapp/page/blockuser.dart';
+import 'package:socialapp/widgets/adHelper.dart';
 
 class SettingPage extends StatefulWidget {
   final String currentId;
@@ -14,6 +16,16 @@ class _SettingPageState extends State<SettingPage> {
   final String currentId;
 
   _SettingPageState({Key key, @required this.currentId});
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Ads.initialize();
+    Ads.showBannerAd();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,28 +61,40 @@ class _SettingPageState extends State<SettingPage> {
             ],
           ),
           SizedBox(height: 20,),
-          Row(//계정정보
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Icon(Icons.account_circle),
-                  SizedBox(width: 10,),
-                  Container(
-                    child: Text(
-                      '계정정보',
-                      style: TextStyle(
-                        fontSize: MediaQuery.of(context).textScaleFactor*20,
-                        fontFamily: 'NIX',
-                        fontWeight: FontWeight.w300,
+          InkWell(
+            onTap: (){
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AccountPage(
+                        currentId: currentId,
+                      ))).then((value){
+                        Ads.showBannerAd();
+              });
+            },
+            child: Row(//계정정보
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Icon(Icons.account_circle),
+                    SizedBox(width: 10,),
+                    Container(
+                      child: Text(
+                        '계정정보',
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).textScaleFactor*20,
+                          fontFamily: 'NIX',
+                          fontWeight: FontWeight.w300,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
 
-              Icon(Icons.arrow_forward_ios),
-            ],
+                Icon(Icons.arrow_forward_ios),
+              ],
+            ),
           ),
           SizedBox(height: 20,),
           InkWell(

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +57,36 @@ class _ProfileDetailState extends State<ProfileDetail> {
 //    }
 //  }
 
+  visiter(){
+    Firestore.instance.collection('users').document(usercurrentId).snapshots().listen((data){
+      if(data['visit'] == null){
+        if(data['visit'] == null){
+          if(this.mounted){
+            Firestore.instance.collection('users').document(usercurrentId).updateData({
+              'visit': FieldValue.arrayUnion([currentId]),
+            });
+          }
+        }else{
+          for(int i= 0 ; i<data['visit'].length ; i++){
+            if(data['visit'][i] == currentId){
+              return null;
+            }
+          }
+          if(this.mounted){
+            Firestore.instance.collection('users').document(usercurrentId).updateData({
+              'visit': FieldValue.arrayUnion([currentId]),
+            });
+          }
+
+          return null;
+
+
+        }
+      }
+    });
+  }
+
+
   LikeManager(List tmp) {
     if (tmp == null) {
       return Firestore.instance
@@ -111,7 +142,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
       //저장된게있을때
       if(user.length == 0){
         //차단기능을 한번 사용했다가 전부 비운경우
-        if(mounted){
+        if(this.mounted){
           Firestore.instance
               .collection('users')
               .document(profileId)
@@ -132,7 +163,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
       if (profileuser != null) {
         if(profileuser.length ==0){
           //차단기능을 한번 사용했다가 전부 비운경우
-          if(mounted){
+          if(this.mounted){
 
             Firestore.instance
                 .collection('users')
@@ -161,7 +192,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
               //원래차단된유저
               return print('a');
             } else if (i == user.length) {
-              if(mounted){
+              if(this.mounted){
                 Firestore.instance
                     .collection('users')
                     .document(profileId)
@@ -190,7 +221,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
             } else if (i == profileuser.length) {
               //신규차단
 
-              if(mounted){
+              if(this.mounted){
 
                 Firestore.instance
                     .collection('users')
@@ -211,7 +242,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
           }
         }
       } else {
-        if(mounted){
+        if(this.mounted){
 
           Firestore.instance.collection('users').document(profileId).updateData({
             'block': FieldValue.arrayUnion([userId]),
@@ -224,7 +255,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
       }
     } else if (user == null || user.length == 0) {
       //아무것도없을때 최초저장
-      if(mounted){
+      if(this.mounted){
 
         Firestore.instance.collection('users').document(profileId).updateData({
           'block': FieldValue.arrayUnion([userId]),
@@ -331,6 +362,8 @@ class _ProfileDetailState extends State<ProfileDetail> {
       BlockBlock();
     }
 
+    visiter();
+
   }
 
 
@@ -353,7 +386,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return (FirebaseAuth.instance.currentUser() != null)?StreamBuilder(
         stream: Firestore.instance
             .collection('users')
             .document(usercurrentId)
@@ -403,11 +436,11 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                 style: TextStyle(
                                 color: Colors.red),),
                               onPressed: (){
-                                Navigator.pop(context);
-                                Future.delayed(Duration(seconds: 1), (){
-                                  Blockuser(ds['block'], ds2['block'], ds['id'], ds2['id']);
-                                });
-
+                                if(this.mounted){
+                                  Future.delayed(Duration(seconds: 1), (){
+                                    Blockuser(ds['block'], ds2['block'], ds['id'], ds2['id']);
+                                  });
+                                }
 
                               },
                             ),
@@ -440,14 +473,14 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                             MediaQuery.of(context).size.width / 5,
                                         height:
                                             MediaQuery.of(context).size.height / 10,
-                                        child: ClipRRect(
+                                        child: (ds['image'] != null)?ClipRRect(
                                           borderRadius:
                                               BorderRadius.all(Radius.circular(10)),
                                           child: CachedNetworkImage(
                                             imageUrl: ds['image'],
                                             fit: BoxFit.cover,
                                           ),
-                                        ),
+                                        ):Icon(Icons.clear),
                                       ),
                                       Row(
                                         children: <Widget>[
@@ -511,7 +544,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                                           color: Colors.black),
                                                     ),
                                                     Text(
-                                                      '23',
+                                                      (ds['visit'] != 0)?ds['visit'].length.toString():'0',
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.w900,
@@ -647,43 +680,6 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                       SizedBox(
                                         height: 5,
                                       ),
-                                      (currentId == usercurrentId)
-                                          ? InkWell(
-                                              onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ProfileEdit(
-                                                              currentId: currentId,
-                                                            )));
-                                              },
-                                              child: Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    4,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height /
-                                                    25,
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      width: 0.4,
-                                                      color: Colors.black),
-                                                  borderRadius: BorderRadius.all(
-                                                      Radius.circular(7)),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    '프로필 수정',
-                                                    style: TextStyle(
-                                                        fontFamily: 'NIX'),
-                                                  ),
-                                                ),
-                                              ),
-                                            )
-                                          : Container(),
                                       SizedBox(
                                         height: 10,
                                       ),
@@ -693,13 +689,14 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                           Container(
                                             width:
                                                 MediaQuery.of(context).size.width /
-                                                    2,
+                                                    1,
                                             height:
                                                 MediaQuery.of(context).size.height /
-                                                    25,
+                                                    20,
                                             decoration: BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(width: 1)),
+                                              color: maincolor,
+                                              border: Border.all(width: 0.1),
+//                                              borderRadius: BorderRadius.all(Radius.circular(15))
                                             ),
                                             child: Center(
                                               child: Text(
@@ -709,72 +706,36 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                                 style: TextStyle(
                                                     color: (ds['today'] == null)
                                                         ? Colors.black54
-                                                        : Colors.black,
-                                                    fontSize: 15,
+                                                        : Colors.white,
+                                                    fontSize: MediaQuery.of(context).textScaleFactor*20,
                                                     fontFamily: 'NIX'),
                                               ),
                                             ),
                                           ),
-//                                      (currentId == usercurrentId)
-//                                          ? InkWell(
-//                                        onTap: () {
-//                                          showDialog(
-//                                              context: context,
-//                                              builder:
-//                                                  (BuildContext context) {
-//                                                return AlertDialog(
-//                                                  content: Container(
-//                                                    child: TextFormField(
-//                                                      maxLength: 12,
-//                                                      controller: _today,
-//                                                      decoration:
-//                                                      InputDecoration(
-//                                                        hintText:
-//                                                        '오늘의한마디를 입력해주세요.',
-//                                                      ),
-//                                                      validator: (input) {
-//                                                        if (input.isEmpty) {
-//                                                          return '내용을입력해주세요';
-//                                                        }
-//                                                      },
-//                                                    ),
-//                                                  ),
-//                                                  actions: <Widget>[
-//                                                    FlatButton(
-//                                                      child: Text('취소'),
-//                                                      onPressed: () {
-//                                                        Navigator.of(context)
-//                                                            .pop();
-//                                                      },
-//                                                      textColor: maincolor,
-////                                                        padding:
-////                                                        EdgeInsets.only(
-////                                                            left: 120),
-//                                                    ),
-//                                                    FlatButton(
-//                                                      child: Text('확인'),
-//                                                      onPressed: (){
-//                                                        Firestore.instance.collection('users').document(usercurrentId).updateData({
-//                                                          'today': _today.text,
-//                                                        });
-//                                                        Navigator.of(context)
-//                                                            .pop(_today);
-//                                                      },
-//                                                      textColor: Colors.black,
-////                                                        padding:
-////                                                            EdgeInsets.only(
-////                                                                right: 120),
-//                                                    )
-//                                                  ],
-//                                                );
-//                                              });
-//                                        },
-//                                        child: Icon(Icons.edit),
-//                                      )
-//                                          : Container(),
                                         ],
                                       ),
                                       SizedBox(height: 20,),
+                                      (currentId == usercurrentId)?Container(
+                                        child: FlatButton.icon(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ProfileEdit(
+                                                            currentId: currentId,
+                                                          )));
+                                            },
+                                            icon: Icon(
+                                              Icons.edit,
+                                            ),
+                                            label: Text(
+                                              '프로필수정',
+                                              style:
+                                              TextStyle(fontFamily: 'NIX', fontSize: MediaQuery.of(context).textScaleFactor*25),
+                                            )),
+                                      ):Container(),
+                                      SizedBox(height: 10,),
                                       Container(
                                         child: FlatButton.icon(
                                             onPressed: () {
@@ -798,7 +759,6 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                             )),
                                       ),
                                       SizedBox(height: 10,),
-                                      SizedBox(height: 10,),
 
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -812,7 +772,9 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                                           builder: (context) =>
                                                               SettingPage(
                                                                 currentId: currentId,
-                                                              )));
+                                                              ))).then((value){
+                                                                Ads.showBannerAd();
+                                                  });
                                                 },
                                                 icon: Icon(
                                                   Icons.settings,
@@ -838,7 +800,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
               );
             }
           );
-        });
+        }):Container();
   }
 
   Widget buildLoading() {

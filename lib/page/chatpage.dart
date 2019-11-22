@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:socialapp/base.dart';
@@ -81,7 +82,7 @@ class _ChatpageState extends State<Chatpage> {
         ),
         backgroundColor: Colors.white, //Color.fromRGBO(188, 206, 255, 1)
       ),
-      body: Stack(
+      body: (FirebaseAuth.instance.currentUser() != null)?Stack(
         children: <Widget>[
           Container(
             child: StreamBuilder(
@@ -150,7 +151,7 @@ class _ChatpageState extends State<Chatpage> {
                 : Container(),
           ),
         ],
-      ),
+      ):Container(),
     );
   }
 
@@ -166,6 +167,13 @@ class _ChatpageState extends State<Chatpage> {
           readLocal(userId);
           if(!snapshot.hasData){
             return Container();
+          }
+          if(document['block'] != null){
+            for(int i=0; i<document['block'].length ; i++){
+              if(document['block'][i] == currentId){
+                return Container();
+              }
+            }
           }
           return Container(
             child: FlatButton(

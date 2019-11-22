@@ -1,13 +1,16 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:socialapp/base.dart';
 import 'package:flutter/material.dart';
 import 'package:socialapp/main.dart';
 import 'package:socialapp/page/contextpage.dart';
+import 'package:socialapp/page/loginscreen.dart';
 import 'package:socialapp/page/notification.dart';
 import 'package:socialapp/page/signup.dart';
 import 'package:socialapp/page/signup.dart' as prefix0;
@@ -34,11 +37,31 @@ class MainhomeState extends State<Mainhome> {
   final RefreshController _refreshController = RefreshController();
 
   int _bottomSelectedIndex = 0;
+  GoogleSignIn googleSignIn =GoogleSignIn();
+
+
+  Future<Null> handleSignOut() async {
+
+
+    await FirebaseAuth.instance.signOut();
+    await googleSignIn.disconnect();
+    await googleSignIn.signOut();
+
+
+
+
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+            (Route<dynamic> route) => false).then((value){
+      Ads.showBannerAd();
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
     final AlertProvider alertProvider = Provider.of<AlertProvider>(context);
-    return Scaffold(
+    return (FirebaseAuth.instance.currentUser() != null)?Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -112,6 +135,7 @@ class MainhomeState extends State<Mainhome> {
                                 ))).then((value){
                                   Ads.showBannerAd();
                     });
+//                  handleSignOut();
                   },
                   child: Column(
                     //구한다
@@ -518,7 +542,7 @@ class MainhomeState extends State<Mainhome> {
           ],
         ),
       ),
-    );
+    ):Container();
   }
   List<Widget> buildList(){
     return List.generate(15, (index) => Container(

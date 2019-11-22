@@ -136,6 +136,7 @@ class _WritingState extends State<Writing> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    Ads.initialize();
     Ads.hideBannerAd();
   }
 
@@ -280,19 +281,15 @@ class _WritingState extends State<Writing> {
   }
 
   Widget buildLoading(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        isLoading
-            ?Container(
-          child: Center(
-            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.grey)),
-          ),
-          color: Colors.white.withOpacity(0.8),
-        )
-            :Container(),
-      ],
+    return Positioned(
+      child: isLoading
+          ?Container(
+        child: Center(
+          child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.grey)),
+        ),
+        color: Colors.white.withOpacity(0.8),
+      )
+          :Container(),
     );
   }
 }

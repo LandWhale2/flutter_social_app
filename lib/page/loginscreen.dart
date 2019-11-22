@@ -12,9 +12,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socialapp/main.dart';
 import 'package:socialapp/model/todo.dart';
+import 'package:socialapp/page/ProfileEdit.dart';
 import 'package:socialapp/page/contextpage.dart';
 import 'package:socialapp/page/signup.dart';
+import 'package:socialapp/page/userwrite.dart';
 import 'package:socialapp/page/writeprofile2.dart';
+import 'package:socialapp/widgets/adHelper.dart';
 import 'package:socialapp/widgets/database_create.dart';
 
 import 'writeprofile.dart';
@@ -46,37 +49,51 @@ class LoginScreenState extends State<LoginScreen>
 
   FirebaseUser currentUser;
 
-  int check2 = 0;
+
 
   @override
-  void initState() {
+  void initState(){
     // TODO: implement initState
     super.initState();
     isSignedIn();
-    int check2 = 0;
+    Ads.initialize();
+    Ads.hideBannerAd();
+
   }
 
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>(debugLabel: 'LoginScreenState');
   String _email, _password;
   var tmpemail, tmppassword;
-  SharedPreferences prefs;
+
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  SharedPreferences prefs;
+
+
+
 
   void isSignedIn() async {
     this.setState(() {
       isLoading = true;
     });
 
-    prefs = await SharedPreferences.getInstance();
 
     isLoggedIn = await googleSignIn.isSignedIn();
+    prefs = await SharedPreferences.getInstance();
+
     if (isLoggedIn) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  Base(currentUserId: prefs.getString('id'))));
+      Firestore.instance.collection('users').document(prefs.getString('id')).snapshots().listen((data){
+        if(data['nickname'] != null){
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Base(currentUserId: prefs.getString('id'))));
+        }else{
+          print('로그인되어있지않은유저');
+        }
+      });
+
     }
 
     this.setState(() {
@@ -91,6 +108,65 @@ class LoginScreenState extends State<LoginScreen>
       isLoading = true;
     });
 
+    //로그인은 되어있는데 프로필을 작성하지않은 신규유저를 위한처리
+    if(FirebaseAuth.instance.currentUser() != null){
+      print('sssss');
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+
+      final snapshot = await Firestore.instance.collection('users').document(user.uid).get();
+
+      if(snapshot.exists == false){
+        Firestore.instance
+            .collection('users')
+            .document(user.uid)
+            .setData({
+          'nickname': null,
+          'id': user.uid,
+          'createAt': DateTime.now().millisecondsSinceEpoch.toString(),
+          'chattingWith': null,
+          'image': null,
+          'age': null,
+          'like': 0,
+          'likeperson': null,
+          'block': null,
+          'visit': 0,
+          'email': null,
+        });
+
+        return Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ProfileEdit(currentId: user.uid)));
+      }else{
+        return Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ProfileEdit(currentId: user.uid)));
+      }
+
+
+    }
+
+    print('asd');
+
+    //프로필을 따로 작성하지않은유저
+    if(prefs.getString('id') != null){
+      Firestore.instance.collection('users').document(prefs.getString('id')).snapshots().listen((data){
+        if(data['nickname'] == null){
+          return Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ProfileEdit(currentId: prefs.getString('id'))));
+        }else{
+          return null;
+        }
+      });
+    }
+    print('222');
+
     GoogleSignInAccount googleUser = await googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
@@ -100,44 +176,73 @@ class LoginScreenState extends State<LoginScreen>
     FirebaseUser firebaseUser =
         (await firebaseAuth.signInWithCredential(credential)).user;
 
+    print('dddd');
+
     if (firebaseUser != null) {
       //check already signup
+      print('onononon');
+
+
+
+      Firestore.instance.collection('users').document(firebaseUser.uid).snapshots().listen((data){
+        if(data['nickname'] == null){
+          return Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ProfileEdit(currentId: firebaseUser.uid)));
+        }else{
+          return null;
+        }
+      });
+
       final QuerySnapshot result = await Firestore.instance
           .collection('users')
           .where('id', isEqualTo: firebaseUser.uid)
           .getDocuments();
       final List<DocumentSnapshot> documents = result.documents;
+      print('gogogogo');
+
+
+
 
       if (documents.length == 0) {
+        print('nonononoo');
         //Update data new user
-        Firestore.instance
-            .collection('users')
-            .document(firebaseUser.uid)
-            .setData({
-          'nickname': firebaseUser.displayName,
-          'photoUrl': firebaseUser.photoUrl,
-          'id': firebaseUser.uid,
-          'createAt': DateTime.now().millisecondsSinceEpoch.toString(),
-          'chattingWith': null,
-          'favorite': null,
-          'image': [],
-          'age': null,
-          'intro': null,
-          'like': 0,
-          'likeperson': null,
-          'block': null,
-          'email' : currentUser.displayName,
-        });
-
-
-        //write data local
         currentUser = firebaseUser;
         await prefs.setString('id', currentUser.uid);
         await prefs.setString('nickname', currentUser.displayName);
         await prefs.setString('photoUrl', currentUser.photoUrl);
+
+        Firestore.instance
+            .collection('users')
+            .document(firebaseUser.uid)
+            .setData({
+          'nickname': null,
+          'id': firebaseUser.uid,
+          'createAt': DateTime.now().millisecondsSinceEpoch.toString(),
+          'chattingWith': null,
+          'image': null,
+          'age': null,
+          'like': 0,
+          'likeperson': null,
+          'block': null,
+          'visit': 0,
+          'email': (currentUser.displayName == null)?null:currentUser.displayName,
+        });
+
+
+        //write data local
+
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ProfileEdit(currentId: firebaseUser.uid)));
+        return null;
       } else {
         //기존유저
-        check2 = 1;
 
         Navigator.push(
             context,
@@ -148,22 +253,10 @@ class LoginScreenState extends State<LoginScreen>
         await prefs.setString('nickname', documents[0]['nickname']);
         await prefs.setString('photoUrl', documents[0]['photoUrl']);
         await prefs.setString('aboutMe', documents[0]['aboutMe']);
-        print('dd');
       }
-      Fluttertoast.showToast(msg: "가입성공");
-      this.setState(() {
-        isLoading = false;
-      });
 
 
-      await Future.delayed(Duration(seconds: 1));
-      if (check2 == 0) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    writeprofile(currentUserId: firebaseUser.uid)));
-      }
+
     } else {
       Fluttertoast.showToast(msg: "sign in fail");
       this.setState(() {
@@ -203,6 +296,19 @@ class LoginScreenState extends State<LoginScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
 //                      Tick(image: tick),
+                    SizedBox(height: MediaQuery.of(context).size.height/6,),
+                      Container(
+                        child: Text(
+                          '데이트메이트',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).textScaleFactor*40,
+                            fontFamily: 'NIX',
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: MediaQuery.of(context).size.height/10,),
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 20),
                         child: Column(

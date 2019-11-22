@@ -23,6 +23,8 @@ void main(){
 class MyApp extends StatelessWidget{
 
   static const String _title = 'flutter code';
+
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -32,9 +34,9 @@ class MyApp extends StatelessWidget{
         ChangeNotifierProvider<AlertProvider>.value(value: AlertProvider()),
       ],
       child: MaterialApp(
-        routes: <String, WidgetBuilder>{
-          '/home' : (BuildContext context) => Mainhome(currentId: prefix0.currentId,),
-      },
+//        routes: <String, WidgetBuilder>{
+//          '/home' : (BuildContext context) => Mainhome(currentId: prefix0.currentId,),
+//      },
         debugShowCheckedModeBanner: false,
         title: _title,
         home: LoginScreen(),

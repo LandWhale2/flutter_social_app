@@ -101,6 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
     isLoading = false;
     isShowSticker = false;
     imageUrl = '';
+    Ads.initialize();
     Ads.hideBannerAd();
     readLocal();
   }

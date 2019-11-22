@@ -88,13 +88,13 @@ class _Base extends State<Base> {
 //    flutterLocalNotificationsPlugin.initialize(initializationSettings);
 //  }
 
-  void onItemMenuPress(Choice choice) {
-    if (choice.title == 'Log out') {
-      handleSignOut();
-    } else {
-//      Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
-    }
-  }
+//  void onItemMenuPress(Choice choice) {
+//    if (choice.title == 'Log out') {
+//      handleSignOut();
+//    } else {
+////      Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+//    }
+//  }
 
 //  void showNotification(message) async{
 //    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -233,23 +233,7 @@ class _Base extends State<Base> {
     });
   }
 
-  Future<Null> handleSignOut() async {
-    this.setState(() {
-      isLoading = true;
-    });
 
-    await FirebaseAuth.instance.signOut();
-    await googleSignIn.disconnect();
-    await googleSignIn.signOut();
-
-    this.setState(() {
-      isLoading = false;
-    });
-
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => MyApp()),
-        (Route<dynamic> route) => false);
-  }
 
 
 
@@ -263,6 +247,9 @@ class _Base extends State<Base> {
   @override
   void initState() {
     super.initState();
+    Ads.initialize();
+    Ads.showBannerAd();
+    AddLocation();
   }
 
 

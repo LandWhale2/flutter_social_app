@@ -123,6 +123,7 @@ class _BoardState extends State<Board> {
     // TODO: implement initState
     super.initState();
     getlatlong();
+    Ads.initialize();
     Ads.hideBannerAd();
     SelectIndex =0;
   }
@@ -437,8 +438,12 @@ class _BoardState extends State<Board> {
                   padding: EdgeInsets.only(top: 10, left: 8),
                   itemBuilder: (BuildContext context, int index) {
                     DocumentSnapshot ds = snapshot2.data.documents[index];
-                    var latitude2 = ds['latitude'];
-                    var longitude2 = ds['longitude'];
+                    var latitude2;
+                    var longitude2;
+                    if(ds['latitude'] != null){
+                      latitude2 = ds['latitude'];
+                      longitude2 = ds['longitude'];
+                    }
                     if (!snapshot2.hasData) {
                       return Container();
                     }
@@ -552,7 +557,9 @@ class _BoardState extends State<Board> {
                                                         contextId: ds['contextID'],
                                                         SelectSpace: SelectSpace,
                                                         title: title,
-                                                      )));
+                                                      ))).then((value){
+                                                        Ads.showBannerAd();
+                                          });
                                         }
                                       },
                                       child: Container(
@@ -899,7 +906,9 @@ class _BoardState extends State<Board> {
                                                       contextId: ds['contextID'],
                                                       SelectSpace: SelectSpace,
                                                       title: title,
-                                                    )));
+                                                    ))).then((value){
+                                                      Ads.showBannerAd();
+                                        });
                                     },
                                     child: Container(
                                       width: MediaQuery.of(context).size.width / 1.38,
