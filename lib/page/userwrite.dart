@@ -99,7 +99,7 @@ class _UserWriteState extends State<UserWrite> {
           color: Colors.black,
         ),
         title: Text(
-          username,
+          username ?? '',
           style:
           TextStyle(fontFamily: 'NIX', fontSize: 25, color: Colors.black),
         ),

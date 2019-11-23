@@ -45,20 +45,20 @@ class _SlideItemState extends State<SlideItem> {
                 child: Container(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
-                  child: ClipRRect(
+                  child: (widget.image != null)?ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(20)),
                     child: CachedNetworkImage(
                       imageUrl: widget.image,
                       fit: BoxFit.cover,
                     )
-                  ),
+                  ):Center(child: Icon(Icons.person),),
                 ),
               ),
               Positioned(
                 bottom: 20,
                 left: 10,
                 child: Text(
-                  '${widget.nickname}, ${widget.age}''세',
+                  (widget.nickname != null)?'${widget.nickname}, ${widget.age}''세':'',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 25,

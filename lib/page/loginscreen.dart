@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as prefix0;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +110,7 @@ class LoginScreenState extends State<LoginScreen>
     });
 
     //로그인은 되어있는데 프로필을 작성하지않은 신규유저를 위한처리
-    if(FirebaseAuth.instance.currentUser() != null){
+    if(await FirebaseAuth.instance.currentUser() != null){
       print('sssss');
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
 
@@ -130,7 +131,7 @@ class LoginScreenState extends State<LoginScreen>
           'likeperson': null,
           'block': null,
           'visit': 0,
-          'email': null,
+          'email':(user.email !=null)? user.email:null ,
         });
 
         return Navigator.push(
@@ -228,7 +229,7 @@ class LoginScreenState extends State<LoginScreen>
           'likeperson': null,
           'block': null,
           'visit': 0,
-          'email': (currentUser.displayName == null)?null:currentUser.displayName,
+          'email': (currentUser.email == null)?null:currentUser.email,
         });
 
 
@@ -503,10 +504,12 @@ class LoginScreenState extends State<LoginScreen>
 //    if (formState.validate()) {
 //      formState.save();
 //      try {
+//
+//
 //        AuthResult _user = await FirebaseAuth.instance
-//            .signInWithEmailAndPassword(email: _email, password: _password);
+//            .signInWithEmailAndPassword(email: null, password: null);
 //        Navigator.push(
-//            context, MaterialPageRoute(builder: (context) => Base(currentUserId: currentUser,)));
+//            context, MaterialPageRoute(builder: (context) => Base(currentUserId: _user.user.uid,)));
 //      } catch (e) {
 //        print(e.message);
 //      }
@@ -516,9 +519,12 @@ class LoginScreenState extends State<LoginScreen>
   _SignDB() async {
     final formState = _formkey.currentState;
     if (formState.validate()) {
-
       formState.save();
       try {
+
+
+
+
         await Firestore.instance
             .collection('users')
             .where('email', isEqualTo: _email)

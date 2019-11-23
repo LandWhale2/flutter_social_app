@@ -31,6 +31,10 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
 
   var getTop;
 
+  checklogin()async{
+    print(await FirebaseAuth.instance.currentUser());
+  }
+
   void initState() {
     super.initState();
 //    futureget();
@@ -175,6 +179,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                       color: Colors.pinkAccent),
                 ),
                 onPressed: () {
+                  checklogin();
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -231,14 +236,14 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                               Container(
                                 height: MediaQuery.of(context).size.height / 6,
                                 width: MediaQuery.of(context).size.height / 6,
-                                child: ClipRRect(
+                                child: (ds['image'] != null)?ClipRRect(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(20)),
                                   child: CachedNetworkImage(
                                     imageUrl: ds['image'],
                                     fit: BoxFit.cover,
                                   ),
-                                ),
+                                ):Center(child: Icon(Icons.person),),
                               ),
                             ],
                           ),

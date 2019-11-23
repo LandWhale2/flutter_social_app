@@ -413,7 +413,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                         (currentId == usercurrentId && check ==1) ?Colors.white  : Colors.black,
                   ),
                   title: Text(
-                    ds['nickname'],
+                    ds['nickname']??'',
                     style: TextStyle(
                         fontFamily: 'NIX', fontSize: 25, color: Colors.black),
                   ),
@@ -503,7 +503,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                                   Icons.person,
                                                 ),
                                                 label: Text(
-                                                  '${ds['age']}세' ?? '',
+                                                  (ds['age'] != null)?'${ds['age']}세': '',
                                                   style:
                                                   TextStyle(fontFamily: 'NIX'),
                                                 )),

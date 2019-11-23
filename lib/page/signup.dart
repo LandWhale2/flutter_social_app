@@ -539,7 +539,7 @@ class _SignUpPageState extends State<SignUpPage> {
               'createAt': DateTime.now().millisecondsSinceEpoch.toString(),
               'chattingWith': null,
               'favorite': null,
-              'image': [],
+              'image': null,
               'age': null,
               'intro': null,
               'like' : 0,
@@ -548,12 +548,7 @@ class _SignUpPageState extends State<SignUpPage> {
               'phone': _phoneNumberController.text,
             });
           }
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => writeprofile(
-                        currentUserId: currentId,
-                      )));
+          Navigator.pop(context);
         } catch (e) {
           print(e.message);
         }
