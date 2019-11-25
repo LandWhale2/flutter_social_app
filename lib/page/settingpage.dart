@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:socialapp/page/Notice.dart';
 import 'package:socialapp/page/accountpage.dart';
@@ -63,6 +64,8 @@ class _SettingPageState extends State<SettingPage> {
           SizedBox(height: 20,),
           InkWell(
             onTap: (){
+
+
               Navigator.push(
                   context,
                   MaterialPageRoute(

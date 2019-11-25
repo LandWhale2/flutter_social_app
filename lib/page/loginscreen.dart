@@ -111,7 +111,6 @@ class LoginScreenState extends State<LoginScreen>
 
     //로그인은 되어있는데 프로필을 작성하지않은 신규유저를 위한처리
     if(await FirebaseAuth.instance.currentUser() != null){
-      print('sssss');
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
 
       final snapshot = await Firestore.instance.collection('users').document(user.uid).get();
@@ -138,13 +137,13 @@ class LoginScreenState extends State<LoginScreen>
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    ProfileEdit(currentId: user.uid)));
+                    ProfileEdit(currentId: user.uid, first: true ,)));
       }else{
         return Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    ProfileEdit(currentId: user.uid)));
+                    ProfileEdit(currentId: user.uid, first: true,)));
       }
 
 
@@ -160,7 +159,7 @@ class LoginScreenState extends State<LoginScreen>
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      ProfileEdit(currentId: prefs.getString('id'))));
+                      ProfileEdit(currentId: prefs.getString('id'),first: true,)));
         }else{
           return null;
         }
@@ -191,7 +190,7 @@ class LoginScreenState extends State<LoginScreen>
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      ProfileEdit(currentId: firebaseUser.uid)));
+                      ProfileEdit(currentId: firebaseUser.uid, first: true,)));
         }else{
           return null;
         }
@@ -240,7 +239,7 @@ class LoginScreenState extends State<LoginScreen>
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    ProfileEdit(currentId: firebaseUser.uid)));
+                    ProfileEdit(currentId: firebaseUser.uid,first: true,)));
         return null;
       } else {
         //기존유저
@@ -521,10 +520,6 @@ class LoginScreenState extends State<LoginScreen>
     if (formState.validate()) {
       formState.save();
       try {
-
-
-
-
         await Firestore.instance
             .collection('users')
             .where('email', isEqualTo: _email)

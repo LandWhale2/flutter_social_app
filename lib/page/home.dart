@@ -64,11 +64,6 @@ class MainhomeState extends State<Mainhome> {
     return FutureBuilder<FirebaseUser>(
       future: FirebaseAuth.instance.currentUser(),
       builder: (BuildContext context,AsyncSnapshot<FirebaseUser> snapshot) {
-        if(!snapshot.hasData){
-          return Scaffold(
-            body: Container(),
-          );
-        }
         return Scaffold(
           body: SingleChildScrollView(
             child: Column(

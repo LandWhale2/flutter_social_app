@@ -111,6 +111,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
             child: StreamBuilder(
                 stream: Firestore.instance
                     .collection('users')
+                    .orderBy('like', descending: true)
                 .limit(30)
                     .snapshots(),
                 builder: (BuildContext context, snapshot) {

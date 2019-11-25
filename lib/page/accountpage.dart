@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/main.dart';
@@ -59,8 +60,16 @@ class _AccountPageState extends State<AccountPage> {
     FirebaseUser user =await FirebaseAuth.instance.currentUser();
     print('asd');
 
+    print(user);
+    if(user != null){
+      print('s');
+    }
+
     user.delete().then((_)async{
 
+      FirebaseStorage.instance.ref().child(currentId+'/0.jpg').delete().then((_){
+        print('클라우드삭제완료');
+      });
 
       print('계정삭제완료');
 
@@ -68,20 +77,12 @@ class _AccountPageState extends State<AccountPage> {
 
       print('preference 삭제완료');
 
-
-
-      FirebaseStorage.instance.ref().child(currentId).delete().then((_){
-        print('클라우드삭제완료');
-      });
-
-
-      Firestore.instance.collection('users').document(currentId).delete();
+      Firestore.instance.collection('user').document(currentId).delete();
       print('사용자 데이터 삭제완료');
 
       await FirebaseAuth.instance.signOut();
       await googleSignIn.disconnect();
       await googleSignIn.signOut();
-
 
 
       Navigator.of(context).pushAndRemoveUntil(
@@ -92,6 +93,7 @@ class _AccountPageState extends State<AccountPage> {
 
     }).catchError((error){
       print('삭제할수없습니다 : ' + error.toString());
+      Fluttertoast.showToast(msg: '재 로그인이 필요합니다.');
     });
 
 

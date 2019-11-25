@@ -11,18 +11,21 @@ import 'package:socialapp/base.dart';
 
 class ProfileEdit extends StatefulWidget {
   final String currentId;
+  bool first;
 
 
-  ProfileEdit({Key key, @required this.currentId}) : super(key: key);
+
+  ProfileEdit({Key key, @required this.currentId, @required this.first}) : super(key: key);
 
   @override
-  _ProfileEditState createState() => _ProfileEditState(currentId: currentId);
+  _ProfileEditState createState() => _ProfileEditState(currentId: currentId,first: first);
 }
 
 class _ProfileEditState extends State<ProfileEdit> {
   final String currentId;
+  bool first;
 
-  _ProfileEditState({Key key, @required this.currentId});
+  _ProfileEditState({Key key, @required this.currentId, @required this.first});
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>(debugLabel: 'asd');
   File tmpimage;
@@ -75,9 +78,9 @@ class _ProfileEditState extends State<ProfileEdit> {
 
 
   Future UploadImage() async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+//    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
     StorageReference reference =
-    FirebaseStorage.instance.ref().child('${currentId}/${fileName}.jpg');
+    FirebaseStorage.instance.ref().child('${currentId}/0.jpg');
     StorageUploadTask uploadTask = reference.putFile(tmpimage);
     StorageTaskSnapshot storageTaskSnapshot;
     uploadTask.onComplete.then((value) async {
@@ -109,7 +112,6 @@ class _ProfileEditState extends State<ProfileEdit> {
 
 
   uploadtask()async{
-    print('asd');
     if(_nickname != null){
       if(_selectage ==null){
         return Fluttertoast.showToast(msg: '나이를 입력해주세요.');
@@ -118,19 +120,23 @@ class _ProfileEditState extends State<ProfileEdit> {
         return Fluttertoast.showToast(msg: '지역을 입력해주세요.');
       }
       try{
-        print('asd');
-        Firestore.instance.collection('users').document(currentId).snapshots().listen((data){
-          if(data['nickname'] == null){
-            if(this.mounted){
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Base(currentUserId: currentId)));
+
+        if(this.mounted){
+
+            if(first == true){
+              if(this.mounted){
+                print('111111');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Base(currentUserId: currentId)));
+              }
+            }else{
+              print('22222');
+                Navigator.pop(context);
             }
-          }
-        });
 
-
+        }
 
         if(this.mounted){
           if(_ImageUrl == null){
@@ -150,15 +156,6 @@ class _ProfileEditState extends State<ProfileEdit> {
             });
           }
         }
-
-
-
-
-
-
-
-
-
       }catch(e){
         print(e.message);
       }
@@ -232,18 +229,14 @@ class _ProfileEditState extends State<ProfileEdit> {
                                     ),
                                     InkWell(
                                       onTap: (){
-                                        print(_ImageUrl);
-                                        print(ds['image']);
+
                                         if(_ImageUrl == null && ds['image'] != null){
-                                          print('1');
                                           if(this.mounted){
                                             uploadtask();
                                           }
                                         }else if(ds['image'] ==null && _ImageUrl ==null){
-                                          print('2');
                                           Fluttertoast.showToast(msg: '프로필 사진을 올려주세요.');
                                         }else if(ds['image'] == null && _ImageUrl != null){
-                                          print('3');
                                           if(this.mounted){
                                             uploadtask();
                                           }

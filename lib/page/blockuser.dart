@@ -59,7 +59,7 @@ class _BlockUserState extends State<BlockUser> {
             }
             var ds0 = snapshot.data;
             return ListView.builder(
-                itemCount: ds0['block'].length,
+                itemCount: (ds0['block'] != null)?ds0['block'].length:0,
                 itemBuilder: (BuildContext context, int index) {
                   if (ds0['block'][index] == null) {
                     return Container();

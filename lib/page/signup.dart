@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialapp/base.dart';
+import 'package:socialapp/page/ProfileEdit.dart';
 import 'package:socialapp/widgets/database_create.dart';
 import 'dart:async';
 import 'writeprofile.dart';
@@ -548,7 +549,11 @@ class _SignUpPageState extends State<SignUpPage> {
               'phone': _phoneNumberController.text,
             });
           }
-          Navigator.pop(context);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ProfileEdit(currentId: currentId, first: true,)));
         } catch (e) {
           print(e.message);
         }
